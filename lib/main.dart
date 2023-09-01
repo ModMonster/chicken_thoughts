@@ -2,7 +2,7 @@ import 'package:chicken_thoughts_notifications/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-String version = "1.2.0";
+String version = "1.2.1";
 
 void main() {
   runApp(MaterialApp(

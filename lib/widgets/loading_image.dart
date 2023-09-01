@@ -19,7 +19,7 @@ class LoadingImage extends StatelessWidget {
           return Lottie.asset("assets/loader.json");
         } else {
           // web version
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
       },
       errorWidget: (context, idk, progress) => ErrorFetching()
