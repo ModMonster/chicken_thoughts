@@ -58,10 +58,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return CustomScrollView(
       slivers: [
         SliverAppBar.large(
-          title: Padding(
-            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 900? 100 : 0),
-            child: const Text("History"),
-          ),
+          title: const Text("History"),
           actions: [
             IconButton(
               onPressed: () {

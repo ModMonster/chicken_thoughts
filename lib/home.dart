@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:animations/animations.dart';
 import 'package:chicken_thoughts_notifications/pages/daily.dart';
 import 'package:chicken_thoughts_notifications/pages/history.dart';
+import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
+import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,32 +39,14 @@ class _HomePageState extends State<HomePage> {
       HistoryPage(chickyMap: chickyMap)
     ];
 
+    bool mobile = MediaQuery.of(context).size.width < 768;
+
     if (chickyMap.isNotEmpty) {
-      return Scaffold(
-        body: PageTransitionSwitcher(
-          transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-            FadeThroughTransition(animation: primaryAnimation, secondaryAnimation: secondaryAnimation, child: child),
-          child: screens[currentPage]
-        ),
-        bottomNavigationBar: NavigationBar(
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.photo),
-              label: "Daily"
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.history),
-              label: "History"
-            ),
-          ],
-          selectedIndex: currentPage,
-          onDestinationSelected: (index) {
-            setState(() {
-              currentPage = index;
-            });
-          },
-        ),
-      );
+      if (mobile) {
+        return MobileScaffold(screens);
+      } else {
+        return WebScaffold(screens);
+      }
     } else {
       return Scaffold(
         body: Center(
