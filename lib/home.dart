@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:animations/animations.dart';
 import 'package:chicken_thoughts_notifications/pages/daily.dart';
 import 'package:chicken_thoughts_notifications/pages/history.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
