@@ -1,19 +1,18 @@
 import 'package:chicken_thoughts_notifications/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart';
 
-String version = "1.2.1";
+String version = "2.0.0";
 
 void main() {
   runApp(MaterialApp(
     title: "Chicken Thoughts",
     home: HomePage(),
     theme: ThemeData(
-      useMaterial3: true,
       colorSchemeSeed: Colors.purple
     ),
     darkTheme: ThemeData(
-      useMaterial3: true,
       colorSchemeSeed: Colors.purple,
       brightness: Brightness.dark
     ),
@@ -22,22 +21,38 @@ void main() {
 }
 
 Future<void> initNotifications() async {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin notifications = FlutterLocalNotificationsPlugin();  
+  await notifications.initialize(settings: InitializationSettings(android: AndroidInitializationSettings("notification_icon")));
 
-  flutterLocalNotificationsPlugin.initialize(InitializationSettings(android: AndroidInitializationSettings("notification_icon")));
+  // request permission on android 13+
+  final AndroidFlutterLocalNotificationsPlugin? androidPlugin = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+  bool? success = await androidPlugin?.requestNotificationsPermission();
+  if (success == null || !success) return;
 
-  await flutterLocalNotificationsPlugin.showDailyAtTime(
-    0,
-    "Daily Chicken Thought",
-    "A new Chicken Thought is ready to read!",
-    Time(7, 0, 0),
-    NotificationDetails(
+  final now = TZDateTime.now(local);
+  var scheduledDate = TZDateTime(
+    local,
+    now.year,
+    now.month,
+    now.day,
+    7
+  );
+
+  await notifications.zonedSchedule(
+    id: 0,
+    scheduledDate: scheduledDate,
+    matchDateTimeComponents: DateTimeComponents.time,
+    title: "Daily Chicken Thought",
+    body: "A new Chicken Thought is ready to read!",
+    androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    notificationDetails: NotificationDetails(
       android: AndroidNotificationDetails(
-        "other",
-        "Other",
+        "daily",
+        "Daily Notifications",
+        channelDescription: "Reminders every morning for new Chicken Thoughts",
         importance: Importance.low,
         priority: Priority.low,
-        color: Colors.blue,
+        color: Colors.purple,
       )
     ),
   );
