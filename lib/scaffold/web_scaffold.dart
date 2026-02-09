@@ -31,6 +31,10 @@ class _WebScaffoldState extends State<WebScaffold> {
                 icon: Icon(Icons.history),
                 label: Text("History")
               ),
+              NavigationRailDestination(
+                icon: Icon(Icons.grid_view),
+                label: Text("Chickendex")
+              ),
             ],
             selectedIndex: currentPage,
             onDestinationSelected: (index) {

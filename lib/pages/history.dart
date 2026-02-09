@@ -59,22 +59,6 @@ class _HistoryPageState extends State<HistoryPage> {
       slivers: [
         SliverAppBar.large(
           title: const Text("History"),
-          actions: [
-            IconButton(
-              onPressed: () {
-                showAboutDialog(
-                  context: context,
-                  applicationVersion: version,
-                  applicationIcon: CircleAvatar(backgroundImage: AssetImage("assets/icon.png")),
-                  children: [
-                    Text("An app that sends you a new Chicken Thought every day!")
-                  ]
-                );
-              },
-              icon: Icon(Icons.info_outline),
-              tooltip: "Information",
-            )
-          ],
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(

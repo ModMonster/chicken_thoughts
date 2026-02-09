@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chicken_thoughts_notifications/pages/chickendex.dart';
 import 'package:chicken_thoughts_notifications/pages/daily.dart';
 import 'package:chicken_thoughts_notifications/pages/history.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
@@ -35,7 +36,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     List<Widget> screens = [
       DailyChickyThoughtPage(chickyMap: chickyMap),
-      HistoryPage(chickyMap: chickyMap)
+      HistoryPage(chickyMap: chickyMap),
+      ChickendexPage(chickyMap: chickyMap)
     ];
 
     bool mobile = MediaQuery.of(context).size.width < 768;

@@ -30,6 +30,10 @@ class _MobileScaffoldState extends State<MobileScaffold> {
               icon: Icon(Icons.history),
               label: "History"
             ),
+            NavigationDestination(
+              icon: Icon(Icons.grid_view),
+              label: "Chickendex"
+            )
           ],
           selectedIndex: currentPage,
           onDestinationSelected: (index) {
