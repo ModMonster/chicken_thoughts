@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/home.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart';
@@ -6,16 +7,37 @@ import 'package:timezone/timezone.dart';
 String version = "2.0.0";
 
 void main() {
-  runApp(MaterialApp(
-    title: "Chicken Thoughts",
-    home: HomePage(),
-    theme: ThemeData(
-      colorSchemeSeed: Colors.purple
-    ),
-    darkTheme: ThemeData(
-      colorSchemeSeed: Colors.purple,
-      brightness: Brightness.dark
-    ),
+  runApp(DynamicColorBuilder(
+    builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      ColorScheme lightColorScheme;
+      ColorScheme darkColorScheme;
+
+      // Use color schemes based on the user's wallpaper
+      if (lightDynamic != null && darkDynamic != null) {
+        lightColorScheme = lightDynamic.harmonized();
+        darkColorScheme = darkDynamic.harmonized();
+      } else {
+        // Otherwise, use fallback
+        lightColorScheme = ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+        );
+        darkColorScheme = ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+          brightness: Brightness.dark,
+        );
+      }
+
+      return MaterialApp(
+        title: "Chicken Thoughts",
+        home: HomePage(),
+        theme: ThemeData(
+          colorScheme: lightColorScheme
+        ),
+        darkTheme: ThemeData(
+          colorScheme: darkColorScheme
+        ),
+      );
+    }
   ));
   // initNotifications();
 }
