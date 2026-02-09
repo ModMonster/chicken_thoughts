@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/pages/photo_view.dart';
 import 'package:chicken_thoughts_notifications/widgets/error_fetching.dart';
 import 'package:flutter/material.dart';

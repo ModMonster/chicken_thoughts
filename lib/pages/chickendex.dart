@@ -1,13 +1,5 @@
-import 'dart:math';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chicken_thoughts_notifications/main.dart';
-import 'package:chicken_thoughts_notifications/pages/history.dart';
-import 'package:chicken_thoughts_notifications/pages/photo_view.dart';
-import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
-import 'package:chicken_thoughts_notifications/widgets/error_fetching.dart';
+import 'package:chicken_thoughts_notifications/pages/chickendex_normal.dart';
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ChickendexPage extends StatefulWidget {
   const ChickendexPage({required this.chickyMap, Key? key}) : super(key: key);
@@ -24,6 +16,17 @@ class _ChickendexPageState extends State<ChickendexPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Widget buildView() {
+    switch (selection) {
+      case ChickendexViews.normal:
+        return ChickendexNormalView();
+      case ChickendexViews.special:
+        return ChickendexNormalView();
+      case ChickendexViews.unlocked:
+        return ChickendexNormalView();
+    }
   }
 
   @override
@@ -69,17 +72,7 @@ class _ChickendexPageState extends State<ChickendexPage> {
         ),
         SliverPadding(
           padding: const EdgeInsets.all(8.0),
-          sliver: SliverGrid.builder(
-            itemCount: 300,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 100,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8
-            ),
-            itemBuilder: (context, index) {
-              return ChickendexLocked(index);
-            }
-          ),
+          sliver: buildView()
         )
       ],
     );
