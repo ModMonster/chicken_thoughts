@@ -10,17 +10,27 @@ class ErrorFetching extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        kIsWeb? Container() : ColorFiltered(
-          colorFilter: const ColorFilter.mode(
-            Colors.purple,
-            BlendMode.lighten
-          ),
-          child: SizedBox(
-            width: 200,
-            child: Lottie.asset(
-              "assets/loader_error.json",
-              repeat: false,
-            ),
+        kIsWeb? Container() : SizedBox(
+          width: 200,
+          child: Lottie.asset(
+            "assets/loader_error.json",
+            repeat: false,
+            delegates: LottieDelegates(
+              values: [
+                ValueDelegate.color(
+                  ["**", "Add_cloud 2 Outlines", "**"],
+                  value: Theme.of(context).colorScheme.error
+                ),
+                ValueDelegate.strokeColor(
+                  ["**", "Line1 Outlines", "**"],
+                  value: Theme.of(context).colorScheme.surface
+                ),
+                ValueDelegate.strokeColor(
+                  ["**", "Line1 Outlines 2", "**"],
+                  value: Theme.of(context).colorScheme.surface
+                )
+              ]
+            )
           ),
         ),
         Text("Could not fetch Chicken Thoughts :("),

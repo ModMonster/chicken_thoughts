@@ -17,7 +17,7 @@ void main() {
       brightness: Brightness.dark
     ),
   ));
-  initNotifications();
+  // initNotifications();
 }
 
 Future<void> initNotifications() async {
