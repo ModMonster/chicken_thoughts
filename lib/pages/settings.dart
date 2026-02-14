@@ -102,16 +102,23 @@ class SettingsPageState extends State<SettingsPage> {
                     Navigator.pushNamed(context, "/settings/color");
                   },
                 ),
+                ListTile(
+                  title: Text("Notifications"),
+                  leading: Icon(Icons.notifications_outlined),
+                  onTap: () {
+                    Navigator.pushNamed(context, "/settings/notifications");
+                  },
+                ),
                 Divider(),
                 ListTile(
                   title: Text("View on GitHub"),
                   leading: Icon(Icons.code),
-                  onTap: () {launchUrl(Uri.parse("https://github.com/modmonster/chicken_thoughts"));},
+                  onTap: () {launchUrl(Uri.parse(githubUrl));},
                 ),
                 ListTile(
                   title: Text("Report a bug"),
                   leading: Icon(Icons.bug_report_outlined),
-                  onTap: () {launchUrl(Uri.parse("https://github.com/modmonster/chicken_thoughts/issues/new"));},
+                  onTap: () {launchUrl(Uri.parse("$githubUrl/issues/new"));},
                 ),
                 AboutListTile(
                   icon: Icon(Icons.info_outline),

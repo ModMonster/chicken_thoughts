@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 final List<SettingsColor> colors = [
-  SettingsColor("Based on wallpaper", Colors.black),
+  SettingsColor("Match wallpaper", Colors.purple),
   SettingsColor("Red", Colors.red),
   SettingsColor("Pink", Colors.pink),
   SettingsColor("Purple", Colors.purple),
@@ -26,7 +26,8 @@ final List<SettingsColor> colors = [
 
 class SettingsColorPage extends StatelessWidget {
   final bool hasDynamicColor;
-  const SettingsColorPage({required this.hasDynamicColor, super.key});
+  final Color? wallpaperColor;
+  const SettingsColorPage({required this.hasDynamicColor, required this.wallpaperColor, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +57,10 @@ class SettingsColorPage extends StatelessWidget {
                       value: index,
                       controlAffinity: ListTileControlAffinity.trailing,
                       secondary: CircleAvatar(
-                        child: Icon(Icons.palette_outlined)
+                        backgroundColor: wallpaperColor,
+                        child: Icon(Icons.auto_awesome_outlined),
                       ),
-                      title: Text("Based on wallpaper"),
-                      subtitle: Text("Requires Android 12+"),
+                      title: Text("Match wallpaper")
                     );
                   }
                   

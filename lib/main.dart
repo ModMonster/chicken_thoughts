@@ -2,16 +2,19 @@ import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
+import 'package:chicken_thoughts_notifications/pages/settings_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 
 String version = "2.0.0";
+String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 
-// TODO: settings ideas:
-  // notifications, set time they happen
-  // theme (obviously)
-  // cache images
+// TODO: This will be checked against the database when app starts
+// It can be used to prompt updates and lock out old versions of the app
+int versionCode = 2;
+
+// TODO: add update notification, with option to update through app store or download from github
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,30 +33,30 @@ class ChickenThoughtsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final Box box = Hive.box("settings");
 
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme lightColorScheme;
-        ColorScheme darkColorScheme;
-        bool hasDynamicColor = lightDynamic != null && darkDynamic != null;
-
-        // Use color schemes based on the user's wallpaper
-        if (hasDynamicColor) {
-          lightColorScheme = lightDynamic.harmonized();
-          darkColorScheme = darkDynamic.harmonized();
-        } else {
-          // Otherwise, use fallback
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: Colors.purple,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: Colors.purple,
-            brightness: Brightness.dark,
-          );
-        }
-
-        return StreamBuilder(
-          stream: box.watch(),
-          builder: (context, asyncSnapshot) {
+    return StreamBuilder(
+      stream: box.watch(),
+      builder: (context, asyncSnapshot) {
+        return DynamicColorBuilder(
+          builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+            ColorScheme lightColorScheme;
+            ColorScheme darkColorScheme;
+            bool hasDynamicColor = lightDynamic != null && darkDynamic != null;
+        
+            // Use color schemes based on the user's wallpaper
+            if (hasDynamicColor && box.get("color", defaultValue: hasDynamicColor? 0 : 3) == 0) {
+              lightColorScheme = lightDynamic.harmonized();
+              darkColorScheme = darkDynamic.harmonized();
+            } else {
+              // Otherwise, use fallback
+              lightColorScheme = ColorScheme.fromSeed(
+                seedColor: colors[box.get("color", defaultValue: hasDynamicColor? 0 : 3)].color
+              );
+              darkColorScheme = ColorScheme.fromSeed(
+                seedColor: colors[box.get("color", defaultValue: hasDynamicColor? 0 : 3)].color,
+                brightness: Brightness.dark,
+              );
+            }
+        
             return MaterialApp(
               title: "Chicken Thoughts",
               themeMode: ThemeMode.values[box.get("theme", defaultValue: 0)],
@@ -66,7 +69,11 @@ class ChickenThoughtsApp extends StatelessWidget {
               routes: {
                 "/": (context) => HomePage(),
                 "/settings": (context) => SettingsPage(hasDynamicColor: hasDynamicColor),
-                "/settings/color": (context) => SettingsColorPage(hasDynamicColor: hasDynamicColor)
+                "/settings/color": (context) => SettingsColorPage(
+                  hasDynamicColor: hasDynamicColor,
+                  wallpaperColor: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized().primaryContainer : darkDynamic?.harmonized().primaryContainer
+                ),
+                "/settings/notifications": (context) => SettingsNotificationPage(),
               },
             );
           }
