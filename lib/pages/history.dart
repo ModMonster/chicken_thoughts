@@ -35,7 +35,7 @@ class ChickenThoughtDate {
 }
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({required this.chickyMap, Key? key}) : super(key: key);
+  const HistoryPage({required this.chickyMap, super.key});
 
   final Map<String, String> chickyMap;
 

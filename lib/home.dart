@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({ Key? key }) : super(key: key);
+  const HomePage({ super.key });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> screens = [
       DailyChickyThoughtPage(chickyMap: chickyMap),
       HistoryPage(chickyMap: chickyMap),
-      ChickendexPage(chickyMap: chickyMap)
+      ChickendexPage()
     ];
 
     bool mobile = MediaQuery.of(context).size.width < 768;

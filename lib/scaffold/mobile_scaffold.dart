@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class MobileScaffold extends StatefulWidget {
   final List<Widget> screens;
-  const MobileScaffold(this.screens, {Key? key}) : super(key: key);
+  const MobileScaffold(this.screens, {super.key});
 
   @override
   State<MobileScaffold> createState() => _MobileScaffoldState();

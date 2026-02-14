@@ -7,7 +7,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewPage extends StatefulWidget {
-  const PhotoViewPage({Key? key, required this.currentChickyThought, required this.pastChickyThoughts, this.heroTag, this.initialPage = 0}) : super(key: key);
+  const PhotoViewPage({super.key, required this.currentChickyThought, required this.pastChickyThoughts, this.heroTag, this.initialPage = 0});
 
   final ChickenThoughtDate currentChickyThought;
   final List<ChickenThoughtDate> pastChickyThoughts;
@@ -75,7 +75,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           });
         },
         pageController: pageController,
-        backgroundDecoration: BoxDecoration(color: Theme.of(context).colorScheme.background),
+        backgroundDecoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
         builder: (BuildContext context, int index) {
           return PhotoViewGalleryPageOptions.customChild(
             child: CachedNetworkImage(

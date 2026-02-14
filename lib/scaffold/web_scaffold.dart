@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class WebScaffold extends StatefulWidget {
   final List<Widget> screens;
-  const WebScaffold(this.screens, {Key? key}) : super(key: key);
+  const WebScaffold(this.screens, {super.key});
 
   @override
   State<WebScaffold> createState() => _WebScaffoldState();

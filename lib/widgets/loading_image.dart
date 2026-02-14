@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class LoadingImage extends StatelessWidget {
-  const LoadingImage(this.url, {Key? key}) : super(key: key);
+  const LoadingImage(this.url, {super.key});
 
   final String url;
 

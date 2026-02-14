@@ -5,7 +5,7 @@ import 'package:chicken_thoughts_notifications/widgets/loading_image.dart';
 import 'package:flutter/material.dart';
 
 class DailyChickyThoughtPage extends StatelessWidget {
-  const DailyChickyThoughtPage({required this.chickyMap, Key? key}) : super(key: key);
+  const DailyChickyThoughtPage({required this.chickyMap, super.key});
 
   final Map<String, String> chickyMap;
 
