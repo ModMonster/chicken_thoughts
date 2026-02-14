@@ -1,21 +1,17 @@
+import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
-import 'package:chicken_thoughts_notifications/pages/history.dart';
-import 'package:chicken_thoughts_notifications/pages/photo_view.dart';
-import 'package:chicken_thoughts_notifications/widgets/loading_image.dart';
+import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
 import 'package:flutter/material.dart';
 
-class DailyChickyThoughtPage extends StatelessWidget {
-  const DailyChickyThoughtPage({required this.chickyMap, super.key});
-
-  final Map<String, String> chickyMap;
+class DailyView extends StatelessWidget {
+  final ChickenThought chickenThought;
+  const DailyView({required this.chickenThought, super.key});
 
   @override
   Widget build(BuildContext context) {
-    int chickyNumber = ChickenThoughtDate.getCurrentChickyNumber();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chicken Thought #$chickyNumber"),
+        title: Text(chickenThought.displayName),
         actions: [
           IconButton(
             onPressed: () {
@@ -41,21 +37,21 @@ class DailyChickyThoughtPage extends StatelessWidget {
             child: Material(
               child: InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PhotoViewPage(
-                      currentChickyThought: ChickenThoughtDate(
-                        dateShown: "Current",
-                        url: chickyMap[chickyNumber.toString()]!,
-                        number: chickyNumber
-                      ),
-                      pastChickyThoughts: ChickenThoughtDate.getImageList(chickyMap),
-                      heroTag: "mainChicken",
-                    );
-                  }));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return PhotoViewPage(
+                  //     currentChickyThought: ChickenThoughtDate(
+                  //       dateShown: "Current",
+                  //       url: chickyMap[chickyNumber.toString()]!,
+                  //       number: chickyNumber
+                  //     ),
+                  //     pastChickyThoughts: ChickenThoughtDate.getImageList(chickyMap),
+                  //     heroTag: "mainChicken",
+                  //   );
+                  // }));
                 },
                 child: Hero(
                   tag: "mainChicken",
-                  child: LoadingImage(chickyMap[chickyNumber.toString()]!)
+                  child: ChickenThoughtImage(chickenThought)
                 )
               ),
             )

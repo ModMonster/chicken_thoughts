@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/pages/history.dart';
 import 'package:chicken_thoughts_notifications/widgets/error_fetching.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,11 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewPage extends StatefulWidget {
-  const PhotoViewPage({super.key, required this.currentChickyThought, required this.pastChickyThoughts, this.heroTag, this.initialPage = 0});
-
-  final ChickenThoughtDate currentChickyThought;
-  final List<ChickenThoughtDate> pastChickyThoughts;
+  final ChickenThought currentChickyThought;
+  final List<ChickenThought> pastChickyThoughts;
   final Object? heroTag;
   final int initialPage;
+  const PhotoViewPage({super.key, required this.currentChickyThought, required this.pastChickyThoughts, this.heroTag, this.initialPage = 0});
 
   @override
   State<PhotoViewPage> createState() => _PhotoViewPageState();
@@ -20,8 +20,7 @@ class PhotoViewPage extends StatefulWidget {
 
 class _PhotoViewPageState extends State<PhotoViewPage> {
   late final PageController pageController;
-  late ChickenThoughtDate activeChickenThought;
-  late final List<ChickenThoughtDate> chickyThoughts;
+  late final List<ChickenThought> chickyThoughts;
 
   @override
   void initState() {

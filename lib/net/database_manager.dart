@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
@@ -23,11 +24,6 @@ class DatabaseManager {
     storage = Storage(client);
     database = TablesDB(client);
   }
-
-  // process to get daily chicken thought:
-  // hit the holidays database, see if today is a holiday, if so grab that picture
-  // otherwise hit the seasons database, see if today falls under any seasons, if so, pull a random one
-  // pull random default
 
   static Future<Holiday?> getHolidayToday() async {
     final today = getToday();
@@ -179,6 +175,13 @@ class DatabaseManager {
 
   static DateTime getToday() {
     return DateTime.now().toUtc().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+  }
+
+  static Future<Uint8List> getImageUrlFromId(String id) {
+    return storage.getFileView(
+      bucketId: bucketId,
+      fileId: id
+    );
   }
 }
 

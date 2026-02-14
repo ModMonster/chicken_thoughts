@@ -1,5 +1,4 @@
-import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
-import 'package:chicken_thoughts_notifications/home.dart';
+import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +15,6 @@ String version = "2.0.0";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseManager.init();
-  ChickenThought daily = await DatabaseManager.getDailyChickenThought();
-  print("${daily.displayName}, ids: ${daily.storageIds}");
 
   runApp(DynamicColorBuilder(
     builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {

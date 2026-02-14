@@ -85,8 +85,8 @@ import 'package:flutter/material.dart';
 //   unlocked
 // }
 
-class ChickendexPage extends StatelessWidget {
-  const ChickendexPage({super.key});
+class ChickendexView extends StatelessWidget {
+  const ChickendexView({super.key});
 
   @override
   Widget build(BuildContext context) {

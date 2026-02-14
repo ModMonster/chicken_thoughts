@@ -1,16 +1,14 @@
 import 'package:chicken_thoughts_notifications/views/coming_soon.dart';
 import 'package:flutter/material.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({required this.chickyMap, super.key});
-
-  final Map<String, String> chickyMap;
+class HistoryView extends StatefulWidget {
+  const HistoryView({super.key});
 
   @override
-  State<HistoryPage> createState() => _HistoryPageState();
+  State<HistoryView> createState() => _HistoryViewState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class _HistoryViewState extends State<HistoryView> {
   // List<ChickenThoughtDate> pastChickyThoughts = [];
 
   // @override
