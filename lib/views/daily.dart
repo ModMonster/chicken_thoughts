@@ -1,5 +1,4 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
-import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
 import 'package:flutter/material.dart';
 
@@ -15,17 +14,10 @@ class DailyView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              showAboutDialog(
-                context: context,
-                applicationVersion: version,
-                applicationIcon: CircleAvatar(backgroundImage: AssetImage("assets/icon.png")),
-                children: [
-                  Text("An app that sends you a new Chicken Thought every day!")
-                ]
-              );
+              Navigator.pushNamed(context, "/settings");
             },
-            icon: Icon(Icons.info_outline),
-            tooltip: "Information",
+            icon: Icon(Icons.settings),
+            tooltip: "Settings",
           )
         ],
       ),
