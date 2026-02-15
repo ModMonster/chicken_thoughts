@@ -7,7 +7,8 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 class ChickendexPhotoViewCarouselItem extends StatefulWidget {
   final String fileName;
   final void Function()? onTap;
-  const ChickendexPhotoViewCarouselItem(this.fileName, {this.onTap, super.key});
+  final void Function(Uint8List thumbnail)? onLoadThumbnail;
+  const ChickendexPhotoViewCarouselItem(this.fileName, {this.onTap, this.onLoadThumbnail, super.key});
 
   @override
   State<ChickendexPhotoViewCarouselItem> createState() => _ChickendexPhotoViewCarouselItemState();
@@ -19,6 +20,9 @@ class _ChickendexPhotoViewCarouselItemState extends State<ChickendexPhotoViewCar
   @override
   void initState() {
     _future = DatabaseManager.getImagePreviewFromPath(widget.fileName);
+    if (widget.onLoadThumbnail != null) {
+      _future.then((value) => widget.onLoadThumbnail!(value));
+    }
     super.initState();
   }
 

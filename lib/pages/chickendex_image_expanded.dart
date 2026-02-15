@@ -23,6 +23,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   late final PageController _photoController;
   late final CarouselSliderController _carouselController;
 
+  Map<int, Uint8List> prefetchedThumbnails = {};
+
   @override
   void initState() {
     // Build the list of unlocked chickens
@@ -31,6 +33,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
         currentPage = chickenIndexes.length;
         _photoController = PageController(initialPage: currentPage);
         _carouselController = CarouselSliderController();
+        prefetchedThumbnails[chickenIndexes.length] = widget.thumbImage;
       }
       chickenIndexes.add(i);
     }
@@ -69,7 +72,6 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     },
                     builder: (context, index) {
                       String chickenIndex = chickenIndexes[index];
-                      bool isStartingChicken = chickenIndexes[index] == widget.startingChickenIndex.toString();
                   
                       return PhotoViewGalleryPageOptions.customChild(
                         maxScale: PhotoViewComputedScale.contained,
@@ -79,9 +81,9 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                           future: DatabaseManager.getImagesFromPath(chickenIndex),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData || snapshot.data == null) {
-                              if (isStartingChicken) {
+                              if (prefetchedThumbnails.containsKey(index)) {
                                 return Image.memory(
-                                  widget.thumbImage,
+                                  prefetchedThumbnails[index]!,
                                   fit: BoxFit.contain,
                                 );
                               }
@@ -110,6 +112,9 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       onTap: () {
                         _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
                         _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                      },
+                      onLoadThumbnail: (thumbnail) {
+                        prefetchedThumbnails[itemIndex] = thumbnail;
                       },
                     );
                   },
