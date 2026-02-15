@@ -27,11 +27,13 @@ class ChickendexGridImage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Stack(
             children: [
-              Hero(
-                tag: index,
-                child: Image.memory(
-                  snapshot.data!,
-                  fit: BoxFit.cover,
+              Positioned.fill(
+                child: Hero(
+                  tag: index,
+                  child: Image.memory(
+                    snapshot.data!,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Positioned.fill(

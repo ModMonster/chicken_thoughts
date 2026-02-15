@@ -1,24 +1,36 @@
 import 'dart:typed_data';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class ChickendexImageExpandedPage extends StatefulWidget {
-  final int index;
+  final int startingChickenIndex;
   final Uint8List thumbImage;
-  const ChickendexImageExpandedPage(this.index, {required this.thumbImage, super.key});
+  const ChickendexImageExpandedPage(this.startingChickenIndex, {required this.thumbImage, super.key});
 
   @override
   State<ChickendexImageExpandedPage> createState() => _ChickendexImageExpandedPageState();
 }
 
 class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPage> {
-  final CarouselController _carouselController = CarouselController();
-  late final Future<List<Uint8List>> _future;
+  List<String> chickenIndexes = [];
+  late int currentPage;
+  late final PageController _photoController;
 
   @override
   void initState() {
-    _future = DatabaseManager.getImagesFromPath(widget.index.toString());
+    // Build the list of unlocked chickens
+    for (String i in Hive.box("chickendex").keys) {
+      if (widget.startingChickenIndex.toString() == i) {
+        currentPage = chickenIndexes.length;
+        _photoController = PageController(initialPage: currentPage);
+      }
+      chickenIndexes.add(i);
+    }
     super.initState();
   }
 
@@ -33,7 +45,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Chicken Thought #${widget.index}"),
+          title: Text("Chicken Thought #${chickenIndexes[currentPage]}"),
         ),
         body: SafeArea(
           child: Column(
@@ -41,53 +53,65 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
               Expanded(
                 child: Center(
                   child: Hero(
-                    tag: widget.index,
-                    child: FutureBuilder(
-                      future: _future,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData || snapshot.data == null) {
-                          return SizedBox.expand(
-                            child: Image.memory(
-                              widget.thumbImage,
-                              fit: BoxFit.contain,
-                            ),
-                          );
-                        }
-                            
-                        return Image.memory(
-                          snapshot.data!.first,
-                          fit: BoxFit.contain,
+                    tag: widget.startingChickenIndex,
+                    child: PhotoViewGallery.builder(
+                      itemCount: chickenIndexes.length,
+                      backgroundDecoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface
+                      ),
+                      pageController: _photoController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentPage = index;
+                        });
+                      },
+                      builder: (context, index) {
+                        String chickenIndex = chickenIndexes[index];
+
+                        return PhotoViewGalleryPageOptions.customChild(
+                          maxScale: PhotoViewComputedScale.contained,
+                          minScale: PhotoViewComputedScale.contained,
+                          child: FutureBuilder(
+                            future: DatabaseManager.getImagesFromPath(chickenIndex),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData || snapshot.data == null) {
+                                if (index + 1 == widget.startingChickenIndex) {
+                                  return Image.memory(
+                                    widget.thumbImage,
+                                    fit: BoxFit.contain,
+                                  );
+                                }
+                                return Center(child: CircularProgressIndicator());
+                              }
+                                  
+                              return Image.memory(
+                                snapshot.data!.first, // TODO: include all
+                                fit: BoxFit.contain,
+                              );
+                            }
+                          )
                         );
                       }
                     ),
                   ),
                 ),
               ),
-              Text("1/100"),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 70),
-                child: CarouselView.weighted(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2)
-                  ),
-                  padding: EdgeInsets.all(1),
-                  flexWeights: [2, 2, 2, 2, 3, 2, 2, 2, 2],
-                  itemSnapping: true,
-                  controller: _carouselController,
-                  onTap: (index) {
-                    setState(() {
-                      _carouselController.animateToItem(index);
-                    });
-                  },
-                  children: List<Widget>.generate(20, (int index) {
-                    return Image.memory(
-                      widget.thumbImage,
-                      fit: BoxFit.cover,
-                      // color: Colors.black.withAlpha(50),
-                      // colorBlendMode: BlendMode.darken,
-                    );
-                  })
-                )
+              Text("${currentPage + 1}/${chickenIndexes.length}"),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 70),
+                  child: CarouselSlider.builder(
+                    itemCount: chickenIndexes.length,
+                    itemBuilder: (context, itemIndex, pageViewIndex) {
+                      return Container(
+                        color: Colors.blue,
+                        child: Text(itemIndex.toString()),
+                      );
+                    },
+                    options: CarouselOptions(),
+                  )
+                ),
               )
             ],
           ),

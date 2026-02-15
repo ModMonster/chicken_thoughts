@@ -32,6 +32,7 @@ dependencies:
   path: ^1.9.1
   proper_filesize: ^1.0.2
   connectivity_plus: ^7.0.0
+  carousel_slider: ^5.1.2
 
 dev_dependencies:
   flutter_lints: ^6.0.0
