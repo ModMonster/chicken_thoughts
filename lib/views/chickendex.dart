@@ -1,95 +1,93 @@
-import 'package:chicken_thoughts_notifications/views/coming_soon.dart';
+import 'package:chicken_thoughts_notifications/views/chickendex_normal.dart';
 import 'package:flutter/material.dart';
 
-// class ChickendexPage extends StatefulWidget {
-//   const ChickendexPage({required this.chickyMap, super.key});
-
-//   final Map<String, String> chickyMap;
-
-//   @override
-//   State<ChickendexPage> createState() => _ChickendexPageState();
-// }
-
-// class _ChickendexPageState extends State<ChickendexPage> {
-//   ChickendexViews selection = ChickendexViews.normal;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   Widget buildView() {
-//     switch (selection) {
-//       case ChickendexViews.normal:
-//         return ChickendexNormalView();
-//       case ChickendexViews.special:
-//         return ChickendexNormalView();
-//       case ChickendexViews.unlocked:
-//         return ChickendexNormalView();
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomScrollView(
-//       slivers: [
-//         SliverAppBar(
-//           title: const Text("Chickendex"),
-//           pinned: true,
-//           snap: true,
-//           floating: true,
-//           bottom: PreferredSize(
-//             preferredSize: Size.fromHeight(56),
-//             child: Padding(
-//               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-//               child: SizedBox(
-//                 width: double.infinity,
-//                 child: SegmentedButton(
-//                   segments: [
-//                     ButtonSegment(
-//                       value: ChickendexViews.normal,
-//                       label: Text("Normal")
-//                     ),
-//                     ButtonSegment(
-//                       value: ChickendexViews.special,
-//                       label: Text("Holiday")
-//                     ),
-//                     ButtonSegment(
-//                       value: ChickendexViews.unlocked,
-//                       label: Text("Unlocked")
-//                     ),
-//                   ],
-//                   selected: {selection},
-//                   onSelectionChanged: (newSelection) {
-//                     setState(() {
-//                       selection = newSelection.first;
-//                     });
-//                   },
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//         SliverPadding(
-//           padding: const EdgeInsets.all(8.0),
-//           sliver: buildView()
-//         )
-//       ],
-//     );
-//   }
-// }
-
-// enum ChickendexViews {
-//   normal,
-//   special,
-//   unlocked
-// }
-
-class ChickendexView extends StatelessWidget {
+class ChickendexView extends StatefulWidget {
   const ChickendexView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ComingSoonView("Chickendex");
+  State<ChickendexView> createState() => _ChickendexViewState();
+}
+
+class _ChickendexViewState extends State<ChickendexView> {
+  ChickendexViews selection = ChickendexViews.normal;
+
+  @override
+  void initState() {
+    super.initState();
   }
+
+  Widget buildView() {
+    switch (selection) {
+      case ChickendexViews.normal:
+        return ChickendexNormalView();
+      case ChickendexViews.special:
+        return ChickendexNormalView();
+      case ChickendexViews.unlocked:
+        return ChickendexNormalView();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          title: const Text("Chickendex"),
+          pinned: true,
+          snap: true,
+          floating: true,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(56),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: SizedBox(
+                width: double.infinity,
+                child: SegmentedButton(
+                  segments: [
+                    ButtonSegment(
+                      value: ChickendexViews.normal,
+                      label: Text("Normal")
+                    ),
+                    ButtonSegment(
+                      value: ChickendexViews.special,
+                      label: Text("Special"),
+                      enabled: false
+                    ),
+                    ButtonSegment(
+                      value: ChickendexViews.unlocked,
+                      label: Text("Unlocked"),
+                      enabled: false
+                    ),
+                  ],
+                  selected: {selection},
+                  onSelectionChanged: (newSelection) {
+                    setState(() {
+                      selection = newSelection.first;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            title: Text("Work in progress"),
+            subtitle: Text("This page isn't quite finished yet!"),
+            leading: Icon(Icons.warning_amber_outlined),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(8.0),
+          sliver: buildView()
+        )
+      ],
+    );
+  }
+}
+
+enum ChickendexViews {
+  normal,
+  special,
+  unlocked
 }

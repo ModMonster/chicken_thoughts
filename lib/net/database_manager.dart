@@ -120,6 +120,21 @@ class DatabaseManager {
     return normalSeason!;
   }
 
+  static Future<Season> getDefaultSeason() async {
+    // Fetch list of seasons
+    RowList seasons = await database.listRows(
+      databaseId: databaseId,
+      tableId: "seasons",
+      queries: [
+        Query.isNull("name")
+      ]
+    );
+
+    return Season(
+      imageCount: seasons.rows.first.data["imageCount"],
+    );
+  }
+
   static Future<ChickenThought> getDailyChickenThought() async {
     Holiday? holiday = await getHolidayToday();
     if (holiday != null) {
@@ -150,7 +165,10 @@ class DatabaseManager {
     FileList files = await storage.listFiles(
       bucketId: bucketId,
       queries: [
-        Query.startsWith("name", path)
+        Query.or([
+          Query.equal("name", "$path.jpg"),
+          Query.startsWith("name", "$path.")
+        ])
       ]
     );
 
@@ -158,16 +176,9 @@ class DatabaseManager {
     return ids;
   }
 
-  // Get all image IDs corresponding to an exact filename
-  // e.g. holiday.fathers_day.1 will give holiday.fathers_day.1.jpg
-  static Future<String> getImageIdFromPath(String path) async {
-    FileList files = await storage.listFiles(
-      bucketId: bucketId,
-      queries: [
-        Query.equal("name", "$path.jpg")
-      ]
-    );
-    return files.files.first.$id;
+  static Future<List<Uint8List>> getNormalSeasonChickenThoughtImagesFromId(int id) async {
+    List<String> imageIds = await getImageIdsFromPath(id.toString());
+    return await getImagesFromIds(imageIds);
   }
 
   static int randomBasedOnDateSeed(int maxValueExclusive, {int extraSeed = 0}) {
@@ -176,13 +187,6 @@ class DatabaseManager {
 
   static DateTime getToday() {
     return DateTime.now().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
-  }
-
-  static Future<Uint8List> getImageFromId(String id) {
-    return storage.getFileView(
-      bucketId: bucketId,
-      fileId: id
-    );
   }
 
   static Future<List<Uint8List>> getImagesFromIds(List<String> ids) async {
@@ -196,6 +200,19 @@ class DatabaseManager {
     }
 
     return images;
+  }
+
+  static Future<Uint8List> getImagePreviewFromPath(String path, {required int imageSize}) async {
+    List<String> imageIds = await getImageIdsFromPath("thumb.$path");
+    if (imageIds.isEmpty) {
+      throw Exception("No image IDs found for path: $path");
+    }
+    String id = imageIds.first;
+
+    return await storage.getFileView(
+      bucketId: bucketId,
+      fileId: id
+    );
   }
 
   static Future<AppData> getRemoteAppData() async {

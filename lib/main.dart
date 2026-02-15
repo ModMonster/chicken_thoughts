@@ -21,6 +21,7 @@ void main() async {
   DatabaseManager.init();
   await Hive.initFlutter();
   await Hive.openBox("settings");
+  await Hive.openBox("chickendex");
 
   runApp(ChickenThoughtsApp());
   // initNotifications();
