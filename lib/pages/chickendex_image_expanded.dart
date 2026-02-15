@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:photo_view/photo_view.dart';
@@ -20,6 +21,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   List<String> chickenIndexes = [];
   late int currentPage;
   late final PageController _photoController;
+  late final CarouselSliderController _carouselController;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       if (widget.startingChickenIndex.toString() == i) {
         currentPage = chickenIndexes.length;
         _photoController = PageController(initialPage: currentPage);
+        _carouselController = CarouselSliderController();
       }
       chickenIndexes.add(i);
     }
@@ -99,18 +102,26 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
               Text("${currentPage + 1}/${chickenIndexes.length}"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: 70),
-                  child: CarouselSlider.builder(
-                    itemCount: chickenIndexes.length,
-                    itemBuilder: (context, itemIndex, pageViewIndex) {
-                      return Container(
-                        color: Colors.blue,
-                        child: Text(itemIndex.toString()),
-                      );
+                child: CarouselSlider.builder(
+                  itemCount: chickenIndexes.length,
+                  itemBuilder: (context, itemIndex, pageViewIndex) {
+                    return ChickendexPhotoViewCarouselItem(
+                      chickenIndexes[itemIndex],
+                      onTap: () =>  _carouselController.animateToPage(itemIndex, duration: Duration(milliseconds: 200), curve: Curves.easeInOutCubic),
+                    );
+                  },
+                  carouselController: _carouselController,
+                  options: CarouselOptions(
+                    height: 70,
+                    viewportFraction: 0.15,
+                    enlargeFactor: 0.3,
+                    enlargeCenterPage: true,
+                    initialPage: currentPage,
+                    enableInfiniteScroll: false,
+                    onPageChanged: (index, reason) {
+                      _photoController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.easeInCubic);
                     },
-                    options: CarouselOptions(),
-                  )
+                  ),
                 ),
               )
             ],
