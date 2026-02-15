@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
     // Get app info
     final AppCheck appCheck = AppCheck();
-    bool monsterAppsInstalled = await appCheck.isAppInstalled("ca.modmonster.monster_apps");
+    bool monsterAppsInstalled = await appCheck.isAppInstalled("ca.modmonster.app_store");
 
     // App requires an update
     if (appData.minVersion > versionCode) {

@@ -192,8 +192,6 @@ class DatabaseManager {
       tableId: "app"
     )).rows.first;
 
-    print(appInfo.data);
-
     return AppData(
       latestVersion: appInfo.data["latestVersion"],
       minVersion: appInfo.data["minVersion"]
