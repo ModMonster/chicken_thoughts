@@ -43,7 +43,7 @@ class DatabaseManager {
 
     // Loop through all retrieved holidays that could possibly be today
     for (Row row in holidays.rows) {
-      DateTime holidayDate = DateTime.parse(row.data["date"]);
+      DateTime holidayDate = DateTime.parse(row.data["date"]).copyWith(isUtc: false);
 
       // Holiday is exactly today
       if (holidayDate.isAtSameMomentAs(today.copyWith(year: 2026))) {
@@ -100,8 +100,8 @@ class DatabaseManager {
         );
       }
 
-      DateTime startDate = DateTime.parse(row.data["startDate"]).subtract(Duration(seconds: 1));
-      DateTime endDate = DateTime.parse(row.data["endDate"]).add(Duration(seconds: 1));
+      DateTime startDate = DateTime.parse(row.data["startDate"]).subtract(Duration(seconds: 1))..copyWith(isUtc: false);
+      DateTime endDate = DateTime.parse(row.data["endDate"]).add(Duration(seconds: 1))..copyWith(isUtc: false);
 
       if (startDate.isBefore(today) && endDate.isAfter(today)) {
         // 1/2 chance to just get the normal season
@@ -171,11 +171,11 @@ class DatabaseManager {
   }
 
   static int randomBasedOnDateSeed(int maxValueExclusive, {int extraSeed = 0}) {
-    return Random(((DateTime.now().toUtc().millisecondsSinceEpoch - 18000000) / 86400000).floor() + extraSeed).nextInt(maxValueExclusive);
+    return Random(((DateTime.now().millisecondsSinceEpoch - 18000000) / 86400000).floor() + extraSeed).nextInt(maxValueExclusive);
   }
 
   static DateTime getToday() {
-    return DateTime.now().toUtc().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+    return DateTime.now().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
   static Future<Uint8List> getImageFromId(String id) {
