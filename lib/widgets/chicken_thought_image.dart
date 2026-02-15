@@ -69,7 +69,7 @@ class _ChickenThoughtImageState extends State<ChickenThoughtImage> {
             },
           ),
         ),
-        SmoothPageIndicator(
+        if (widget.images.length > 1) SmoothPageIndicator(
           key: _pageIndicatorKey,
           controller: _pageController,
           count: widget.images.length,

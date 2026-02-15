@@ -137,7 +137,6 @@ class DatabaseManager {
     // Choose a random chicken thought based on the season
     Season season = await getSeasonToday();
     int imageNumber = randomBasedOnDateSeed(season.imageCount) + 1;
-    imageNumber = 339;
     String filePath = season.imagePrefix == null? imageNumber.toString() : "season.${season.imagePrefix}.$imageNumber";
     List<String> imageIds = await getImageIdsFromPath(filePath);
 
