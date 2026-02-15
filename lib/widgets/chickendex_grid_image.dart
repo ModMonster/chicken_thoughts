@@ -29,7 +29,7 @@ class ChickendexGridImage extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Hero(
-                  tag: index,
+                  tag: index.toString(),
                   child: Image.memory(
                     snapshot.data!,
                     fit: BoxFit.cover,

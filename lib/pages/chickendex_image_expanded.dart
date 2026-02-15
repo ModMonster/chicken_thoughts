@@ -55,47 +55,47 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
             children: [
               Expanded(
                 child: Center(
-                  child: Hero(
-                    tag: widget.startingChickenIndex,
-                    child: PhotoViewGallery.builder(
-                      itemCount: chickenIndexes.length,
-                      backgroundDecoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface
-                      ),
-                      pageController: _photoController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          currentPage = index;
-                        });
-                      },
-                      builder: (context, index) {
-                        String chickenIndex = chickenIndexes[index];
-
-                        return PhotoViewGalleryPageOptions.customChild(
-                          maxScale: PhotoViewComputedScale.contained,
-                          minScale: PhotoViewComputedScale.contained,
-                          child: FutureBuilder(
-                            future: DatabaseManager.getImagesFromPath(chickenIndex),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData || snapshot.data == null) {
-                                if (index + 1 == widget.startingChickenIndex) {
-                                  return Image.memory(
-                                    widget.thumbImage,
-                                    fit: BoxFit.contain,
-                                  );
-                                }
-                                return Center(child: CircularProgressIndicator());
-                              }
-                                  
-                              return Image.memory(
-                                snapshot.data!.first, // TODO: include all
-                                fit: BoxFit.contain,
-                              );
-                            }
-                          )
-                        );
-                      }
+                  child: PhotoViewGallery.builder(
+                    itemCount: chickenIndexes.length,
+                    backgroundDecoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface
                     ),
+                    pageController: _photoController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentPage = index;
+                        _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                      });
+                    },
+                    builder: (context, index) {
+                      String chickenIndex = chickenIndexes[index];
+                      bool isStartingChicken = chickenIndexes[index] == widget.startingChickenIndex.toString();
+                  
+                      return PhotoViewGalleryPageOptions.customChild(
+                        maxScale: PhotoViewComputedScale.contained,
+                        minScale: PhotoViewComputedScale.contained,
+                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndexes[index]),
+                        child: FutureBuilder(
+                          future: DatabaseManager.getImagesFromPath(chickenIndex),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              if (isStartingChicken) {
+                                return Image.memory(
+                                  widget.thumbImage,
+                                  fit: BoxFit.contain,
+                                );
+                              }
+                              return Center(child: CircularProgressIndicator());
+                            }
+                                
+                            return Image.memory(
+                              snapshot.data!.first, // TODO: include all
+                              fit: BoxFit.contain,
+                            );
+                          }
+                        )
+                      );
+                    }
                   ),
                 ),
               ),
@@ -107,7 +107,10 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   itemBuilder: (context, itemIndex, pageViewIndex) {
                     return ChickendexPhotoViewCarouselItem(
                       chickenIndexes[itemIndex],
-                      onTap: () =>  _carouselController.animateToPage(itemIndex, duration: Duration(milliseconds: 200), curve: Curves.easeInOutCubic),
+                      onTap: () {
+                        _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                        _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                      },
                     );
                   },
                   carouselController: _carouselController,
@@ -119,7 +122,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     initialPage: currentPage,
                     enableInfiniteScroll: false,
                     onPageChanged: (index, reason) {
-                      _photoController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.easeInCubic);
+                      if (reason == CarouselPageChangedReason.controller) return;
+                      _photoController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInCubic);
                     },
                   ),
                 ),
