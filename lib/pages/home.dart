@@ -24,6 +24,10 @@ class _HomePageState extends State<HomePage> {
     // Check for updates and show update dialog if necessary
     AppData appData = await DatabaseManager.getRemoteAppData();
 
+    if (appData.offline) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacementNamed(context, "/offline"));
+    }
+
     // Get app info
     final AppCheck appCheck = AppCheck();
     bool monsterAppsInstalled = await appCheck.isAppInstalled("ca.modmonster.app_store");

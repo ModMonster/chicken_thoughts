@@ -6,20 +6,27 @@ import 'dart:typed_data';
 
 import 'package:appwrite/models.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:proper_filesize/proper_filesize.dart';
 
 class CacheManager {
-  static Future<Directory> getCacheDir() async {
+  static late final Directory cacheDir;
+  
+  static Future<void> init() async {
+    cacheDir = await _getCacheDir();
+  }
+
+  static Future<Directory> _getCacheDir() async {
     Directory dir = await getApplicationDocumentsDirectory();
     Directory cacheDir = Directory(path.join(dir.path, "caches"));
     await cacheDir.create(recursive: true);
     return cacheDir;
   }
 
-  static Future<String> getCachePath(String filename) async {
-    return path.join((await getCacheDir()).path, filename);
+  static String getCachePath(String filename) {
+    return path.join(cacheDir.path, filename);
   }
 
   static Stream<DownloadInfo> downloadCaches() async* {
@@ -41,13 +48,11 @@ class CacheManager {
   }
 
   static Future<void> deleteCaches() async {
-    Directory cacheDir = await getCacheDir();
     print("Deleting from ${cacheDir.path}");
     await cacheDir.delete(recursive: true);
   }
 
   static Future<int> getLocalCacheSize() async {
-    Directory cacheDir = await getCacheDir();
     int size = 0;
 
     for (FileSystemEntity entity in cacheDir.listSync(recursive: true)) {
@@ -64,6 +69,32 @@ class CacheManager {
       decimals: 1,
     );
     return formattedSize;
+  }
+
+  static Future<List<Uint8List>?> getImagesFromPath(String path) async {
+    // Return null if cache disabled
+    if (!Hive.box("settings").get("caching.enable", defaultValue: false)) return null;
+
+    List<Uint8List> images = [];
+    Uint8List? normalImage = await _getImageFromFilePath("$path.jpg");
+    if (normalImage != null) images.add(normalImage);
+
+    // Try getting variations (i.e. __.1.jpg, __.2.jpg)
+    Uint8List? variationImage;
+    int counter = 1;
+    do {
+      variationImage = await _getImageFromFilePath("$path.$counter.jpg");
+      if (variationImage != null) images.add(variationImage);
+    } while (variationImage != null);
+
+    return images;
+  }
+
+  static Future<Uint8List?> _getImageFromFilePath(String filePath) async {
+    String absolutePath = path.join(cacheDir.path, filePath);
+    io.File file = io.File(absolutePath);
+    if (!await file.exists()) return null;
+    return await file.readAsBytes();
   }
 }
 

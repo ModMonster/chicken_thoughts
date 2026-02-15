@@ -34,7 +34,7 @@ class ErrorFetching extends StatelessWidget {
           ),
         ),
         Text("Could not fetch Chicken Thoughts :("),
-        Text("Check your internet connection.")
+        Text("Please check your internet connection")
       ],
     );
   }

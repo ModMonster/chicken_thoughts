@@ -1,5 +1,7 @@
+import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/pages/offline_page.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_caching.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
@@ -14,12 +16,12 @@ int versionCode = 2;
 String version = "2.0.0";
 String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 
-// TODO: what happens when no internet?
-// TODO: don't get chicken thought URLs every time we load a page
+// TODO: listen for changes in internet state
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseManager.init();
+  CacheManager.init();
   await Hive.initFlutter();
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
@@ -70,6 +72,7 @@ class ChickenThoughtsApp extends StatelessWidget {
               ),
               routes: {
                 "/": (context) => HomePage(),
+                "/offline": (context) => OfflinePage(),
                 "/settings": (context) => SettingsPage(hasDynamicColor: hasDynamicColor),
                 "/settings/color": (context) => SettingsColorPage(
                   hasDynamicColor: hasDynamicColor,

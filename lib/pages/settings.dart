@@ -127,7 +127,7 @@ class SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/caching");
                   },
-                  subtitle: Text("Off"),
+                  subtitle: Text(box.get("caching.enable", defaultValue: false)? "On" : "Off"),
                 ),
                 Divider(),
                 ListTile(

@@ -7,6 +7,7 @@ import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
+import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 
 class DatabaseManager {
   static const String endpoint = "https://tor.cloud.appwrite.io/v1";
@@ -165,6 +166,10 @@ class DatabaseManager {
   // Get all images corresponding to a filename
   // e.g. holiday.fathers_day will give holiday.fathers_day.1.jpg and holiday.fathers_day.2.jpg
   static Future<List<Uint8List>> getImagesFromPath(String path) async {
+    // Hit cache if it exists
+    List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
+    if (cacheHitResults != null) return cacheHitResults;
+
     FileList files = await storage.listFiles(
       bucketId: bucketId,
       queries: [
@@ -230,15 +235,23 @@ class DatabaseManager {
   }
 
   static Future<AppData> getRemoteAppData() async {
-    Row appInfo = (await database.listRows(
-      databaseId: databaseId,
-      tableId: "app"
-    )).rows.first;
+    AppData appData;
+    try {
+      Row appInfo = (await database.listRows(
+        databaseId: databaseId,
+        tableId: "app"
+      )).rows.first;
+      appData = AppData(
+        latestVersion: appInfo.data["latestVersion"],
+        minVersion: appInfo.data["minVersion"]
+      );
+    } catch (e) {
+      print("Error fetching remote app data: $e");
+      print("Setting app to offline mode");
+      appData = AppData.offline();
+    }
 
-    return AppData(
-      latestVersion: appInfo.data["latestVersion"],
-      minVersion: appInfo.data["minVersion"]
-    );
+    return appData;
   }
 
   static Future<Uint8List> downloadFile(String fileId) async {
