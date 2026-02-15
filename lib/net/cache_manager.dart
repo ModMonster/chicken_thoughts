@@ -39,7 +39,7 @@ class CacheManager {
       yield DownloadInfo(current: downloaded, total: files.total, currentFilesize: currentFilesize, filename: file.name);
 
       Uint8List bytes = await DatabaseManager.downloadFile(file.$id);
-      final ioFile = io.File(await getCachePath(file.name));
+      final ioFile = io.File(getCachePath(file.name));
       ioFile.writeAsBytes(bytes);
 
       downloaded++;
