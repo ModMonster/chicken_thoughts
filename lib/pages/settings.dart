@@ -108,17 +108,28 @@ class SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/notifications");
                   },
+                  enabled: false,
+                  subtitle: Text("Coming soon"),
+                ),
+                SwitchListTile(
+                  value: box.get("update_notifications", defaultValue: true),
+                  onChanged: (value) {
+                    box.put("update_notifications", value);
+                  },
+                  title: Text("Update prompts"),
+                  subtitle: Text("Show an alert if a new update is available"),
+                  secondary: Icon(Icons.update_outlined),
                 ),
                 Divider(),
                 ListTile(
                   title: Text("View on GitHub"),
                   leading: Icon(Icons.code),
-                  onTap: () {launchUrl(Uri.parse(githubUrl));},
+                  onTap: () {launchUrl(Uri.parse(githubUrl), mode: LaunchMode.externalApplication);},
                 ),
                 ListTile(
                   title: Text("Report a bug"),
                   leading: Icon(Icons.bug_report_outlined),
-                  onTap: () {launchUrl(Uri.parse("$githubUrl/issues/new"));},
+                  onTap: () {launchUrl(Uri.parse("$githubUrl/issues/new"), mode: LaunchMode.externalApplication);},
                 ),
                 AboutListTile(
                   icon: Icon(Icons.info_outline),

@@ -10,11 +10,11 @@ import 'package:hive_ce_flutter/adapters.dart';
 String version = "2.0.0";
 String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 
-// TODO: This will be checked against the database when app starts
+// This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
 int versionCode = 2;
 
-// TODO: add update notification, with option to update through app store or download from github
+// TODO: update chicken thought on EST instead of UTC
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

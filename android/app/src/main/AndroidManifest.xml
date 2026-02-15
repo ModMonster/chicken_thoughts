@@ -52,5 +52,6 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <package android:name="ca.modmonster.app_store"/>
     </queries>
 </manifest>

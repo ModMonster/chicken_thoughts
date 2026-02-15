@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
@@ -181,6 +182,21 @@ class DatabaseManager {
     return storage.getFileView(
       bucketId: bucketId,
       fileId: id
+    );
+  }
+
+
+  static Future<AppData> getRemoteAppData() async {
+    Row appInfo = (await database.listRows(
+      databaseId: databaseId,
+      tableId: "app"
+    )).rows.first;
+
+    print(appInfo.data);
+
+    return AppData(
+      latestVersion: appInfo.data["latestVersion"],
+      minVersion: appInfo.data["minVersion"]
     );
   }
 }
