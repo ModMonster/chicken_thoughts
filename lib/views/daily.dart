@@ -1,5 +1,8 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
+import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
+import 'package:chicken_thoughts_notifications/widgets/error_fetching.dart';
 import 'package:flutter/material.dart';
 
 class DailyView extends StatelessWidget {
@@ -26,26 +29,20 @@ class DailyView extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Material(
-              child: InkWell(
-                onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //   return PhotoViewPage(
-                  //     currentChickyThought: ChickenThoughtDate(
-                  //       dateShown: "Current",
-                  //       url: chickyMap[chickyNumber.toString()]!,
-                  //       number: chickyNumber
-                  //     ),
-                  //     pastChickyThoughts: ChickenThoughtDate.getImageList(chickyMap),
-                  //     heroTag: "mainChicken",
-                  //   );
-                  // }));
-                },
-                child: Hero(
-                  tag: "mainChicken",
-                  child: ChickenThoughtImage(chickenThought)
-                )
-              ),
+            child: FutureBuilder(
+              future: DatabaseManager.getImagesFromIds(chickenThought.storageIds),
+              builder: (context, snapshot) {
+                // Still loading
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Center(child: ChickenSpinner());      
+                }
+
+                if (snapshot.hasError) {
+                  return ErrorFetching();
+                }
+                
+                return ChickenThoughtImage(snapshot.data!);
+              }
             )
           ),
         ),

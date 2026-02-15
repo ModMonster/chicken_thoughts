@@ -137,10 +137,11 @@ class DatabaseManager {
     // Choose a random chicken thought based on the season
     Season season = await getSeasonToday();
     int imageNumber = randomBasedOnDateSeed(season.imageCount) + 1;
+    imageNumber = 339;
     String filePath = season.imagePrefix == null? imageNumber.toString() : "season.${season.imagePrefix}.$imageNumber";
     List<String> imageIds = await getImageIdsFromPath(filePath);
 
-    String displayName = "${season.displayName?? "Chicken Thought"} #$imageNumber";
+    String displayName = "${season.displayName != null ? "Chicken Thoughts: ${season.displayName}" : "Chicken Thought"} #$imageNumber";
     return ChickenThought(displayName: displayName, storageIds: imageIds);
   }
 
@@ -150,7 +151,7 @@ class DatabaseManager {
     FileList files = await storage.listFiles(
       bucketId: bucketId,
       queries: [
-        Query.equal("name", ["$path.jpg", "$path.*.jpg"])
+        Query.startsWith("name", path)
       ]
     );
 
@@ -178,13 +179,25 @@ class DatabaseManager {
     return DateTime.now().toUtc().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
-  static Future<Uint8List> getImageUrlFromId(String id) {
+  static Future<Uint8List> getImageFromId(String id) {
     return storage.getFileView(
       bucketId: bucketId,
       fileId: id
     );
   }
 
+  static Future<List<Uint8List>> getImagesFromIds(List<String> ids) async {
+    List<Uint8List> images = [];
+
+    for (String id in ids) {
+      images.add(await storage.getFileView(
+        bucketId: bucketId,
+        fileId: id
+      ));
+    }
+
+    return images;
+  }
 
   static Future<AppData> getRemoteAppData() async {
     Row appInfo = (await database.listRows(
