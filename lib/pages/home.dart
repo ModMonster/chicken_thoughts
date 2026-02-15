@@ -131,6 +131,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         // Add to chicken thoughts user has seen
+        print(snapshot.data!.id);
         Hive.box("chickendex").put(snapshot.data!.id, true);
     
         List<Widget> screens = [

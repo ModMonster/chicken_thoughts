@@ -34,7 +34,7 @@ class ChickendexNormalView extends StatelessWidget {
           itemBuilder: (context, inp) {
             int index = inp + 1;
             // We haven't seen it yet; locked!
-            if (box.get(index) == null) {
+            if (!box.get(index.toString(), defaultValue: false)) {
               return ChickendexLocked(index);
             }
             
