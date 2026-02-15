@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex_normal.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,18 @@ class _ChickendexViewState extends State<ChickendexView> {
           pinned: true,
           snap: true,
           floating: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
+                },
+                icon: Icon(Icons.view_array),
+                label: Text("View unlocked"),
+              ),
+            )
+          ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(56),
             child: Padding(
@@ -68,13 +81,6 @@ class _ChickendexViewState extends State<ChickendexView> {
                 ),
               ),
             ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: ListTile(
-            title: Text("Work in progress"),
-            subtitle: Text("This page isn't quite finished yet!"),
-            leading: Icon(Icons.warning_amber_outlined),
           ),
         ),
         SliverPadding(

@@ -156,7 +156,6 @@ class DatabaseManager {
     // Choose a random chicken thought based on the season
     Season season = await getSeasonToday();
     int imageNumber = randomBasedOnDateSeed(season.imageCount) + 1;
-    imageNumber = 1;
     String filePath = season.imagePrefix == null? imageNumber.toString() : "season.${season.imagePrefix}.$imageNumber";
     List<Uint8List> images = await getImagesFromPath(filePath);
 
@@ -192,6 +191,26 @@ class DatabaseManager {
     }
 
     return images;
+  }
+
+  static Future<Uint8List> getImageFromExactPath(String path) async {   
+    // Hit cache if it exists
+    List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
+    if (cacheHitResults != null) return cacheHitResults.first;
+
+    FileList files = await storage.listFiles(
+      bucketId: bucketId,
+      queries: [
+        Query.equal("name", "$path.jpg")
+      ]
+    );
+
+    List<String> ids = files.files.map((e) => e.$id).toList();
+
+    return await storage.getFileView(
+      bucketId: bucketId,
+      fileId: ids.first
+    );
   }
 
   static Future<List<Uint8List>> getImageIdsFromPath(String path) async {

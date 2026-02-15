@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChickendexGridImage extends StatelessWidget {
-  final int index;
-  const ChickendexGridImage(this.index, {super.key});
+  final String imagePath;
+  const ChickendexGridImage(this.imagePath, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: DatabaseManager.getImagePreviewFromPath(index.toString()),
+      future: DatabaseManager.getImagePreviewFromPath(imagePath),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return ClipRRect(
@@ -29,7 +29,7 @@ class ChickendexGridImage extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Hero(
-                  tag: index.toString(),
+                  tag: imagePath,
                   child: Image.memory(
                     snapshot.data!,
                     fit: BoxFit.cover,
@@ -41,7 +41,7 @@ class ChickendexGridImage extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(index, thumbImage: snapshot.data!)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: imagePath, thumbImage: snapshot.data!)));
                     },
                   ),
                 )

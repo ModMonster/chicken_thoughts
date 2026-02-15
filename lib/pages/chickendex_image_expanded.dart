@@ -9,34 +9,39 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class ChickendexImageExpandedPage extends StatefulWidget {
-  final int startingChickenIndex;
-  final Uint8List thumbImage;
-  const ChickendexImageExpandedPage(this.startingChickenIndex, {required this.thumbImage, super.key});
+  final String? startingImagePath;
+  final Uint8List? thumbImage;
+  const ChickendexImageExpandedPage({this.startingImagePath, this.thumbImage, super.key});
 
   @override
   State<ChickendexImageExpandedPage> createState() => _ChickendexImageExpandedPageState();
 }
 
 class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPage> {
-  List<String> chickenIndexes = [];
+  List<String> imagePaths = [];
   late int currentPage;
   late final PageController _photoController;
-  late final CarouselSliderController _carouselController;
+  final CarouselSliderController _carouselController = CarouselSliderController();
 
   Map<int, Uint8List> prefetchedThumbnails = {};
 
   @override
   void initState() {
     // Build the list of unlocked chickens
+    // TODO: sort so that 69 doesn't appear after 640
     for (String i in Hive.box("chickendex").keys) {
-      if (widget.startingChickenIndex.toString() == i) {
-        currentPage = chickenIndexes.length;
+      if (widget.startingImagePath == i) {
+        currentPage = imagePaths.length;
         _photoController = PageController(initialPage: currentPage);
-        _carouselController = CarouselSliderController();
-        prefetchedThumbnails[chickenIndexes.length] = widget.thumbImage;
+        if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
       }
-      chickenIndexes.add(i);
+      imagePaths.add(i);
     }
+    if (widget.startingImagePath == null) {
+      currentPage = 0;
+      _photoController = PageController();
+    }
+
     super.initState();
   }
 
@@ -51,7 +56,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Chicken Thought #${chickenIndexes[currentPage]}"),
+          title: Text("Chicken Thought #${imagePaths[currentPage]}"),
         ),
         body: SafeArea(
           child: Column(
@@ -59,7 +64,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
               Expanded(
                 child: Center(
                   child: PhotoViewGallery.builder(
-                    itemCount: chickenIndexes.length,
+                    itemCount: imagePaths.length,
                     backgroundDecoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface
                     ),
@@ -71,14 +76,14 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       });
                     },
                     builder: (context, index) {
-                      String chickenIndex = chickenIndexes[index];
+                      String chickenIndex = imagePaths[index];
                   
                       return PhotoViewGalleryPageOptions.customChild(
                         maxScale: PhotoViewComputedScale.contained,
                         minScale: PhotoViewComputedScale.contained,
-                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndexes[index]),
+                        heroAttributes: PhotoViewHeroAttributes(tag: imagePaths[index]),
                         child: FutureBuilder(
-                          future: DatabaseManager.getImagesFromPath(chickenIndex),
+                          future: DatabaseManager.getImageFromExactPath(chickenIndex),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData || snapshot.data == null) {
                               if (prefetchedThumbnails.containsKey(index)) {
@@ -91,7 +96,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                             }
                                 
                             return Image.memory(
-                              snapshot.data!.first, // TODO: include all
+                              snapshot.data!,
                               fit: BoxFit.contain,
                             );
                           }
@@ -101,28 +106,32 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   ),
                 ),
               ),
-              Text("${currentPage + 1}/${chickenIndexes.length}"),
+              Text("${currentPage + 1}/${imagePaths.length}"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: CarouselSlider.builder(
-                  itemCount: chickenIndexes.length,
+                  itemCount: imagePaths.length,
                   itemBuilder: (context, itemIndex, pageViewIndex) {
-                    return ChickendexPhotoViewCarouselItem(
-                      chickenIndexes[itemIndex],
-                      onTap: () {
-                        _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
-                        _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
-                      },
-                      onLoadThumbnail: (thumbnail) {
-                        prefetchedThumbnails[itemIndex] = thumbnail;
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: ChickendexPhotoViewCarouselItem(
+                        imagePaths[itemIndex],
+                        onTap: () {
+                          _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                          _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                        },
+                        onLoadThumbnail: (thumbnail) {
+                          prefetchedThumbnails[itemIndex] = thumbnail;
+                        },
+                      ),
                     );
                   },
                   carouselController: _carouselController,
                   options: CarouselOptions(
                     height: 70,
                     viewportFraction: 0.15,
-                    enlargeFactor: 0.3,
+                    enlargeFactor: 0.2,
+                    enlargeStrategy: CenterPageEnlargeStrategy.height,
                     enlargeCenterPage: true,
                     initialPage: currentPage,
                     enableInfiniteScroll: false,
