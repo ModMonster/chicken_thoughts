@@ -165,7 +165,7 @@ class DatabaseManager {
 
   // Get all images corresponding to a filename
   // e.g. holiday.fathers_day will give holiday.fathers_day.1.jpg and holiday.fathers_day.2.jpg
-  static Future<List<Uint8List>> getImagesFromPath(String path) async {
+  static Future<List<Uint8List>> getImagesFromPath(String path) async {   
     // Hit cache if it exists
     List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
     if (cacheHitResults != null) return cacheHitResults;
@@ -225,7 +225,7 @@ class DatabaseManager {
     return DateTime.now().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
-  static Future<Uint8List> getImagePreviewFromPath(String path, {required int imageSize}) async {
+  static Future<Uint8List> getImagePreviewFromPath(String path) async {
     List<Uint8List> thumbs = await getImagesFromPath("thumb.$path");
     // TODO: we don't really need to store thumbnails for both parts of a multi image chicken thought
     if (thumbs.isEmpty) {

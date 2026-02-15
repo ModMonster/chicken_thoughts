@@ -36,7 +36,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                       Icon(Icons.info_outline),
                       Expanded(
                         child: Text(
-                          "Store Chicken Thoughts on your device. This uses more storage, but will result in faster loading times and allow you to view Chicken Thoughts offline.",
+                          "Store Chicken Thoughts on your device. This uses more storage, but will result in faster loading times.",
                           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         )
                       ),
