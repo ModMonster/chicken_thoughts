@@ -8,6 +8,7 @@ import 'package:appwrite/models.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:proper_filesize/proper_filesize.dart';
 
 class CacheManager {
   static Future<Directory> getCacheDir() async {
@@ -55,6 +56,14 @@ class CacheManager {
     }
 
     return size;
+  }
+
+  static String formatSize(int bytes) {
+    String formattedSize = FileSize.fromBytes(bytes).toString(
+      unit: Unit.auto(size: bytes, baseType: BaseType.metric),
+      decimals: 1,
+    );
+    return formattedSize;
   }
 }
 

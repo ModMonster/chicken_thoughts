@@ -1,8 +1,8 @@
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
+import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_caching_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:proper_filesize/proper_filesize.dart';
 
 class SettingsCachingPage extends StatefulWidget {
   const SettingsCachingPage({super.key});
@@ -50,35 +50,48 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                   onChanged: (value) async {
                     if (value) {
                       // Enabling caching
-                      showDialog(context: context, builder: (context) => AlertDialog(
-                        title: Text("Enable caching?"),
-                        content: Column(
-                          spacing: 12.0,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("This will require 86.5 MB of storage on your device."),
-                            Text(
-                              "This may take a very long time!",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            )
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("Cancel")
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              showDialog(context: context, barrierDismissible: false, builder: (context) => SettingsCachingDialog());
-                            },
-                            child: Text("OK")
-                          )
-                        ],
+                      showDialog(context: context, builder: (context) => FutureBuilder(
+                        future: DatabaseManager.getRemoteCacheSize(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.surface,
+                              )
+                            );
+                          }
+
+                          return AlertDialog(
+                            title: Text("Enable caching?"),
+                            content: Column(
+                              spacing: 12.0,
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("This will require ${CacheManager.formatSize(snapshot.data!)} of storage on your device."),
+                                Text(
+                                  "This may take a very long time!",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                )
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Cancel")
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  showDialog(context: context, barrierDismissible: false, builder: (context) => SettingsCachingDialog());
+                                },
+                                child: Text("OK")
+                              )
+                            ],
+                          );
+                        }
                       ));
                     } else {
                       // Disabling caching
@@ -107,10 +120,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                           return Text("Calculating...");
                         }
 
-                        String formattedSize = FileSize.fromBytes(snapshot.data!).toString(
-                          unit: Unit.auto(size: snapshot.data!, baseType: BaseType.metric),
-                          decimals: 1,
-                        );
+                        String formattedSize = CacheManager.formatSize(snapshot.data!);
 
                         return Text(formattedSize);
                       }

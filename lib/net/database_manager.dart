@@ -244,6 +244,15 @@ class DatabaseManager {
       ]
     );
   }
+
+  static Future<int> getRemoteCacheSize() async {
+    Row appInfo = (await database.listRows(
+      databaseId: databaseId,
+      tableId: "app"
+    )).rows.first;
+
+    return appInfo.data["cacheSize"];
+  }
 }
 
 enum Weekday {

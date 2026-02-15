@@ -1,7 +1,6 @@
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:proper_filesize/proper_filesize.dart';
 
 class SettingsCachingDialog extends StatefulWidget {
   const SettingsCachingDialog({super.key});
@@ -52,10 +51,7 @@ class _SettingsCachingDialogState extends State<SettingsCachingDialog> {
                   children: [
                     Text("${snapshot.data?.current} / ${snapshot.data?.total}"),
                     Spacer(),
-                    Text(FileSize.fromBytes(snapshot.data!.currentFilesize).toString(
-                      unit: Unit.auto(size: snapshot.data!.currentFilesize, baseType: BaseType.metric),
-                      decimals: 1,
-                    ))
+                    Text(CacheManager.formatSize(snapshot.data!.currentFilesize))
                   ],
                 )
               ],
