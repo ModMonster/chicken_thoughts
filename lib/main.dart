@@ -71,7 +71,7 @@ class ChickenThoughtsApp extends StatelessWidget {
                 "/settings": (context) => SettingsPage(hasDynamicColor: hasDynamicColor),
                 "/settings/color": (context) => SettingsColorPage(
                   hasDynamicColor: hasDynamicColor,
-                  wallpaperColor: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized().primaryContainer : darkDynamic?.harmonized().primaryContainer
+                  dynamicColorScheme: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized() : darkDynamic?.harmonized()
                 ),
                 "/settings/notifications": (context) => SettingsNotificationPage(),
               },

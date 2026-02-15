@@ -96,7 +96,7 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 ListTile(
                   leading: Icon(Icons.brush_outlined),
-                  title: Text("Color scheme"),
+                  title: Text("Color tint"),
                   subtitle: Text(colors[box.get("color", defaultValue: widget.hasDynamicColor? 0 : 3)].name),
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/color");

@@ -26,8 +26,8 @@ final List<SettingsColor> colors = [
 
 class SettingsColorPage extends StatelessWidget {
   final bool hasDynamicColor;
-  final Color? wallpaperColor;
-  const SettingsColorPage({required this.hasDynamicColor, required this.wallpaperColor, super.key});
+  final ColorScheme? dynamicColorScheme;
+  const SettingsColorPage({required this.hasDynamicColor, required this.dynamicColorScheme, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class SettingsColorPage extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar.large(
-              title: Text("Choose primary color"),
+              title: Text("Choose color tint"),
             ),
             SliverSafeArea(
               bottom: true,
@@ -57,7 +57,8 @@ class SettingsColorPage extends StatelessWidget {
                       value: index,
                       controlAffinity: ListTileControlAffinity.trailing,
                       secondary: CircleAvatar(
-                        backgroundColor: wallpaperColor,
+                        backgroundColor: dynamicColorScheme!.primaryContainer,
+                        foregroundColor: dynamicColorScheme!.onPrimaryContainer,
                         child: Icon(Icons.auto_awesome_outlined),
                       ),
                       title: Text("Match wallpaper")
