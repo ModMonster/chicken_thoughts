@@ -2,6 +2,7 @@ import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChickendexNormalView extends StatelessWidget {
   const ChickendexNormalView({super.key});
@@ -33,7 +34,7 @@ class ChickendexNormalView extends StatelessWidget {
           itemBuilder: (context, inp) {
             int index = inp + 1;
             // We haven't seen it yet; locked!
-            if (index != 1 && box.get(index) == null) {
+            if (box.get(index) == null) {
               return ChickendexLocked(index);
             }
             
@@ -45,8 +46,13 @@ class ChickendexNormalView extends StatelessWidget {
                 future: DatabaseManager.getImagePreviewFromPath(index.toString(), imageSize: 96),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData || snapshot.data == null) {
-                    return Center(
-                      child: CircularProgressIndicator()
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Shimmer(
+                        child: Container(
+                          color: Theme.of(context).colorScheme.onInverseSurface,
+                        )
+                      ),
                     );
                   }
 

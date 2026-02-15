@@ -7,14 +7,14 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 
-String version = "2.0.0";
-String githubUrl = "https://github.com/modmonster/chicken_thoughts";
-
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
 int versionCode = 2;
+String version = "2.0.0";
+String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 
-// TODO: update chicken thought on EST instead of UTC
+// TODO: what happens when no internet?
+// TODO: don't get chicken thought URLs every time we load a page
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

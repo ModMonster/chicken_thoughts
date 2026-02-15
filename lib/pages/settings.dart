@@ -117,8 +117,49 @@ class SettingsPageState extends State<SettingsPage> {
                     box.put("update_notifications", value);
                   },
                   title: Text("Update prompts"),
-                  subtitle: Text("Show an alert if a new update is available"),
+                  subtitle: Text("Show an alert if a new app update is available"),
                   secondary: Icon(Icons.update_outlined),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text("Clear Chickendex"),
+                  leading: Icon(Icons.delete_outline),
+                  onTap: () {
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        title: Text("Clear Chickendex"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 12.0,
+                          children: [
+                            Text("Are you sure you want to clear your Chickendex?"),
+                            Text("This will clear all of the Chicken Thoughts you have previously unlocked."),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Cancel")
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Hive.box("chickendex").clear();
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text("The Chickendex has been cleared!")
+                                )
+                              );
+                            },
+                            child: Text("OK"),
+                          )
+                        ],
+                      );
+                    });
+                  },
                 ),
                 Divider(),
                 ListTile(

@@ -1,6 +1,7 @@
 class ChickenThought {
+  String id;
   String displayName;
   List<String> storageIds;
 
-  ChickenThought({required this.displayName, required this.storageIds});
+  ChickenThought(this.id, {required this.displayName, required this.storageIds});
 }

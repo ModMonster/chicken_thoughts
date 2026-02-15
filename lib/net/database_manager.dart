@@ -139,11 +139,13 @@ class DatabaseManager {
     Holiday? holiday = await getHolidayToday();
     if (holiday != null) {
       // Get all images corresponding to this holiday
-      List<String> ids = await getImageIdsFromPath("holiday.${holiday.name}");
+      String holidayPath = "holiday.${holiday.name}";
+      List<String> ids = await getImageIdsFromPath(holidayPath);
 
       // Choose a random one based on today's date as a seed
       int index = randomBasedOnDateSeed(ids.length);
       return ChickenThought(
+        ids.length > 1 ? "$holidayPath.$index" : holidayPath,
         displayName: holiday.displayName,
         storageIds: [ids[index]]
       );
@@ -156,7 +158,7 @@ class DatabaseManager {
     List<String> imageIds = await getImageIdsFromPath(filePath);
 
     String displayName = "${season.displayName != null ? "Chicken Thoughts: ${season.displayName}" : "Chicken Thought"} #$imageNumber";
-    return ChickenThought(displayName: displayName, storageIds: imageIds);
+    return ChickenThought(filePath, displayName: displayName, storageIds: imageIds);
   }
 
   // Get all image IDs corresponding to a filename

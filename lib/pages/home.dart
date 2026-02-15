@@ -9,6 +9,7 @@ import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: const Text("This app version is no longer supported. Please update to the latest version using one of the following methods:"),
+                    child: const Text("This app version is no longer supported. Tap one of the following methods to update:"),
                   ),
                   ...buildUpdateOptions(appCheck, monsterAppsInstalled)
                 ]
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     // App can update
-    if (appData.latestVersion > versionCode) {
+    if (appData.latestVersion > versionCode && Hive.box("settings").get("update_notifications", defaultValue: true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) =>
         showDialog(context: context, builder: (context) {
           return AlertDialog(
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: const Text("A new update is available! Please consider updating through one of the following methods:"),
+                  child: const Text("A new update is available! Tap one of the following methods to update:"),
                 ),
                 ...buildUpdateOptions(appCheck, monsterAppsInstalled)
               ]
@@ -128,6 +129,9 @@ class _HomePageState extends State<HomePage> {
             body: Center(child: ChickenSpinner())
           );
         }
+
+        // Add to chicken thoughts user has seen
+        Hive.box("chickendex").put(snapshot.data!.id, true);
     
         List<Widget> screens = [
           DailyView(chickenThought: snapshot.data!),
