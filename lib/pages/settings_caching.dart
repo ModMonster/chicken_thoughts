@@ -104,8 +104,16 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                       ));
 
                       await CacheManager.deleteCaches();
-                      Navigator.pop(context); // TODO: fix this
                       box.put("caching.enable", false);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            content: Text("Deleted cache files from your device")
+                          )
+                        );
+                      });
                     }
                   }
                 ),

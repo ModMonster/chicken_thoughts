@@ -35,6 +35,12 @@ class _SettingsCachingDialogState extends State<SettingsCachingDialog> {
               box.put("caching.enable", true);
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text("Successfully downloaded cache files!")
+                  )
+                );
               });
             }
 
