@@ -228,6 +228,22 @@ class DatabaseManager {
       minVersion: appInfo.data["minVersion"]
     );
   }
+
+  static Future<Uint8List> downloadFile(String fileId) async {
+    return await storage.getFileDownload(
+      bucketId: bucketId,
+      fileId: fileId
+    );
+  }
+
+  static Future<FileList> getAllFiles() async {
+    return await storage.listFiles(
+      bucketId: bucketId,
+      queries: [
+        Query.limit(100000000)
+      ]
+    );
+  }
 }
 
 enum Weekday {

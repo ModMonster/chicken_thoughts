@@ -102,6 +102,7 @@ class SettingsPageState extends State<SettingsPage> {
                     Navigator.pushNamed(context, "/settings/color");
                   },
                 ),
+                Divider(),
                 ListTile(
                   title: Text("Notifications"),
                   leading: Icon(Icons.notifications_outlined),
@@ -119,6 +120,14 @@ class SettingsPageState extends State<SettingsPage> {
                   title: Text("Update prompts"),
                   subtitle: Text("Show an alert if a new app update is available"),
                   secondary: Icon(Icons.update_outlined),
+                ),
+                ListTile(
+                  title: Text("Caching"),
+                  leading: Icon(Icons.cached_outlined),
+                  onTap: () {
+                    Navigator.pushNamed(context, "/settings/caching");
+                  },
+                  subtitle: Text("Off"),
                 ),
                 Divider(),
                 ListTile(
