@@ -2,10 +2,10 @@
 
 import 'dart:io' as io;
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:appwrite/models.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -31,7 +31,7 @@ class CacheManager {
 
   static Stream<DownloadInfo> downloadCaches() async* {
     FileList files = await DatabaseManager.getAllFiles();
-    print("Files: ${files.total}");
+    if (kDebugMode) print("Files: ${files.total}");
 
     int currentFilesize = 0;
     int downloaded = 0;
@@ -48,7 +48,7 @@ class CacheManager {
   }
 
   static Future<void> deleteCaches() async {
-    print("Deleting from ${cacheDir.path}");
+    if (kDebugMode) print("Deleting from ${cacheDir.path}");
     await cacheDir.delete(recursive: true);
   }
 

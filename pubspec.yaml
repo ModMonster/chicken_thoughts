@@ -51,19 +51,20 @@ flutter:
 
 flutter_launcher_icons:
   android: true
+  image_path: "assets/icon.png"
+  adaptive_icon_foreground: "assets/icon-foreground.png"
+  adaptive_icon_background: "assets/icon-background.png"
+  adaptive_icon_monochrome: "assets/icon-monochrome.png"
   web:
     generate: true
-    image_path: "assets/icon.png"
-  image_path: "assets/icon.png"
-  adaptive_icon_foreground: "assets/icon.png"
-  adaptive_icon_background: "#ffffff"
+    image_path: "assets/icon-circle-overhang.png"
+    background_color: "#FFF7FA"
+    theme_color: "#FFD6FE"
 
 flutter_native_splash:
-  color: "#fafafa"
-  color_dark: "#303030"
-  image: assets/icon.png
-
+  color: "#FFF7FA"
+  image: "assets/icon-circle-overhang.png"
+  color_dark: "#171216"
   android_12:
-    image: assets/icon.png
-    color: "#fafafa"
-    color_dark: "#303030"
+    color: "#FFF7FA"
+    color_dark: "#171216"

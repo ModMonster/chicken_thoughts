@@ -13,7 +13,6 @@ class _OfflinePageState extends State<OfflinePage> {
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
-      print(results);
       if (results.contains(ConnectivityResult.mobile) || results.contains(ConnectivityResult.wifi) || results.contains(ConnectivityResult.ethernet) || results.contains(ConnectivityResult.other)) {
         WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacementNamed(context, "/"));
       }

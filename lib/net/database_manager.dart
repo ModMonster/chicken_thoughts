@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
@@ -8,6 +7,7 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseManager {
   static const String endpoint = "https://tor.cloud.appwrite.io/v1";
@@ -266,8 +266,7 @@ class DatabaseManager {
         minVersion: appInfo.data["minVersion"]
       );
     } catch (e) {
-      print("Error fetching remote app data: $e");
-      print("Setting app to offline mode");
+      if (kDebugMode) print("Error fetching remote app data: $e\nSetting app to offline mode");
       appData = AppData.offline();
     }
 

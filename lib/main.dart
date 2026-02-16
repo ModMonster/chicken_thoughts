@@ -15,9 +15,6 @@ import 'package:hive_ce_flutter/adapters.dart';
 int versionCode = 2;
 String version = "2.0.0";
 String githubUrl = "https://github.com/modmonster/chicken_thoughts";
-
-// TODO: listen for changes in internet state
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseManager.init();
