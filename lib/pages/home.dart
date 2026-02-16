@@ -141,6 +141,8 @@ class _HomePageState extends State<HomePage> {
         // Add to chicken thoughts user has seen
         // key = ID of the chicken thought
         // value = amount of chicken thoughts corresponding to this (usually 1)
+        // TODO: holidays will DEF MESS THIS UP
+        // FIX THIS WITH MIMI'S IDEA (ONE BIG LIST, NO holiday.christmas.jpg JUST ONE BIG LIST AND MAP EACH NUM INSIDE THE DATABASE)
         Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
     
         List<Widget> screens = [

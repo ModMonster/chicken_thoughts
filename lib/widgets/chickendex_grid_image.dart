@@ -22,8 +22,6 @@ class ChickendexGridImage extends StatelessWidget {
             ),
           );
         }
-
-        print("Grid image hero: $imagePath");
     
         return ClipRRect(
           borderRadius: BorderRadius.circular(8),

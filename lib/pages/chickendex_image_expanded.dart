@@ -27,9 +27,11 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
 
   @override
   void initState() {
+    // Quick and dirty fix to sort properly (i.e. prevent 66 appearing after 650)
+    List<dynamic> chickendexItems = Hive.box("chickendex").keys.toList()..sort((in1, in2) => int.parse(in1).compareTo(int.parse(in2)));
+
     // Build the list of unlocked chickens
-    // TODO: sort so that 69 doesn't appear after 640
-    for (String id in Hive.box("chickendex").keys) {
+    for (String id in chickendexItems) {
       if (widget.startingImagePath == id) {
         currentPage = imagePaths.length;
         _photoController = PageController(initialPage: currentPage);
