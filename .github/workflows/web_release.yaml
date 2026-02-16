@@ -1,0 +1,47 @@
+name: web_release
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+env:
+  WORKING_DIR: chicken_thoughts
+
+jobs:
+  build-web:
+    name: Build for web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.38.9'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ env.WORKING_DIR }}
+      - name: Build app for web
+        run: flutter build web
+        working-directory: ${{ env.WORKING_DIR }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.WORKING_DIR }}/build/web
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-web
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
