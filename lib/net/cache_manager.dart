@@ -15,6 +15,7 @@ class CacheManager {
   static late final Directory cacheDir;
   
   static Future<void> init() async {
+    if (kIsWeb) return;
     cacheDir = await _getCacheDir();
   }
 
@@ -72,7 +73,8 @@ class CacheManager {
   }
 
   static Future<List<Uint8List>?> getImagesFromPath(String path) async {
-    // Return null if cache disabled
+    // Return null if on web or cache disabled
+    if (kIsWeb) return null;
     if (!Hive.box("settings").get("caching.enable", defaultValue: false)) return null;
 
     List<Uint8List> images = [];

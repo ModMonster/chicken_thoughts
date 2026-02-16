@@ -1,5 +1,6 @@
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -112,7 +113,7 @@ class SettingsPageState extends State<SettingsPage> {
                   enabled: false,
                   subtitle: Text("Coming soon"),
                 ),
-                SwitchListTile(
+                if (!kIsWeb) SwitchListTile(
                   value: box.get("update_notifications", defaultValue: true),
                   onChanged: (value) {
                     box.put("update_notifications", value);
@@ -121,7 +122,7 @@ class SettingsPageState extends State<SettingsPage> {
                   subtitle: Text("Show an alert if a new app update is available"),
                   secondary: Icon(Icons.update_outlined),
                 ),
-                ListTile(
+                if (!kIsWeb) ListTile(
                   title: Text("Caching"),
                   leading: Icon(Icons.cached_outlined),
                   onTap: () {

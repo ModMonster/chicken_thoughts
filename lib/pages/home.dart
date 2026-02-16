@@ -8,6 +8,7 @@ import 'package:chicken_thoughts_notifications/views/history.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,6 +28,9 @@ class _HomePageState extends State<HomePage> {
     if (appData.offline) {
       WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacementNamed(context, "/offline"));
     }
+
+    // Skip on web lol
+    if (kIsWeb) return;
 
     // Get app info
     final AppCheck appCheck = AppCheck();
