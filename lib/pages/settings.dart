@@ -140,6 +140,7 @@ class SettingsPageState extends State<SettingsPage> {
                         title: Text("Clear Chickendex"),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12.0,
                           children: [
                             Text("Are you sure you want to clear your Chickendex?"),

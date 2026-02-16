@@ -46,6 +46,7 @@ class _HomePageState extends State<HomePage> {
               title: const Text("Update required"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
@@ -69,6 +70,7 @@ class _HomePageState extends State<HomePage> {
             title: const Text("Update available"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
