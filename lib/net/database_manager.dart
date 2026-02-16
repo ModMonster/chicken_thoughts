@@ -247,7 +247,6 @@ class DatabaseManager {
 
   static Future<Uint8List> getImagePreviewFromPath(String path) async {
     List<Uint8List> thumbs = await getImagesFromPath("thumb.$path");
-    // TODO: we don't really need to store thumbnails for both parts of a multi image chicken thought
     if (thumbs.isEmpty) {
       throw Exception("No image IDs found for path: $path");
     }

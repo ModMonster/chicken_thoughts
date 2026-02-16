@@ -71,14 +71,15 @@ class _ChickendexViewState extends State<ChickendexView> {
                   ),
                   itemBuilder: (context, inp) {
                     int index = inp + 1;
+                    int imageCount = box.get(index.toString(), defaultValue: 0);
           
                     // We haven't seen it yet; locked!
-                    if (box.get(index.toString(), defaultValue: 0) == 0) {
+                    if (imageCount == 0) {
                       return ChickendexLocked(index);
                     }
                     
                     // We have seen it; show it!
-                    return ChickendexGridImage(index.toString());
+                    return ChickendexGridImage(imageCount > 1? "$index.1" : index.toString());
                   }
                 )
               )

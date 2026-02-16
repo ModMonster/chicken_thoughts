@@ -25,6 +25,15 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
 
   Map<int, Uint8List> prefetchedThumbnails = {};
 
+  void addImagePath(String imagePath) {
+    if (widget.startingImagePath == imagePath) {
+      currentPage = imagePaths.length;
+      _photoController = PageController(initialPage: currentPage);
+      if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
+    }
+    imagePaths.add(imagePath);
+  }
+
   @override
   void initState() {
     // Quick and dirty fix to sort properly (i.e. prevent 66 appearing after 650)
@@ -32,19 +41,13 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
 
     // Build the list of unlocked chickens
     for (String id in chickendexItems) {
-      if (widget.startingImagePath == id) {
-        currentPage = imagePaths.length;
-        _photoController = PageController(initialPage: currentPage);
-        if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
-      }
-
       int imageCount = Hive.box("chickendex").get(id);
       if (imageCount > 1) {
         for (int i = 1; i <= imageCount; i++) {
-          imagePaths.add("$id.$i");
+          addImagePath("$id.$i");
         }
       } else {
-        imagePaths.add(id);
+        addImagePath(id);
       }
     }
     if (widget.startingImagePath == null) {
@@ -90,7 +93,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       return PhotoViewGalleryPageOptions.customChild(
                         maxScale: PhotoViewComputedScale.contained,
                         minScale: PhotoViewComputedScale.contained,
-                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndex.split(".")[0]),
+                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndex),
                         child: FutureBuilder(
                           future: DatabaseManager.getImageFromExactPath(chickenIndex),
                           builder: (context, snapshot) {
