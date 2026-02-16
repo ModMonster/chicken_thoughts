@@ -5,9 +5,6 @@ on:
       - "*"
   workflow_dispatch:
 
-env:
-  WORKING_DIR: chicken_thoughts
-
 jobs:
   build-web:
     name: Build for web
@@ -23,14 +20,12 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ${{ env.WORKING_DIR }}
       - name: Build app for web
         run: flutter build web
-        working-directory: ${{ env.WORKING_DIR }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.WORKING_DIR }}/build/web
+          path: build/web
   deploy:
     name: Deploy to GitHub Pages
     needs: build-web
