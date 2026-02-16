@@ -54,7 +54,6 @@ flutter_launcher_icons:
   image_path: "assets/icon.png"
   adaptive_icon_foreground: "assets/icon-foreground.png"
   adaptive_icon_background: "assets/icon-background.png"
-  adaptive_icon_monochrome: "assets/icon-monochrome.png"
   web:
     generate: true
     image_path: "assets/icon-circle-overhang.png"
