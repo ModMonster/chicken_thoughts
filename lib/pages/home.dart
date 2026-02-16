@@ -139,13 +139,9 @@ class _HomePageState extends State<HomePage> {
         }
 
         // Add to chicken thoughts user has seen
-        if (snapshot.data!.images.length > 1) {
-          for (int i = 1; i <= snapshot.data!.images.length; i++) {
-            Hive.box("chickendex").put("${snapshot.data!.id}.$i", true);
-          }
-        } else {
-          Hive.box("chickendex").put(snapshot.data!.id, true);
-        }
+        // key = ID of the chicken thought
+        // value = amount of chicken thoughts corresponding to this (usually 1)
+        Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
     
         List<Widget> screens = [
           DailyView(chickenThought: snapshot.data!),

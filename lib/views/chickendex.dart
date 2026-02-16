@@ -73,14 +73,12 @@ class _ChickendexViewState extends State<ChickendexView> {
                     int index = inp + 1;
           
                     // We haven't seen it yet; locked!
-                    if (!box.get(index.toString(), defaultValue: false) && !box.get("$index.1", defaultValue: false)) {
+                    if (box.get(index.toString(), defaultValue: 0) == 0) {
                       return ChickendexLocked(index);
                     }
-          
-                    bool isMulti = box.get("$index.1", defaultValue: false);
                     
                     // We have seen it; show it!
-                    return ChickendexGridImage(isMulti? "$index.1" : index.toString());
+                    return ChickendexGridImage(index.toString());
                   }
                 )
               )

@@ -29,13 +29,21 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   void initState() {
     // Build the list of unlocked chickens
     // TODO: sort so that 69 doesn't appear after 640
-    for (String i in Hive.box("chickendex").keys) {
-      if (widget.startingImagePath == i) {
+    for (String id in Hive.box("chickendex").keys) {
+      if (widget.startingImagePath == id) {
         currentPage = imagePaths.length;
         _photoController = PageController(initialPage: currentPage);
         if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
       }
-      imagePaths.add(i);
+
+      int imageCount = Hive.box("chickendex").get(id);
+      if (imageCount > 1) {
+        for (int i = 1; i <= imageCount; i++) {
+          imagePaths.add("$id.$i");
+        }
+      } else {
+        imagePaths.add(id);
+      }
     }
     if (widget.startingImagePath == null) {
       currentPage = 0;
@@ -77,11 +85,10 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     },
                     builder: (context, index) {
                       String chickenIndex = imagePaths[index];
-                  
                       return PhotoViewGalleryPageOptions.customChild(
                         maxScale: PhotoViewComputedScale.contained,
                         minScale: PhotoViewComputedScale.contained,
-                        heroAttributes: PhotoViewHeroAttributes(tag: imagePaths[index]),
+                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndex.split(".")[0]),
                         child: FutureBuilder(
                           future: DatabaseManager.getImageFromExactPath(chickenIndex),
                           builder: (context, snapshot) {
