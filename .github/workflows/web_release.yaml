@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build app for web
-        run: flutter build web
+        run: flutter build web --base-href "/chicken_thoughts/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
