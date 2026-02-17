@@ -87,6 +87,7 @@ class CacheManager {
     do {
       variationImage = await _getImageFromFilePath("$path.$counter.jpg");
       if (variationImage != null) images.add(variationImage);
+      counter++;
     } while (variationImage != null);
 
     return images;
