@@ -1,30 +1,27 @@
-# chicken_thoughts_notifications
+# Chicken Thoughts
 
-A new Flutter project.
+Get a random [Chicken Thought](https://www.instagram.com/chickenthoughtsofficial/) (bird comic) every day!
+
+#### Includes:
+- Random daily bird comics
+- Collect them all like Pokémon!
+- More to come™
+
+#### Why?
+As a bird owner, I found these comics immensely funny and relatable and wanted to make a fun way for me to see one per day!
 
 ## Getting Started
+Follow these instructions to build and run the project
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
+### Prerequisites
+- Flutter `3.38.9` (stable)
+- Dart `3.10.8`
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> Set up Flutter by following the [installation guide](https://docs.flutter.dev/get-started/install)
 
-## Assets
+### Set up project
+- Clone the repository: `git clone https://github.com/ModMonster/chicken_thoughts.git`
+- Run `flutter pub get` to get all of the dependencies
+- Run the app with `flutter run`
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
-
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
-
-## Localization
-
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
-
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+> Make sure you have an Android device connected or web debugging set up in order to run the app
