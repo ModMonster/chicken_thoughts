@@ -28,7 +28,6 @@ class _ChickendexPhotoViewCarouselItemState extends State<ChickendexPhotoViewCar
 
   @override
   Widget build(BuildContext context) {
-    // TODO: you can't whip it. you should be able to whip it
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {

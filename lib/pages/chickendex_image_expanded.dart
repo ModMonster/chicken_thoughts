@@ -20,6 +20,7 @@ class ChickendexImageExpandedPage extends StatefulWidget {
 class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPage> {
   List<String> imagePaths = [];
   late int currentPage;
+  late int carouselPage;
   late final PageController _photoController;
   final CarouselSliderController _carouselController = CarouselSliderController();
 
@@ -28,6 +29,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   void addImagePath(String imagePath) {
     if (widget.startingImagePath == imagePath) {
       currentPage = imagePaths.length;
+      carouselPage = currentPage;
       _photoController = PageController(initialPage: currentPage);
       if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
     }
@@ -85,7 +87,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     onPageChanged: (index) {
                       setState(() {
                         currentPage = index;
-                        _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                        if (carouselPage != index) _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCubic);
                       });
                     },
                     builder: (context, index) {
@@ -148,6 +150,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     initialPage: currentPage,
                     enableInfiniteScroll: false,
                     onPageChanged: (index, reason) {
+                      carouselPage = index;
                       if (reason == CarouselPageChangedReason.controller) return;
                       _photoController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInCubic);
                     },
