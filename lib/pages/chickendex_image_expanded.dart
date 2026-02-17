@@ -5,8 +5,6 @@ import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 
 class ChickendexImageExpandedPage extends StatefulWidget {
   final String? startingImagePath;
@@ -20,8 +18,7 @@ class ChickendexImageExpandedPage extends StatefulWidget {
 class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPage> {
   List<String> imagePaths = [];
   late int currentPage;
-  late int carouselPage;
-  late final PageController _photoController;
+  final CarouselSliderController _photoController = CarouselSliderController();
   final CarouselSliderController _carouselController = CarouselSliderController();
 
   Map<int, Uint8List> prefetchedThumbnails = {};
@@ -29,8 +26,6 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   void addImagePath(String imagePath) {
     if (widget.startingImagePath == imagePath) {
       currentPage = imagePaths.length;
-      carouselPage = currentPage;
-      _photoController = PageController(initialPage: currentPage);
       if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
     }
     imagePaths.add(imagePath);
@@ -54,7 +49,6 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
     }
     if (widget.startingImagePath == null) {
       currentPage = 0;
-      _photoController = PageController();
     }
 
     super.initState();
@@ -78,24 +72,26 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
             children: [
               Expanded(
                 child: Center(
-                  child: PhotoViewGallery.builder(
+                  child: CarouselSlider.builder(
                     itemCount: imagePaths.length,
-                    backgroundDecoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface
+                    options: CarouselOptions(
+                      initialPage: currentPage,
+                      aspectRatio: 1,
+                      viewportFraction: 1,
+                      enableInfiniteScroll: false,
+                      onPageChanged: (index, reason) {
+                        if (reason == CarouselPageChangedReason.controller) return;
+                        _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
+                        setState(() {
+                          currentPage = index;
+                        });
+                      },
                     ),
-                    pageController: _photoController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentPage = index;
-                        if (carouselPage != index) _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCubic);
-                      });
-                    },
-                    builder: (context, index) {
+                    carouselController: _photoController,
+                    itemBuilder: (context, index, pageViewIndex) {
                       String chickenIndex = imagePaths[index];
-                      return PhotoViewGalleryPageOptions.customChild(
-                        maxScale: PhotoViewComputedScale.contained,
-                        minScale: PhotoViewComputedScale.contained,
-                        heroAttributes: PhotoViewHeroAttributes(tag: chickenIndex),
+                      return Hero(
+                        tag: chickenIndex,
                         child: FutureBuilder(
                           future: DatabaseManager.getImageFromExactPath(chickenIndex),
                           builder: (context, snapshot) {
@@ -114,9 +110,9 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                               fit: BoxFit.contain,
                             );
                           }
-                        )
+                        ),
                       );
-                    }
+                    },
                   ),
                 ),
               ),
@@ -133,6 +129,9 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                         onTap: () {
                           _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
                           _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                          setState(() {
+                            currentPage = itemIndex;
+                          });
                         },
                         onLoadThumbnail: (thumbnail) {
                           prefetchedThumbnails[itemIndex] = thumbnail;
@@ -142,17 +141,16 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   },
                   carouselController: _carouselController,
                   options: CarouselOptions(
-                    height: 70,
-                    viewportFraction: 0.15,
-                    enlargeFactor: 0.2,
-                    enlargeStrategy: CenterPageEnlargeStrategy.height,
-                    enlargeCenterPage: true,
+                    viewportFraction: 70/MediaQuery.of(context).size.width,
+                    aspectRatio: 1/(70/MediaQuery.of(context).size.width),
                     initialPage: currentPage,
                     enableInfiniteScroll: false,
                     onPageChanged: (index, reason) {
-                      carouselPage = index;
                       if (reason == CarouselPageChangedReason.controller) return;
-                      _photoController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInCubic);
+                      _photoController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
+                      setState(() {
+                        currentPage = index;
+                      });
                     },
                   ),
                 ),
