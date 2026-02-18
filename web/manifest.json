@@ -1,11 +1,11 @@
 {
-    "name": "chicken_thoughts_notifications",
-    "short_name": "chicken_thoughts_notifications",
+    "name": "Chicken Thoughts",
+    "short_name": "Chicken Thoughts",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFF7FA",
     "theme_color": "#FFD6FE",
-    "description": "A new Flutter project.",
+    "description": "Get a random Chicken Thought every day!",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
