@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 
 class MobileScaffold extends StatefulWidget {
@@ -40,6 +41,7 @@ class _MobileScaffoldState extends State<MobileScaffold> {
             setState(() {
               currentPage = index;
             });
+            Vibrate.tap();
           },
         ),
       );

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
 import 'package:flutter/material.dart';
@@ -152,6 +153,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       setState(() {
                         currentPage = index;
                       });
+                      Vibrate.carousel();
                     },
                   ),
                 ),
