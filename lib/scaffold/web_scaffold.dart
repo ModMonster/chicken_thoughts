@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:navigation_rail_m3e/navigation_rail_m3e.dart';
 
 class WebScaffold extends StatefulWidget {
   final List<Widget> screens;
@@ -19,21 +20,32 @@ class _WebScaffoldState extends State<WebScaffold> {
     return Scaffold(
       body: Row(
         children: [
-          NavigationRail(
-            extended: xl,
-            labelType: xl? null : NavigationRailLabelType.all,
-            destinations: [
-              NavigationRailDestination(
-                icon: Icon(Icons.photo),
-                label: Text("Daily")
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.history),
-                label: Text("History")
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.grid_view),
-                label: Text("Chickendex")
+          NavigationRailM3E(
+            type: xl? NavigationRailM3EType.expanded : NavigationRailM3EType.collapsed,
+            sections: [
+              NavigationRailM3ESection(
+                destinations: [
+                  NavigationRailM3EDestination(
+                    icon: Icon(Icons.photo_outlined),
+                    selectedIcon: Icon(Icons.photo),
+                    label: "Daily"
+                  ),
+                  NavigationRailM3EDestination(
+                    icon: Icon(Icons.history_outlined),
+                    selectedIcon: Icon(Icons.history),
+                    label: "History"
+                  ),
+                  NavigationRailM3EDestination(
+                    icon: Icon(Icons.grid_view_outlined),
+                    selectedIcon: Icon(Icons.grid_view_sharp),
+                    label: "Chickendex"
+                  ),
+                  NavigationRailM3EDestination(
+                    icon: Icon(Icons.settings_outlined),
+                    selectedIcon: Icon(Icons.settings),
+                    label: "Settings"
+                  ),
+                ]
               ),
             ],
             selectedIndex: currentPage,

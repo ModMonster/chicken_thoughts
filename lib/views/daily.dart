@@ -12,7 +12,7 @@ class DailyView extends StatelessWidget {
       appBar: AppBar(
         title: Text(chickenThought.displayName),
         actions: [
-          IconButton(
+          if (MediaQuery.of(context).size.width <= 600) IconButton(
             onPressed: () {
               Navigator.pushNamed(context, "/settings");
             },

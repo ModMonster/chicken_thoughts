@@ -2,6 +2,7 @@ import 'package:appcheck/appcheck.dart';
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex.dart';
 import 'package:chicken_thoughts_notifications/views/daily.dart';
 import 'package:chicken_thoughts_notifications/views/history.dart';
@@ -14,7 +15,8 @@ import 'package:hive_ce/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool hasDynamicColor;
+  const HomePage({required this.hasDynamicColor, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -129,7 +131,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool mobile = MediaQuery.of(context).size.width < 768;
+    bool mobile = MediaQuery.of(context).size.width < 600;
 
     return FutureBuilder(
       future: DatabaseManager.getDailyChickenThought(),
@@ -156,7 +158,7 @@ class _HomePageState extends State<HomePage> {
         if (mobile) {
           return MobileScaffold(screens);
         } else {
-          return WebScaffold(screens);
+          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)));
         }
       }
     );

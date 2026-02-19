@@ -69,7 +69,7 @@ class ChickenThoughtsApp extends StatelessWidget {
                 colorScheme: darkColorScheme
               ),
               routes: {
-                "/": (context) => HomePage(),
+                "/": (context) => HomePage(hasDynamicColor: hasDynamicColor),
                 "/offline": (context) => OfflinePage(),
                 "/settings": (context) => SettingsPage(hasDynamicColor: hasDynamicColor),
                 "/settings/color": (context) => SettingsColorPage(
