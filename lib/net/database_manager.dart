@@ -168,7 +168,7 @@ class DatabaseManager {
   static Future<List<Uint8List>> getImagesFromPath(String path) async {   
     // Hit cache if it exists
     List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
-    if (cacheHitResults != null) return cacheHitResults;
+    if (cacheHitResults != null && cacheHitResults.isNotEmpty) return cacheHitResults;
 
     FileList files = await storage.listFiles(
       bucketId: bucketId,
@@ -196,7 +196,7 @@ class DatabaseManager {
   static Future<Uint8List> getImageFromExactPath(String path) async {   
     // Hit cache if it exists
     List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
-    if (cacheHitResults != null) return cacheHitResults.first;
+    if (cacheHitResults != null && cacheHitResults.isNotEmpty) return cacheHitResults.first;
 
     FileList files = await storage.listFiles(
       bucketId: bucketId,
@@ -273,17 +273,18 @@ class DatabaseManager {
   }
 
   static Future<Uint8List> downloadFile(String fileId) async {
+    if (kDebugMode) print("Downloading file: $fileId");
     return await storage.getFileDownload(
       bucketId: bucketId,
       fileId: fileId
     );
   }
 
-  static Future<FileList> getAllFiles() async {
+  static Future<FileList> getCacheFiles() async {
     return await storage.listFiles(
       bucketId: bucketId,
       queries: [
-        Query.limit(100000000)
+        Query.startsWith("name", "caches")
       ]
     );
   }

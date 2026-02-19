@@ -1,6 +1,7 @@
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:progress_indicator_m3e/progress_indicator_m3e.dart';
 
 class SettingsCachingDialog extends StatefulWidget {
   const SettingsCachingDialog({super.key});
@@ -27,6 +28,16 @@ class _SettingsCachingDialogState extends State<SettingsCachingDialog> {
       canPop: false,
       child: AlertDialog(
         title: Text("Downloading caches"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _popped = true;
+              Navigator.pop(context);
+              CacheManager.cancelCacheDownload = true;
+            },
+            child: Text("Cancel")
+          )
+        ],
         content: StreamBuilder(
           stream: _stream,
           builder: (context, snapshot) {
@@ -47,17 +58,20 @@ class _SettingsCachingDialogState extends State<SettingsCachingDialog> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 8.0,
+              spacing: 16.0,
               children: [
-                LinearProgressIndicator(
-                  value: snapshot.data != null? snapshot.data!.current / snapshot.data!.total : null,
+                LinearProgressIndicatorM3E(
+                  shape: ProgressM3EShape.wavy,
+                  size: LinearProgressM3ESize.s,
+                  value: snapshot.data != null && snapshot.data!.determinate?
+                    snapshot.data!.current / snapshot.data!.total : null,
                 ),
                 if (snapshot.hasData && snapshot.data != null) Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Text("${snapshot.data?.current} / ${snapshot.data?.total}"),
+                    if (snapshot.data!.status != null) Text(snapshot.data!.status!),
                     Spacer(),
-                    Text(CacheManager.formatSize(snapshot.data!.currentFilesize))
+                    Text("${snapshot.data?.current} / ${snapshot.data?.total}"),
                   ],
                 )
               ],

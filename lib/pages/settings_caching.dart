@@ -4,6 +4,7 @@ import 'package:chicken_thoughts_notifications/widgets/settings_caching_dialog.d
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
+import 'package:progress_indicator_m3e/progress_indicator_m3e.dart';
 
 class SettingsCachingPage extends StatefulWidget {
   const SettingsCachingPage({super.key});
@@ -57,7 +58,8 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                           if (!snapshot.hasData || snapshot.data == null) {
                             return Center(
                               child: LoadingIndicatorM3E(
-                                color: Theme.of(context).colorScheme.surface,
+                                color: Theme.of(context).colorScheme.primary,
+                                variant: LoadingIndicatorM3EVariant.contained,
                               )
                             );
                           }
@@ -71,7 +73,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                               children: [
                                 Text("This will require ${CacheManager.formatSize(snapshot.data!)} of storage on your device."),
                                 Text(
-                                  "This may take a very long time!",
+                                  "This may take a long time!",
                                   style: Theme.of(context).textTheme.labelLarge,
                                 )
                               ],
@@ -100,7 +102,10 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                         canPop: false,
                         child: AlertDialog(
                           title: Text("Deleting caches"),
-                          content: LinearProgressIndicator(),
+                          content: LinearProgressIndicatorM3E(
+                            shape: ProgressM3EShape.wavy,
+                            size: LinearProgressM3ESize.s,
+                          ),
                         ),
                       ));
 

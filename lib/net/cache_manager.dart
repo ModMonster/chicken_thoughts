@@ -1,9 +1,9 @@
-
-
 import 'dart:io' as io;
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:appwrite/models.dart';
+import 'package:archive/archive.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
@@ -30,31 +30,73 @@ class CacheManager {
     return path.join(cacheDir.path, filename);
   }
 
+  static bool cancelCacheDownload = false;
+
   static Stream<DownloadInfo> downloadCaches() async* {
-    FileList files = await DatabaseManager.getAllFiles();
-    if (kDebugMode) print("Files: ${files.total}");
+    cancelCacheDownload = false;
+    FileList cacheParts = await DatabaseManager.getCacheFiles();
+    if (kDebugMode) print("Cache parts: ${cacheParts.total}");
 
     int currentFilesize = 0;
-    int downloaded = 0;
-    for (File file in files.files) {
-      yield DownloadInfo(current: downloaded, total: files.total, currentFilesize: currentFilesize, filename: file.name);
+    int downloaded = 1;
 
+    final BytesBuilder downloadBuilder = BytesBuilder();
+
+    for (File file in cacheParts.files) {
+      yield DownloadInfo(
+        current: downloaded,
+        total: cacheParts.total,
+        status: file.name,
+        currentFilesize: currentFilesize,
+        determinate: true
+      );
+      if (cancelCacheDownload) return;
       Uint8List bytes = await DatabaseManager.downloadFile(file.$id);
-      final ioFile = io.File(getCachePath(file.name));
-      ioFile.writeAsBytes(bytes);
+      downloadBuilder.add(bytes);
 
       downloaded++;
       currentFilesize += file.sizeOriginal;
+    }
+
+    if (cancelCacheDownload) return;
+
+    // extract the zip archive to this folder
+    final Uint8List zipBytes = downloadBuilder.toBytes();
+    if (kDebugMode) print("Downloaded ${zipBytes.length} bytes");
+    final zip = ZipDecoder().decodeBytes(zipBytes);
+
+    if (kDebugMode) print("There are ${zip.length} files!!");
+
+    // Extract the contents
+    int index = 0;
+    for (final file in zip) {
+      await Future.delayed(Duration(milliseconds: 10)); // TODO: REMOVE
+      yield DownloadInfo(
+        current: index,
+        total: zip.length,
+        status: "Extracting",
+        determinate: true
+      );
+      final filename = getCachePath(file.name);
+      if (file.isCompressed) {
+        // Create a new file and write the content
+        final outFile = io.File(filename);
+        await outFile.create(recursive: true);
+        await outFile.writeAsBytes(file.content);
+      }
+      index++;
     }
   }
 
   static Future<void> deleteCaches() async {
     if (kDebugMode) print("Deleting from ${cacheDir.path}");
+    if (!cacheDir.existsSync()) return;
     await cacheDir.delete(recursive: true);
   }
 
   static Future<int> getLocalCacheSize() async {
     int size = 0;
+    if (!cacheDir.existsSync()) return 0;
 
     for (FileSystemEntity entity in cacheDir.listSync(recursive: true)) {
       if (entity is! io.File) continue;
@@ -104,8 +146,9 @@ class CacheManager {
 class DownloadInfo {
   int current;
   int total;
-  int currentFilesize;
-  String? filename;
+  int? currentFilesize;
+  String? status;
+  bool determinate;
 
-  DownloadInfo({required this.current, required this.total, required this.currentFilesize, this.filename});
+  DownloadInfo({required this.current, required this.total, this.currentFilesize, this.status, this.determinate = true});
 }
