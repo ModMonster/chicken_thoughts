@@ -15,7 +15,7 @@ import 'package:hive_ce_flutter/adapters.dart';
 
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
-int versionCode = 5000;
+int versionCode = 5;
 String version = "2.1.0";
 String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 void main() async {
