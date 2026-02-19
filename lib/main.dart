@@ -58,15 +58,26 @@ class ChickenThoughtsApp extends StatelessWidget {
                 brightness: Brightness.dark,
               );
             }
+
+            SwitchThemeData switchTheme = SwitchThemeData(
+              thumbIcon: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Icon(Icons.check);
+                }
+                return const Icon(Icons.close);
+              })
+            );
         
             return MaterialApp(
               title: "Chicken Thoughts",
               themeMode: ThemeMode.values[box.get("theme", defaultValue: 0)],
               theme: ThemeData(
-                colorScheme: lightColorScheme
+                colorScheme: lightColorScheme,
+                switchTheme: switchTheme
               ),
               darkTheme: ThemeData(
-                colorScheme: darkColorScheme
+                colorScheme: darkColorScheme,
+                switchTheme: switchTheme
               ),
               routes: {
                 "/": (context) => HomePage(hasDynamicColor: hasDynamicColor),
