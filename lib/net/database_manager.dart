@@ -272,6 +272,15 @@ class DatabaseManager {
     return appData;
   }
 
+  static Future<int> getRemoteCacheVersion() async {
+    Row appInfo = (await database.listRows(
+      databaseId: databaseId,
+      tableId: "app"
+    )).rows.first;
+
+    return appInfo.data["cacheVersion"];
+  }
+
   static Future<Uint8List> downloadFile(String fileId) async {
     if (kDebugMode) print("Downloading file: $fileId");
     return await storage.getFileDownload(

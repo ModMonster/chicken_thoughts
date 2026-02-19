@@ -1,6 +1,7 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
+import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex.dart';
@@ -95,6 +96,46 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void showCacheInvalidDialog() async {
+    if (kIsWeb) return;
+    if (!Hive.box("settings").get("caching.enable", defaultValue: false)) return;
+
+    // Get local and remote cache versions
+    int localCacheVersion = await CacheManager.getLocalCacheVersion();
+    int remoteCacheVersion = await DatabaseManager.getRemoteCacheVersion();
+
+    // App requires an update
+    if (remoteCacheVersion > localCacheVersion) {
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+        showDialog(context: context, barrierDismissible: false, builder: (context) {
+          return PopScope(
+            canPop: false,
+            child: AlertDialog(
+              title: const Text("Cache error"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 16,
+                children: [
+                  Text("You have caching enabled, but your downloaded cache is out of date."),
+                  Text("Please visit the settings page to update your caches!"),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, "/settings/caching", arguments: remoteCacheVersion);
+                  },
+                  child: Text("Open settings")
+                )
+              ],
+            ),
+          );
+        })
+      );
+    }
+  }
+
   List<Widget> buildUpdateOptions(AppCheck appCheck, bool monsterAppsInstalled) {
     return [ListTile(
       title: const Text("With Monster Apps"),
@@ -126,6 +167,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     showUpdateDialog();
+    showCacheInvalidDialog();
     super.initState();
   }
 

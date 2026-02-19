@@ -85,6 +85,10 @@ class CacheManager {
       }
       index++;
     }
+    
+    // Put cache version into box
+    int cacheVersion = await DatabaseManager.getRemoteCacheVersion();
+    Hive.box("settings").put("caching.version", cacheVersion);
   }
 
   static Future<void> deleteCaches() async {
@@ -99,10 +103,15 @@ class CacheManager {
 
     for (FileSystemEntity entity in cacheDir.listSync(recursive: true)) {
       if (entity is! io.File) continue;
+      if (!entity.existsSync()) continue;
       size += entity.lengthSync();
     }
 
     return size;
+  }
+
+  static Future<int> getLocalCacheVersion() async {
+    return await Hive.box("settings").get("caching.version", defaultValue: 0);
   }
 
   static String formatSize(int bytes) {
