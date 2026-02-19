@@ -91,7 +91,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
   @override
   Widget build(BuildContext context) {
     final Box box = Hive.box("settings");
-    final int remoteCacheVersion = ModalRoute.of(context)!.settings.arguments as int;
+    final int remoteCacheVersion = (ModalRoute.of(context)!.settings.arguments?? 0) as int;
 
     return StreamBuilder(
       stream: box.watch().where((event) => {"caching.version", "caching.enable"}.contains(event.key)),
