@@ -28,6 +28,15 @@ class ComingSoonView extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
           backgroundColor: Colors.transparent,
+          actions: [
+            if (MediaQuery.of(context).size.width <= 600) IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/settings");
+              },
+              icon: Icon(Icons.settings),
+              tooltip: "Settings",
+            )
+          ],
         ),
         body: Transform.rotate(
           angle: -math.pi / 8,

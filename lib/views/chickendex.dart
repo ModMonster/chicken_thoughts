@@ -60,6 +60,15 @@ class _ChickendexViewState extends State<ChickendexView> {
                     ),
                   ),
                 ),
+                actions: [
+                  if (MediaQuery.of(context).size.width <= 600) IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/settings");
+                    },
+                    icon: Icon(Icons.settings),
+                    tooltip: "Settings",
+                  )
+                ],
               ),
               SliverPadding(
                 padding: const EdgeInsets.all(8.0),
