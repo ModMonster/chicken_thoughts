@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:flutter/foundation.dart';
@@ -102,6 +103,14 @@ class SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/color");
                   },
+                ),
+                if(Vibrate.hasVibrator) SwitchListTile(
+                  value: box.get("vibration", defaultValue: true),
+                  onChanged: (value) {
+                    box.put("vibration", value);
+                  },
+                  title: Text("Vibration"),
+                  secondary: Icon(Icons.vibration_outlined),
                 ),
                 Divider(),
                 ListTile(
