@@ -24,15 +24,18 @@ class _MobileScaffoldState extends State<MobileScaffold> {
         bottomNavigationBar: NavigationBar(
           destinations: [
             NavigationDestination(
-              icon: Icon(Icons.photo),
+              icon: Icon(Icons.photo_outlined),
+              selectedIcon: Icon(Icons.photo),
               label: "Daily"
             ),
             NavigationDestination(
-              icon: Icon(Icons.history),
+              icon: Icon(Icons.history_outlined),
+              selectedIcon: Icon(Icons.history),
               label: "History"
             ),
             NavigationDestination(
-              icon: Icon(Icons.grid_view),
+              icon: Icon(Icons.grid_view_outlined),
+              selectedIcon: Icon(Icons.grid_view_sharp),
               label: "Chickendex"
             )
           ],
