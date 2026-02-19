@@ -70,7 +70,6 @@ class CacheManager {
     // Extract the contents
     int index = 0;
     for (final file in zip) {
-      await Future.delayed(Duration(milliseconds: 10)); // TODO: REMOVE
       yield DownloadInfo(
         current: index,
         total: zip.length,
