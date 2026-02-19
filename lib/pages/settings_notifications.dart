@@ -1,6 +1,5 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
-import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 

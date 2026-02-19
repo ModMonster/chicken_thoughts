@@ -1,6 +1,5 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
-import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
