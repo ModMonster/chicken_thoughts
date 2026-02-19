@@ -5,6 +5,7 @@ import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
 class ChickendexImageExpandedPage extends StatefulWidget {
   final String? startingImagePath;
@@ -102,7 +103,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                                   fit: BoxFit.contain,
                                 );
                               }
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: LoadingIndicatorM3E());
                             }
                                 
                             return Image.memory(

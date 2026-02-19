@@ -3,6 +3,7 @@ import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_caching_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
 class SettingsCachingPage extends StatefulWidget {
   const SettingsCachingPage({super.key});
@@ -55,7 +56,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                         builder: (context, snapshot) {
                           if (!snapshot.hasData || snapshot.data == null) {
                             return Center(
-                              child: CircularProgressIndicator(
+                              child: LoadingIndicatorM3E(
                                 color: Theme.of(context).colorScheme.surface,
                               )
                             );

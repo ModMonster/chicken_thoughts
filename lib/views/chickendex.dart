@@ -5,6 +5,7 @@ import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dar
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
 class ChickendexView extends StatefulWidget {
   const ChickendexView({super.key});
@@ -32,7 +33,7 @@ class _ChickendexViewState extends State<ChickendexView> {
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
             return Center(
-              child: CircularProgressIndicator()
+              child: LoadingIndicatorM3E()
             );
           }
 

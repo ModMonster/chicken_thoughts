@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 import 'package:lottie/lottie.dart';
 
 class ChickenSpinner extends StatelessWidget {
@@ -12,7 +13,7 @@ class ChickenSpinner extends StatelessWidget {
       return Lottie.asset("assets/loader.json");
     } else {
       // web version
-      return CircularProgressIndicator();
+      return LoadingIndicatorM3E();
     }    
   }
 }
