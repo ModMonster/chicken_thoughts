@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
@@ -13,8 +14,8 @@ import 'package:hive_ce_flutter/adapters.dart';
 
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
-int versionCode = 4;
-String version = "2.0.2";
+int versionCode = 5;
+String version = "2.1.0";
 String githubUrl = "https://github.com/modmonster/chicken_thoughts";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +24,9 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
+  if (!kIsWeb) await NotificationManager.initNotifications();
 
   runApp(ChickenThoughtsApp());
-  // initNotifications();
 }
 
 class ChickenThoughtsApp extends StatelessWidget {
@@ -97,41 +98,3 @@ class ChickenThoughtsApp extends StatelessWidget {
     );
   }
 }
-
-// Future<void> initNotifications() async {
-//   final FlutterLocalNotificationsPlugin notifications = FlutterLocalNotificationsPlugin();  
-//   await notifications.initialize(settings: InitializationSettings(android: AndroidInitializationSettings("notification_icon")));
-
-//   // request permission on android 13+
-//   final AndroidFlutterLocalNotificationsPlugin? androidPlugin = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-//   bool? success = await androidPlugin?.requestNotificationsPermission();
-//   if (success == null || !success) return;
-
-//   final now = TZDateTime.now(local);
-//   var scheduledDate = TZDateTime(
-//     local,
-//     now.year,
-//     now.month,
-//     now.day,
-//     7
-//   );
-
-//   await notifications.zonedSchedule(
-//     id: 0,
-//     scheduledDate: scheduledDate,
-//     matchDateTimeComponents: DateTimeComponents.time,
-//     title: "Daily Chicken Thought",
-//     body: "A new Chicken Thought is ready to read!",
-//     androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-//     notificationDetails: NotificationDetails(
-//       android: AndroidNotificationDetails(
-//         "daily",
-//         "Daily Notifications",
-//         channelDescription: "Reminders every morning for new Chicken Thoughts",
-//         importance: Importance.low,
-//         priority: Priority.low,
-//         color: Colors.purple,
-//       )
-//     ),
-//   );
-// }

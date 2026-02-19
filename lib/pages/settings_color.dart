@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -39,6 +40,7 @@ class SettingsColorPage extends StatelessWidget {
         groupValue: groupValue,
         onChanged: (value) {
           box.put("color", value);
+          NotificationManager.scheduleDailyNotification(); // we use the color for the notification, so reschedule when it's changed
         },
         child: CustomScrollView(
           slivers: [

@@ -1,4 +1,5 @@
 import 'package:app_settings/app_settings.dart';
+import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
@@ -25,14 +26,6 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
             top: false,
             sliver: SliverList.list(
               children: [
-                SwitchListTile(
-                  title: Text("Enable notifications"),
-                  value: box.get("notifications.enable", defaultValue: true),
-                  secondary: Icon(Icons.notifications_outlined),
-                  onChanged: (value) {
-                    box.put("notifications.enable", value);
-                  },
-                ),
                 ListTile(
                   title: Text("Notification time"),
                   subtitle: Text(box.get("notifications.time", defaultValue: TimeOfDay(hour: 7, minute: 0)).format(context)),
@@ -44,6 +37,7 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
                     );
                     if (chosenTime == null) return;
                     box.put("notifications.time", chosenTime);
+                    await NotificationManager.scheduleDailyNotification();
                   }
                 ),
                 ListTile(

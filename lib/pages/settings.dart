@@ -110,8 +110,6 @@ class SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/notifications");
                   },
-                  enabled: false,
-                  subtitle: Text("Coming soon"),
                 ),
                 if (!kIsWeb) SwitchListTile(
                   value: box.get("update_notifications", defaultValue: true),
