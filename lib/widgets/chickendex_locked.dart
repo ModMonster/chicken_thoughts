@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 
 class ChickendexLocked extends StatelessWidget {
@@ -12,6 +13,7 @@ class ChickendexLocked extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: () {
+          Vibrate.tap();
           showDialog(context: context, builder: (context) {
             return AlertDialog(
               title: Text("Locked!"),

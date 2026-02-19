@@ -108,6 +108,7 @@ class SettingsPageState extends State<SettingsPage> {
                   value: box.get("vibration", defaultValue: true),
                   onChanged: (value) {
                     box.put("vibration", value);
+                    Vibrate.tap();
                   },
                   title: Text("Vibration"),
                   secondary: Icon(Icons.vibration_outlined),
@@ -124,6 +125,7 @@ class SettingsPageState extends State<SettingsPage> {
                   value: box.get("update_notifications", defaultValue: true),
                   onChanged: (value) {
                     box.put("update_notifications", value);
+                    Vibrate.tap();
                   },
                   title: Text("Update prompts"),
                   subtitle: Text("Show an alert if a new app update is available"),
@@ -183,12 +185,16 @@ class SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   title: Text("View on GitHub"),
                   leading: Icon(Icons.code),
-                  onTap: () {launchUrl(Uri.parse(githubUrl), mode: LaunchMode.externalApplication);},
+                  onTap: () {
+                    launchUrl(Uri.parse(githubUrl), mode: LaunchMode.externalApplication);
+                  },
                 ),
                 ListTile(
                   title: Text("Report a bug"),
                   leading: Icon(Icons.bug_report_outlined),
-                  onTap: () {launchUrl(Uri.parse("$githubUrl/issues/new"), mode: LaunchMode.externalApplication);},
+                  onTap: () {
+                    launchUrl(Uri.parse("$githubUrl/issues/new"), mode: LaunchMode.externalApplication);
+                  },
                 ),
                 AboutListTile(
                   icon: Icon(Icons.info_outline),

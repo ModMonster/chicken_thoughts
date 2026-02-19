@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/season.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
@@ -52,6 +53,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
                       child: OutlinedButton.icon(
                         onPressed: () {
+                          Vibrate.tap();
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
                         },
                         icon: Icon(Icons.view_array),

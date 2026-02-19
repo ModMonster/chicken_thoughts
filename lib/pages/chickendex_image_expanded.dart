@@ -129,6 +129,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       child: ChickendexPhotoViewCarouselItem(
                         imagePaths[itemIndex],
                         onTap: () {
+                          Vibrate.tap();
                           _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
                           _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
                           setState(() {

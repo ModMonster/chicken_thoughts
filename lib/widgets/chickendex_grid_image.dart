@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class ChickendexGridImage extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
+                      Vibrate.tap();
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: imagePath, thumbImage: snapshot.data!)));
                     },
                   ),

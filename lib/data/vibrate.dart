@@ -25,7 +25,7 @@ class Vibrate {
 
   static Future<void> tap() async {
     if (!_canVibrate()) return;
-    await Vibration.vibrate(duration: 5, amplitude: 128);
+    await Vibration.vibrate(duration: 2, amplitude: 128);
   }
 
   static Future<void> carousel() async {

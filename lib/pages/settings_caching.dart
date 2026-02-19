@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_caching_dialog.dart';
@@ -189,6 +190,7 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                         value: enabled,
                         secondary: Icon(Icons.cached_outlined),
                         onChanged: (value) async {
+                          Vibrate.tap();
                           if (value) {
                             _enableCaching(context);
                           } else {
