@@ -170,7 +170,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         value: _downloadProgress,
                         inset: 12.0,
                         size: LinearProgressM3ESize.m,
-                      ) : const Text("Download")
+                      ) : Text(widget.required? "Download update" : "Download")
                     ),
                   ),
                 ),
