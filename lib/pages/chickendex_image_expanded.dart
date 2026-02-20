@@ -23,6 +23,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   late int currentPage;
   final CarouselSliderController _photoController = CarouselSliderController();
   final CarouselSliderController _carouselController = CarouselSliderController();
+  bool _blockPageChange = false;
 
   Map<int, Uint8List> prefetchedThumbnails = {};
 
@@ -57,6 +58,24 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
     super.initState();
   }
 
+  void _changePage(int index) {
+    const duration = Durations.medium1;
+    if (_blockPageChange) return;
+
+    _blockPageChange = true;
+
+    _carouselController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
+    _photoController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
+    setState(() {
+      currentPage = index;
+    });
+
+
+    Future.delayed(duration + Duration(milliseconds: 250)).then((_) {
+      _blockPageChange = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -78,6 +97,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   child: Listener(
                     onPointerSignal: (event) {
                       if (event is! PointerScrollEvent) return;
+                      if (event.scrollDelta.dy.abs() < event.scrollDelta.dx.abs()) return;
+                      if (event.scrollDelta.dx != 0.0) return;
                       if (event.scrollDelta.dy < 0) {
                         setState(() {
                           currentPage -= 1;
@@ -102,11 +123,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                         viewportFraction: 1,
                         enableInfiniteScroll: false,
                         onPageChanged: (index, reason) {
-                          if (reason == CarouselPageChangedReason.controller) return;
-                          _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
-                          setState(() {
-                            currentPage = index;
-                          });
+                          _changePage(index);
                         },
                       ),
                       carouselController: _photoController,
@@ -151,11 +168,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                         imagePaths[itemIndex],
                         onTap: () {
                           Vibrate.tap();
-                          _carouselController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
-                          _photoController.animateToPage(itemIndex, duration: Durations.medium1, curve: Curves.easeInOutCubic);
-                          setState(() {
-                            currentPage = itemIndex;
-                          });
+                          _changePage(itemIndex);
                         },
                         onLoadThumbnail: (thumbnail) {
                           prefetchedThumbnails[itemIndex] = thumbnail;
@@ -170,12 +183,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     initialPage: currentPage,
                     enableInfiniteScroll: false,
                     onPageChanged: (index, reason) {
-                      if (reason == CarouselPageChangedReason.controller) return;
-                      _photoController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
-                      setState(() {
-                        currentPage = index;
-                      });
-                      Vibrate.carousel();
+                      _changePage(index);
+                      if (reason != CarouselPageChangedReason.controller) Vibrate.carousel();
                     },
                   ),
                 ),
