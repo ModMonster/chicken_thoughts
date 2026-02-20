@@ -113,8 +113,8 @@ class SettingsPageState extends State<SettingsPage> {
                   title: Text("Vibration"),
                   secondary: Icon(Icons.vibration_outlined),
                 ),
-                Divider(),
-                ListTile(
+                if (!kIsWeb) Divider(),
+                if (!kIsWeb) ListTile(
                   title: Text("Notifications"),
                   leading: Icon(Icons.notifications_outlined),
                   onTap: () {

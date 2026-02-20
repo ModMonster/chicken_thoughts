@@ -90,7 +90,7 @@ class ChickenThoughtsApp extends StatelessWidget {
                   hasDynamicColor: hasDynamicColor,
                   dynamicColorScheme: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized() : darkDynamic?.harmonized()
                 ),
-                "/settings/notifications": (context) => SettingsNotificationPage(),
+                if (!kIsWeb) "/settings/notifications": (context) => SettingsNotificationPage(),
                 if (!kIsWeb) "/settings/caching": (context) => SettingsCachingPage()
               },
             );
