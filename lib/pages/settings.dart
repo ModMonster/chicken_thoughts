@@ -41,6 +41,15 @@ class SettingsPageState extends State<SettingsPage> {
             top: false,
             sliver: SliverList.list(
               children: [
+                if (isAndroidWeb) ListTile(
+                  title: Text("Download the app!"),
+                  subtitle: Text("Tap to open download page"),
+                  leading: Icon(Icons.downloading_outlined),
+                  onTap: () {
+                    launchUrl(Uri.parse("$githubUrl/releases/latest"), mode: LaunchMode.externalApplication);
+                  },
+                ),
+                if (isAndroidWeb) Divider(),
                 ListTile(
                   title: Text("Theme"),
                   subtitle: Text(getCurrentThemeName()),

@@ -164,8 +164,54 @@ class _HomePageState extends State<HomePage> {
     )];
   }
 
+  void showAppDownloadDialog() {
+    if (!isAndroidWeb) return;
+    if (!Hive.box("settings").get("show_download_app_prompt", defaultValue: true)) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(context: context, builder: (context) => AlertDialog(
+        title: Text("Download the app?"),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16.0,
+          children: [
+            Text("The Chicken Thoughts Android app has more features, like daily reminders!"),
+            Text("Of course, you're still welcome to keep viewing online! :)"),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () {
+                  launchUrl(Uri.parse("$githubUrl/releases/latest"), mode: LaunchMode.externalApplication);
+                },
+                icon: Icon(Icons.open_in_new),
+                label: Text("Open download page")
+              ),
+            )
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Hive.box("settings").put("show_download_app_prompt", true);
+            },
+            child: Text("Don't show again")
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Close")
+          ),
+        ],
+      ));
+    });
+  }
+
   @override
   void initState() {
+    showAppDownloadDialog();
     showUpdateDialog();
     showCacheInvalidDialog();
     super.initState();
