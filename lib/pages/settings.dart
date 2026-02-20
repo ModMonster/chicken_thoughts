@@ -1,9 +1,12 @@
+import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
+import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -149,6 +152,33 @@ class SettingsPageState extends State<SettingsPage> {
                   subtitle: Text(box.get("caching.enable", defaultValue: false)? "On" : "Off"),
                 ),
                 Divider(),
+                if (kDebugMode) ListTile(
+                  title: Text("Unlock full Chickendex"),
+                  leading: Icon(Icons.add_circle_outline),
+                  onTap: () async {
+                    showDialog(context: context, builder: (context) => PopScope(
+                      canPop: false,
+                      child: Center(
+                        child: LoadingIndicatorM3E(
+                          variant: LoadingIndicatorM3EVariant.contained,
+                        ),
+                      ),
+                    ));
+
+                    Season season = await DatabaseManager.getSeasonToday();
+                    for (int i = 1; i <= season.imageCount; i++) {
+                      await Hive.box("chickendex").put(i.toString(), 1);
+                    }
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Unlocked all Chicken Thoughts! Note: this won't work with multi-image Chicken Thoughts, but that's fine since it's just for testing"),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    });
+                  },
+                ),
                 ListTile(
                   title: Text("Clear Chickendex"),
                   leading: Icon(Icons.delete_outline),
