@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
@@ -74,47 +75,67 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
             children: [
               Expanded(
                 child: Center(
-                  child: CarouselSlider.builder(
-                    itemCount: imagePaths.length,
-                    options: CarouselOptions(
-                      initialPage: currentPage,
-                      aspectRatio: 1,
-                      viewportFraction: 1,
-                      enableInfiniteScroll: false,
-                      onPageChanged: (index, reason) {
-                        if (reason == CarouselPageChangedReason.controller) return;
-                        _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
+                  child: Listener(
+                    onPointerSignal: (event) {
+                      if (event is! PointerScrollEvent) return;
+                      if (event.scrollDelta.dy < 0) {
                         setState(() {
-                          currentPage = index;
+                          currentPage -= 1;
+                          if (currentPage < 0) currentPage = 0;
                         });
+                        _carouselController.animateToPage(currentPage, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                        _photoController.animateToPage(currentPage, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                      } else {
+                        setState(() {
+                          currentPage += 1;
+                          if (currentPage >= imagePaths.length) currentPage = imagePaths.length - 1;
+                        });
+                        _carouselController.animateToPage(currentPage, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                        _photoController.animateToPage(currentPage, duration: Durations.medium1, curve: Curves.easeInOutCubic);
+                      }
+                    },
+                    child: CarouselSlider.builder(
+                      itemCount: imagePaths.length,
+                      options: CarouselOptions(
+                        initialPage: currentPage,
+                        aspectRatio: 1,
+                        viewportFraction: 1,
+                        enableInfiniteScroll: false,
+                        onPageChanged: (index, reason) {
+                          if (reason == CarouselPageChangedReason.controller) return;
+                          _carouselController.animateToPage(index, duration: Durations.medium1, curve: Curves.easeInOutCirc);
+                          setState(() {
+                            currentPage = index;
+                          });
+                        },
+                      ),
+                      carouselController: _photoController,
+                      itemBuilder: (context, index, pageViewIndex) {
+                        String chickenIndex = imagePaths[index];
+                        return Hero(
+                          tag: chickenIndex,
+                          child: FutureBuilder(
+                            future: DatabaseManager.getImageFromExactPath(chickenIndex),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData || snapshot.data == null) {
+                                if (prefetchedThumbnails.containsKey(index)) {
+                                  return Image.memory(
+                                    prefetchedThumbnails[index]!,
+                                    fit: BoxFit.contain,
+                                  );
+                                }
+                                return Center(child: LoadingIndicatorM3E());
+                              }
+                                  
+                              return Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.contain,
+                              );
+                            }
+                          ),
+                        );
                       },
                     ),
-                    carouselController: _photoController,
-                    itemBuilder: (context, index, pageViewIndex) {
-                      String chickenIndex = imagePaths[index];
-                      return Hero(
-                        tag: chickenIndex,
-                        child: FutureBuilder(
-                          future: DatabaseManager.getImageFromExactPath(chickenIndex),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData || snapshot.data == null) {
-                              if (prefetchedThumbnails.containsKey(index)) {
-                                return Image.memory(
-                                  prefetchedThumbnails[index]!,
-                                  fit: BoxFit.contain,
-                                );
-                              }
-                              return Center(child: LoadingIndicatorM3E());
-                            }
-                                
-                            return Image.memory(
-                              snapshot.data!,
-                              fit: BoxFit.contain,
-                            );
-                          }
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
