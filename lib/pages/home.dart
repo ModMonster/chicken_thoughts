@@ -1,4 +1,3 @@
-import 'package:appcheck/appcheck.dart';
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
@@ -10,6 +9,7 @@ import 'package:chicken_thoughts_notifications/views/history.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
+import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
@@ -35,31 +35,11 @@ class _HomePageState extends State<HomePage> {
     // Skip on web lol
     if (kIsWeb) return;
 
-    // Get app info
-    final AppCheck appCheck = AppCheck();
-    bool monsterAppsInstalled = await appCheck.isAppInstalled("ca.modmonster.app_store");
-
     // App requires an update
     if (appData.minVersion > versionCode) {
       WidgetsBinding.instance.addPostFrameCallback((_) =>
         showDialog(context: context, barrierDismissible: false, builder: (context) {
-          return PopScope(
-            canPop: false,
-            child: AlertDialog(
-              title: const Text("Update required"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: const Text("This app version is no longer supported. Tap one of the following methods to update:"),
-                  ),
-                  ...buildUpdateOptions(appCheck, monsterAppsInstalled)
-                ]
-              ),
-            ),
-          );
+          return UpdateDialog(required: true);
         })
       );
       return;
@@ -69,28 +49,7 @@ class _HomePageState extends State<HomePage> {
     if (appData.latestVersion > versionCode && Hive.box("settings").get("update_notifications", defaultValue: true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) =>
         showDialog(context: context, builder: (context) {
-          return AlertDialog(
-            title: const Text("Update available"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: const Text("A new update is available! Tap one of the following methods to update:"),
-                ),
-                ...buildUpdateOptions(appCheck, monsterAppsInstalled)
-              ]
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Skip for now")
-              )
-            ]
-          );
+          return UpdateDialog(required: false);
         })
       );
     }
@@ -134,34 +93,6 @@ class _HomePageState extends State<HomePage> {
         })
       );
     }
-  }
-
-  List<Widget> buildUpdateOptions(AppCheck appCheck, bool monsterAppsInstalled) {
-    return [ListTile(
-      title: const Text("With Monster Apps"),
-      subtitle: monsterAppsInstalled? null : Text("Not installed"),
-      enabled: monsterAppsInstalled,
-      leading: CircleAvatar(
-        child: Image.asset(
-          "assets/monster_apps.png",
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          colorBlendMode: BlendMode.srcIn,
-        ),
-      ),
-      onTap: () {
-        appCheck.launchApp("ca.modmonster.app_store");
-      },
-    ),
-    ListTile(
-      title: Text("Manually"),
-      subtitle: Text("Open GitHub to download the latest version"),
-      leading: CircleAvatar(
-        child: const Icon(Icons.download_outlined),
-      ),
-      onTap: () {
-        launchUrl(Uri.parse("$githubUrl/releases/latest"), mode: LaunchMode.externalApplication);
-      },
-    )];
   }
 
   void showAppDownloadDialog() {
