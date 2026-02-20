@@ -29,7 +29,7 @@ void main() async {
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
   if (!kIsWeb) await NotificationManager.initNotifications();
-  await deleteUpdateFile();
+  if (!kIsWeb) await deleteUpdateFile();
 
   runApp(ChickenThoughtsApp());
 }
