@@ -1,5 +1,4 @@
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
-import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
@@ -26,7 +25,6 @@ void main() async {
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
   if (!kIsWeb) await NotificationManager.initNotifications();
-  await Vibrate.init();
 
   runApp(ChickenThoughtsApp());
 }
