@@ -7,11 +7,11 @@ class ChickenSpinner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(80.0),
+      padding: const EdgeInsets.all(20.0),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: 512,
-          maxWidth: 512
+          maxHeight: 400,
+          maxWidth: 400
         ),
         child: Lottie.asset("assets/loader.json")
       ),
