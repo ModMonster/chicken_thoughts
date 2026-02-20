@@ -104,7 +104,7 @@ class SettingsPageState extends State<SettingsPage> {
                     Navigator.pushNamed(context, "/settings/color");
                   },
                 ),
-                SwitchListTile(
+                if (!kIsWeb) SwitchListTile(
                   value: box.get("vibration", defaultValue: true),
                   onChanged: (value) {
                     box.put("vibration", value);
