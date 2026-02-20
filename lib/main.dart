@@ -7,6 +7,7 @@ import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_caching.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_notifications.dart';
+import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,8 @@ import 'package:hive_ce_flutter/adapters.dart';
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
 final int versionCode = 4;
-final String version = "2.1.0";
-final String githubUrl = "https://github.com/modmonster/chicken_thoughts";
+final String version = "2.1.0${kDebugMode? "-DEBUG" : ""}";
+final String githubRepo = "modmonster/chicken_thoughts";
 
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -28,6 +29,7 @@ void main() async {
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
   if (!kIsWeb) await NotificationManager.initNotifications();
+  await deleteUpdateFile();
 
   runApp(ChickenThoughtsApp());
 }

@@ -46,7 +46,7 @@ class SettingsPageState extends State<SettingsPage> {
                   subtitle: Text("Tap to open download page"),
                   leading: Icon(Icons.downloading_outlined),
                   onTap: () {
-                    launchUrl(Uri.parse("$githubUrl/releases/latest"), mode: LaunchMode.externalApplication);
+                    launchUrl(Uri.parse("https://github.com/$githubRepo/releases/latest"), mode: LaunchMode.externalApplication);
                   },
                 ),
                 if (isAndroidWeb) Divider(),
@@ -195,14 +195,14 @@ class SettingsPageState extends State<SettingsPage> {
                   title: Text("View on GitHub"),
                   leading: Icon(Icons.code),
                   onTap: () {
-                    launchUrl(Uri.parse(githubUrl), mode: LaunchMode.externalApplication);
+                    launchUrl(Uri.parse("https://github.com/$githubRepo"), mode: LaunchMode.externalApplication);
                   },
                 ),
                 ListTile(
                   title: Text("Report a bug"),
                   leading: Icon(Icons.bug_report_outlined),
                   onTap: () {
-                    launchUrl(Uri.parse("$githubUrl/issues/new"), mode: LaunchMode.externalApplication);
+                    launchUrl(Uri.parse("https://github.com/$githubRepo/issues/new"), mode: LaunchMode.externalApplication);
                   },
                 ),
                 AboutListTile(

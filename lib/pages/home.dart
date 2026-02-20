@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: () {
-                  launchUrl(Uri.parse("$githubUrl/releases/latest"), mode: LaunchMode.externalApplication);
+                  launchUrl(Uri.parse("https://github.com/$githubRepo/releases/latest"), mode: LaunchMode.externalApplication);
                 },
                 icon: Icon(Icons.open_in_new),
                 label: Text("Open download page")
