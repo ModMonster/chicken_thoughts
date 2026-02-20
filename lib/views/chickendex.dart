@@ -76,41 +76,49 @@ class _ChickendexViewState extends State<ChickendexView> {
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.all(8.0),
-                  sliver: SliverGrid.builder(
-                    itemCount: snapshot.data!.imageCount,
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 96,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8
-                    ),
-                    itemBuilder: (context, inp) {
-                      int index = inp + 1;
-                      int imageCount = box.get(index.toString(), defaultValue: 0);
-            
-                      // We haven't seen it yet; locked!
-                      if (imageCount == 0) {
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: const Duration(milliseconds: 375),
-                          columnCount: 3, // good enough
-                          child: ScaleAnimation(
-                            child: FadeInAnimation(
-                              child: ChickendexLocked(index)
+                  sliver: SliverLayoutBuilder(
+                    builder: (context, constraints) {
+                      final double availableWidth = constraints.crossAxisExtent;
+                      const double size = 96.0;
+                      final int crossAxisCount = (availableWidth / size).floor();
+
+                      return SliverGrid.builder(
+                        itemCount: snapshot.data!.imageCount,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8
+                        ),
+                        itemBuilder: (context, inp) {
+                          int index = inp + 1;
+                          int imageCount = box.get(index.toString(), defaultValue: 0);
+                                  
+                          // We haven't seen it yet; locked!
+                          if (imageCount == 0) {
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              columnCount: crossAxisCount,
+                              child: ScaleAnimation(
+                                child: FadeInAnimation(
+                                  child: ChickendexLocked(index)
+                                )
+                              )
+                            );
+                          }
+                          
+                          // We have seen it; show it!
+                          return AnimationConfiguration.staggeredGrid(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            columnCount: crossAxisCount,
+                            child: ScaleAnimation(
+                              child: FadeInAnimation(
+                                child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
+                              )
                             )
-                          )
-                        );
-                      }
-                      
-                      // We have seen it; show it!
-                      return AnimationConfiguration.staggeredGrid(
-                        position: index,
-                        duration: const Duration(milliseconds: 375),
-                        columnCount: 3, // good enough
-                        child: ScaleAnimation(
-                          child: FadeInAnimation(
-                            child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
-                          )
-                        )
+                          );
+                        }
                       );
                     }
                   )
