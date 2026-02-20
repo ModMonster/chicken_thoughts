@@ -5,6 +5,7 @@ import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.d
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
@@ -37,65 +38,85 @@ class _ChickendexViewState extends State<ChickendexView> {
               child: LoadingIndicatorM3E()
             );
           }
-
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                title: const Text("Chickendex"),
-                pinned: true,
-                snap: true,
-                floating: true,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(56),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Vibrate.tap();
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-                        },
-                        icon: Icon(Icons.view_array),
-                        label: Text("View unlocked (${box.length}/${snapshot.data!.imageCount})"),
+      
+          return AnimationLimiter(
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  title: const Text("Chickendex"),
+                  pinned: true,
+                  snap: true,
+                  floating: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(56),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Vibrate.tap();
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
+                          },
+                          icon: Icon(Icons.view_array),
+                          label: Text("View unlocked (${box.length}/${snapshot.data!.imageCount})"),
+                        ),
                       ),
                     ),
                   ),
+                  actions: [
+                    if (MediaQuery.of(context).size.width <= 600) IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/settings");
+                      },
+                      icon: Icon(Icons.settings),
+                      tooltip: "Settings",
+                    )
+                  ],
                 ),
-                actions: [
-                  if (MediaQuery.of(context).size.width <= 600) IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/settings");
-                    },
-                    icon: Icon(Icons.settings),
-                    tooltip: "Settings",
-                  )
-                ],
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverGrid.builder(
-                  itemCount: snapshot.data!.imageCount,
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 96,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8
-                  ),
-                  itemBuilder: (context, inp) {
-                    int index = inp + 1;
-                    int imageCount = box.get(index.toString(), defaultValue: 0);
-          
-                    // We haven't seen it yet; locked!
-                    if (imageCount == 0) {
-                      return ChickendexLocked(index);
+                SliverPadding(
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: SliverGrid.builder(
+                    itemCount: snapshot.data!.imageCount,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 96,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8
+                    ),
+                    itemBuilder: (context, inp) {
+                      int index = inp + 1;
+                      int imageCount = box.get(index.toString(), defaultValue: 0);
+            
+                      // We haven't seen it yet; locked!
+                      if (imageCount == 0) {
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          columnCount: 3, // good enough
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: ChickendexLocked(index)
+                            )
+                          )
+                        );
+                      }
+                      
+                      // We have seen it; show it!
+                      return AnimationConfiguration.staggeredGrid(
+                        position: index,
+                        duration: const Duration(milliseconds: 375),
+                        columnCount: 3, // good enough
+                        child: ScaleAnimation(
+                          child: FadeInAnimation(
+                            child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
+                          )
+                        )
+                      );
                     }
-                    
-                    // We have seen it; show it!
-                    return ChickendexGridImage(imageCount > 1? "$index.1" : index.toString());
-                  }
+                  )
                 )
-              )
-            ]
+              ]
+            ),
           );
         }
       ),
