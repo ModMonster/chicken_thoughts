@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 import 'package:lottie/lottie.dart';
 
 class ChickenSpinner extends StatelessWidget {
@@ -8,12 +6,15 @@ class ChickenSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kIsWeb) {
-      // mobile version
-      return Lottie.asset("assets/loader.json");
-    } else {
-      // web version
-      return LoadingIndicatorM3E();
-    }    
+    return Padding(
+      padding: const EdgeInsets.all(80.0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: 512,
+          maxWidth: 512
+        ),
+        child: Lottie.asset("assets/loader.json")
+      ),
+    );
   }
 }

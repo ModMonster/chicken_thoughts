@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -10,7 +9,7 @@ class ErrorFetching extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        kIsWeb? Container() : SizedBox(
+        SizedBox(
           width: 200,
           child: Lottie.asset(
             "assets/loader_error.json",
