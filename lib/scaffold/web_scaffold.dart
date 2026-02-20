@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 import 'package:navigation_rail_m3e/navigation_rail_m3e.dart';
 
@@ -53,6 +54,7 @@ class _WebScaffoldState extends State<WebScaffold> {
               setState(() {
                 currentPage = index;
               });
+              Vibrate.tap();
             },
           ),
           Expanded(
