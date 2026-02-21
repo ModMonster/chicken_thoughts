@@ -59,23 +59,6 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
     super.initState();
   }
 
-  void _changePage(int index) {
-    // const duration = Durations.medium1;
-    // if (_blockPageChange) return;
-
-    // _blockPageChange = true;
-
-    // _carouselController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
-    // _mainController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
-    // setState(() {
-    //   currentPage = index;
-    // });
-
-    // Future.delayed(duration).then((_) {
-    //   _blockPageChange = false;
-    // });
-  }
-
   Future<void> _waitForScrollEnd() async {
     if (_waitingForScrollEnd) return;
     _waitingForScrollEnd = true;
@@ -142,67 +125,48 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   child: KeyboardListener(
                     focusNode: _mainFocusNode,
                     autofocus: true,
-                    // onKeyEvent: (event) {
-                    //   if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-                    //     int prevPage = currentPage - 1;
-                    //     if (prevPage < 0) prevPage = 0;
-                    //     _changePage(prevPage);
-                    //   } else {
-                    //     int nextPage = currentPage + 1;
-                    //     if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
-                    //     _changePage(nextPage);
-                    //   }
-                    // },
-                    child: Listener(
-                      // onPointerSignal: (event) {
-                      //   if (event is! PointerScrollEvent) return;
-                      //   if (event.scrollDelta.dy.abs() < event.scrollDelta.dx.abs()) return;
-                      //   if (event.scrollDelta.dx != 0.0) return;
-                      //   if (event.scrollDelta.dy < 0) {
-                      //     int prevPage = currentPage - 1;
-                      //     if (prevPage < 0) prevPage = 0;
-                      //     _changePage(prevPage);
-                      //   } else {
-                      //     int nextPage = currentPage + 1;
-                      //     if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
-                      //     _changePage(nextPage);
-                      //   }
-                      // },
-                      child: PageView.builder(
-                        itemCount: imagePaths.length,
-                        controller: _mainController,
-                        pageSnapping: _snapping,
-                        onPageChanged: (page) {
-                          setState(() {
-                            currentPage = page;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          String chickenIndex = imagePaths[index];
-                          return Hero(
-                            tag: chickenIndex,
-                            child: FutureBuilder(
-                              future: DatabaseManager.getImageFromExactPath(chickenIndex),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData || snapshot.data == null) {
-                                  if (prefetchedThumbnails.containsKey(index)) {
-                                    return Image.memory(
-                                      prefetchedThumbnails[index]!,
-                                      fit: BoxFit.contain,
-                                    );
-                                  }
-                                  return Center(child: LoadingIndicatorM3E());
+                    onKeyEvent: (event) {
+                      if (event is! KeyDownEvent && event is! KeyRepeatEvent) return;
+                      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                        _mainController!.previousPage(duration: Durations.short1, curve: Curves.easeInOutCubic);
+                      } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+                        _mainController!.nextPage(duration: Durations.short1, curve: Curves.easeInOutCubic);
+                      }
+                    },
+                    child: PageView.builder(
+                      itemCount: imagePaths.length,
+                      controller: _mainController,
+                      pageSnapping: _snapping,
+                      onPageChanged: (page) {
+                        setState(() {
+                          currentPage = page;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        String chickenIndex = imagePaths[index];
+                        return Hero(
+                          tag: chickenIndex,
+                          child: FutureBuilder(
+                            future: DatabaseManager.getImageFromExactPath(chickenIndex),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData || snapshot.data == null) {
+                                if (prefetchedThumbnails.containsKey(index)) {
+                                  return Image.memory(
+                                    prefetchedThumbnails[index]!,
+                                    fit: BoxFit.contain,
+                                  );
                                 }
-                                    
-                                return Image.memory(
-                                  snapshot.data!,
-                                  fit: BoxFit.contain,
-                                );
+                                return Center(child: LoadingIndicatorM3E());
                               }
-                            ),
-                          );
-                        },
-                      ),
+                                  
+                              return Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.contain,
+                              );
+                            }
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -212,42 +176,28 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: SizedBox(
                   height: 70,
-                  child: GestureDetector(
-                    // onHorizontalDragUpdate: (details) {
-                    //   final delta = details.primaryDelta! * 7;
-                    //   final fraction = delta /
-                    //       _carouselController!.position.viewportDimension;
-
-                    //   final mainDelta =
-                    //       fraction * _mainController!.position.viewportDimension;
-
-                    //   _mainController!.position.moveTo(
-                    //     _mainController!.position.pixels - mainDelta,
-                    //   );
-                    // },
-                    child: PageView.builder(
-                      itemCount: imagePaths.length,
-                      pageSnapping: false,
-                      onPageChanged: (index) {
-                        Vibrate.carousel();
-                      },
-                      itemBuilder: (context, itemIndex) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: ChickendexPhotoViewCarouselItem(
-                            imagePaths[itemIndex],
-                            onTap: () {
-                              Vibrate.tap();
-                              _changePage(itemIndex);
-                            },
-                            onLoadThumbnail: (thumbnail) {
-                              prefetchedThumbnails[itemIndex] = thumbnail;
-                            },
-                          ),
-                        );
-                      },
-                      controller: _carouselController,
-                    ),
+                  child: PageView.builder(
+                    itemCount: imagePaths.length,
+                    pageSnapping: false,
+                    onPageChanged: (index) {
+                      Vibrate.carousel();
+                    },
+                    itemBuilder: (context, itemIndex) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: ChickendexPhotoViewCarouselItem(
+                          imagePaths[itemIndex],
+                          onTap: () {
+                            Vibrate.tap();
+                            _mainController!.animateToPage(itemIndex, duration: Durations.medium2, curve: Curves.easeInOutCubic);
+                          },
+                          onLoadThumbnail: (thumbnail) {
+                            prefetchedThumbnails[itemIndex] = thumbnail;
+                          },
+                        ),
+                      );
+                    },
+                    controller: _carouselController,
                   ),
                 ),
               )
