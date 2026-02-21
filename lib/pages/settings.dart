@@ -54,6 +54,15 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 if (isAndroidWeb) Divider(),
                 ListTile(
+                  title: Text("Chicken Streak"),
+                  subtitle: Text("30 days"),
+                  leading: Icon(Icons.calendar_today_outlined),
+                  onTap: () {
+                    Navigator.pushNamed(context, "/settings/chickenstreak");
+                  },
+                ),
+                Divider(),
+                ListTile(
                   title: Text("Theme"),
                   subtitle: Text(getCurrentThemeName()),
                   leading: Icon(Icons.palette_outlined),
