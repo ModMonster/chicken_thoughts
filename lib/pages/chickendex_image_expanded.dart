@@ -4,7 +4,7 @@ import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_car
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChickendexImageExpandedPage extends StatefulWidget {
   final String? startingImagePath;
@@ -26,7 +26,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   bool _waitingForScrollEnd = false;
   final FocusNode _mainFocusNode = FocusNode();
 
-  Map<int, Uint8List> prefetchedThumbnails = {};
+  final Map<int, Uint8List> prefetchedThumbnails = {};
+  final Map<String, Future<Uint8List>> _futures = {};
 
   void addImagePath(String imagePath) {
     if (widget.startingImagePath == imagePath) {
@@ -75,9 +76,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       );
     }
 
-    setState(() {
-      _snapping = true;
-    });
+    _snapping = true;
     _waitingForScrollEnd = false;
   }
 
@@ -144,24 +143,42 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       },
                       itemBuilder: (context, index) {
                         String chickenIndex = imagePaths[index];
+                        if (!_futures.containsKey(chickenIndex)) {
+                          _futures[chickenIndex] = DatabaseManager.getImageFromExactPath(chickenIndex);
+                        }
+                        
                         return Hero(
                           tag: chickenIndex,
                           child: FutureBuilder(
-                            future: DatabaseManager.getImageFromExactPath(chickenIndex),
+                            future: _futures[chickenIndex],
                             builder: (context, snapshot) {
+                              Widget child;
                               if (!snapshot.hasData || snapshot.data == null) {
                                 if (prefetchedThumbnails.containsKey(index)) {
-                                  return Image.memory(
+                                  child = Image.memory(
                                     prefetchedThumbnails[index]!,
                                     fit: BoxFit.contain,
                                   );
                                 }
-                                return Center(child: LoadingIndicatorM3E());
+                                child = AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Shimmer(
+                                    child: Container(
+                                      width: double.infinity,
+                                      color: Theme.of(context).colorScheme.onInverseSurface,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                child = Image.memory(
+                                  snapshot.data!,
+                                  fit: BoxFit.contain,
+                                );
                               }
                                   
-                              return Image.memory(
-                                snapshot.data!,
-                                fit: BoxFit.contain,
+                              return AnimatedSwitcher(
+                                duration: Durations.medium2,
+                                child: child,
                               );
                             }
                           ),
