@@ -228,6 +228,9 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                     child: PageView.builder(
                       itemCount: imagePaths.length,
                       pageSnapping: false,
+                      onPageChanged: (index) {
+                        Vibrate.carousel();
+                      },
                       itemBuilder: (context, itemIndex) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
