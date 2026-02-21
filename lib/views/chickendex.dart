@@ -98,7 +98,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                             return AnimationConfiguration.staggeredGrid(
                               position: index,
                               duration: const Duration(milliseconds: 375),
-                              columnCount: crossAxisCount,
+                              columnCount: crossAxisCount + 1,
                               child: ScaleAnimation(
                                 child: FadeInAnimation(
                                   child: ChickendexLocked(index)
@@ -111,7 +111,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                           return AnimationConfiguration.staggeredGrid(
                             position: index,
                             duration: const Duration(milliseconds: 375),
-                            columnCount: crossAxisCount,
+                            columnCount: crossAxisCount + 1,
                             child: ScaleAnimation(
                               child: FadeInAnimation(
                                 child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
