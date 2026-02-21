@@ -47,6 +47,23 @@ class ChickendexGridImage extends StatelessWidget {
                     },
                   ),
                 )
+              ),
+              Positioned(
+                left: 4,
+                bottom: 4,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9999),
+                    color: Theme.of(context).colorScheme.surfaceContainer
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                    child: Text(
+                      imagePath,
+                      style: Theme.of(context).textTheme.labelSmall
+                    ),
+                  ),
+                ),
               )
             ],
           ),
