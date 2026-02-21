@@ -1,10 +1,6 @@
-import 'dart:typed_data';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive.dart';
@@ -22,9 +18,12 @@ class ChickendexImageExpandedPage extends StatefulWidget {
 class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPage> {
   List<String> imagePaths = [];
   late int currentPage;
-  final CarouselSliderController _photoController = CarouselSliderController();
-  final CarouselSliderController _carouselController = CarouselSliderController();
-  bool _blockPageChange = false;
+  PageController? _mainController;
+  PageController? _carouselController;
+  bool _syncMain = false;
+  bool _syncCarousel = false;
+  bool _snapping = true;
+  bool _waitingForScrollEnd = false;
   final FocusNode _mainFocusNode = FocusNode();
 
   Map<int, Uint8List> prefetchedThumbnails = {};
@@ -61,24 +60,69 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   }
 
   void _changePage(int index) {
-    const duration = Durations.medium1;
-    if (_blockPageChange) return;
+    // const duration = Durations.medium1;
+    // if (_blockPageChange) return;
 
-    _blockPageChange = true;
+    // _blockPageChange = true;
 
-    _carouselController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
-    _photoController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
+    // _carouselController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
+    // _mainController.animateToPage(index, duration: duration, curve: Curves.easeInOutCubic);
+    // setState(() {
+    //   currentPage = index;
+    // });
+
+    // Future.delayed(duration).then((_) {
+    //   _blockPageChange = false;
+    // });
+  }
+
+  Future<void> _waitForScrollEnd() async {
+    if (_waitingForScrollEnd) return;
+    _waitingForScrollEnd = true;
+    _snapping = false;
+    while (_carouselController!.position.isScrollingNotifier.value) {
+      await Future.delayed(const Duration(milliseconds: 64));
+    }
+    final page = _carouselController!.page?.round();
+    if (page != null) {
+      await _carouselController!.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
+
     setState(() {
-      currentPage = index;
+      _snapping = true;
     });
-
-    Future.delayed(duration).then((_) {
-      _blockPageChange = false;
-    });
+    _waitingForScrollEnd = false;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_carouselController == null || _mainController == null) {
+      _carouselController = PageController(
+        viewportFraction: 70/MediaQuery.of(context).size.width,
+        initialPage: currentPage,
+      )..addListener(() async {
+        if (_syncMain) return;
+        _syncCarousel = true;
+        _mainController!.jumpTo(_carouselController!.offset / _carouselController!.viewportFraction * _mainController!.viewportFraction);
+        _syncCarousel = false;
+        
+        await _waitForScrollEnd();
+      });
+
+      _mainController = PageController(
+        initialPage: currentPage,
+      )..addListener(() {
+        if (_syncCarousel) return;
+        _syncMain = true;
+        _carouselController!.jumpTo(_mainController!.offset / _mainController!.viewportFraction * _carouselController!.viewportFraction);
+        _syncMain = false;
+      });
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -98,45 +142,42 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                   child: KeyboardListener(
                     focusNode: _mainFocusNode,
                     autofocus: true,
-                    onKeyEvent: (event) {
-                      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-                        int prevPage = currentPage - 1;
-                        if (prevPage < 0) prevPage = 0;
-                        _changePage(prevPage);
-                      } else {
-                        int nextPage = currentPage + 1;
-                        if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
-                        _changePage(nextPage);
-                      }
-                    },
+                    // onKeyEvent: (event) {
+                    //   if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                    //     int prevPage = currentPage - 1;
+                    //     if (prevPage < 0) prevPage = 0;
+                    //     _changePage(prevPage);
+                    //   } else {
+                    //     int nextPage = currentPage + 1;
+                    //     if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
+                    //     _changePage(nextPage);
+                    //   }
+                    // },
                     child: Listener(
-                      onPointerSignal: (event) {
-                        if (event is! PointerScrollEvent) return;
-                        if (event.scrollDelta.dy.abs() < event.scrollDelta.dx.abs()) return;
-                        if (event.scrollDelta.dx != 0.0) return;
-                        if (event.scrollDelta.dy < 0) {
-                          int prevPage = currentPage - 1;
-                          if (prevPage < 0) prevPage = 0;
-                          _changePage(prevPage);
-                        } else {
-                          int nextPage = currentPage + 1;
-                          if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
-                          _changePage(nextPage);
-                        }
-                      },
-                      child: CarouselSlider.builder(
+                      // onPointerSignal: (event) {
+                      //   if (event is! PointerScrollEvent) return;
+                      //   if (event.scrollDelta.dy.abs() < event.scrollDelta.dx.abs()) return;
+                      //   if (event.scrollDelta.dx != 0.0) return;
+                      //   if (event.scrollDelta.dy < 0) {
+                      //     int prevPage = currentPage - 1;
+                      //     if (prevPage < 0) prevPage = 0;
+                      //     _changePage(prevPage);
+                      //   } else {
+                      //     int nextPage = currentPage + 1;
+                      //     if (nextPage >= imagePaths.length) nextPage = imagePaths.length - 1;
+                      //     _changePage(nextPage);
+                      //   }
+                      // },
+                      child: PageView.builder(
                         itemCount: imagePaths.length,
-                        options: CarouselOptions(
-                          initialPage: currentPage,
-                          aspectRatio: 1,
-                          viewportFraction: 1,
-                          enableInfiniteScroll: false,
-                          onPageChanged: (index, reason) {
-                            _changePage(index);
-                          },
-                        ),
-                        carouselController: _photoController,
-                        itemBuilder: (context, index, pageViewIndex) {
+                        controller: _mainController,
+                        pageSnapping: _snapping,
+                        onPageChanged: (page) {
+                          setState(() {
+                            currentPage = page;
+                          });
+                        },
+                        itemBuilder: (context, index) {
                           String chickenIndex = imagePaths[index];
                           return Hero(
                             tag: chickenIndex,
@@ -169,33 +210,41 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
               Text("${currentPage + 1}/${imagePaths.length}"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: CarouselSlider.builder(
-                  itemCount: imagePaths.length,
-                  itemBuilder: (context, itemIndex, pageViewIndex) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: ChickendexPhotoViewCarouselItem(
-                        imagePaths[itemIndex],
-                        onTap: () {
-                          Vibrate.tap();
-                          _changePage(itemIndex);
-                        },
-                        onLoadThumbnail: (thumbnail) {
-                          prefetchedThumbnails[itemIndex] = thumbnail;
-                        },
-                      ),
-                    );
-                  },
-                  carouselController: _carouselController,
-                  options: CarouselOptions(
-                    viewportFraction: 70/MediaQuery.of(context).size.width,
-                    aspectRatio: 1/(70/MediaQuery.of(context).size.width),
-                    initialPage: currentPage,
-                    enableInfiniteScroll: false,
-                    onPageChanged: (index, reason) {
-                      _changePage(index);
-                      if (reason != CarouselPageChangedReason.controller) Vibrate.carousel();
-                    },
+                child: SizedBox(
+                  height: 70,
+                  child: GestureDetector(
+                    // onHorizontalDragUpdate: (details) {
+                    //   final delta = details.primaryDelta! * 7;
+                    //   final fraction = delta /
+                    //       _carouselController!.position.viewportDimension;
+
+                    //   final mainDelta =
+                    //       fraction * _mainController!.position.viewportDimension;
+
+                    //   _mainController!.position.moveTo(
+                    //     _mainController!.position.pixels - mainDelta,
+                    //   );
+                    // },
+                    child: PageView.builder(
+                      itemCount: imagePaths.length,
+                      pageSnapping: false,
+                      itemBuilder: (context, itemIndex) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: ChickendexPhotoViewCarouselItem(
+                            imagePaths[itemIndex],
+                            onTap: () {
+                              Vibrate.tap();
+                              _changePage(itemIndex);
+                            },
+                            onLoadThumbnail: (thumbnail) {
+                              prefetchedThumbnails[itemIndex] = thumbnail;
+                            },
+                          ),
+                        );
+                      },
+                      controller: _carouselController,
+                    ),
                   ),
                 ),
               )
