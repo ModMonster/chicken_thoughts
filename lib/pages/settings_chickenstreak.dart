@@ -15,6 +15,8 @@ class SettingsChickenStreakPage extends StatelessWidget {
           SliverSafeArea(
             bottom: true,
             top: false,
+            right: true,
+            left: false,
             sliver: SliverToBoxAdapter(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

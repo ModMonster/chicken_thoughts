@@ -50,6 +50,8 @@ class SettingsColorPage extends StatelessWidget {
             SliverSafeArea(
               bottom: true,
               top: false,
+              right: true,
+              left: false,
               sliver: SliverList.builder(
                 itemCount: colors.length,
                 itemBuilder: (context, index) {

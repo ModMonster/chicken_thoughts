@@ -24,6 +24,8 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
           SliverSafeArea(
             bottom: true,
             top: false,
+            right: true,
+            left: false,
             sliver: SliverList.list(
               children: [
                 ListTile(

@@ -42,6 +42,8 @@ class SettingsPageState extends State<SettingsPage> {
           SliverSafeArea(
             bottom: true,
             top: false,
+            right: true,
+            left: false,
             sliver: SliverList.list(
               children: [
                 if (isAndroidWeb) ListTile(

@@ -147,6 +147,8 @@ class _SettingsCachingPageState extends State<SettingsCachingPage> {
                 SliverSafeArea(
                   bottom: true,
                   top: false,
+                  right: true,
+                  left: false,
                   sliver: SliverList.list(
                     children: [
                       if (invalid) Column(
