@@ -190,6 +190,15 @@ class DatabaseManager {
       ));
     }
 
+    // Add images to cache
+    if (images.length > 1) {
+      for (int i = 0; i < images.length; i++) {
+        CacheManager.addToCache("$path.${i+1}", images[i]);
+      }
+    } else {
+      CacheManager.addToCache(path, images[0]);
+    }
+
     return images;
   }
 
@@ -207,34 +216,15 @@ class DatabaseManager {
 
     List<String> ids = files.files.map((e) => e.$id).toList();
 
-    return await storage.getFileView(
+    Uint8List image = await storage.getFileView(
       bucketId: bucketId,
       fileId: ids.first
     );
-  }
 
-  static Future<List<Uint8List>> getImageIdsFromPath(String path) async {
-    FileList files = await storage.listFiles(
-      bucketId: bucketId,
-      queries: [
-        Query.or([
-          Query.equal("name", "$path.jpg"),
-          Query.startsWith("name", "$path.")
-        ])
-      ]
-    );
+    // add image to cache
+    CacheManager.addToCache(path, image);
 
-    List<String> ids = files.files.map((e) => e.$id).toList();
-    List<Uint8List> images = [];
-
-    for (String id in ids) {
-      images.add(await storage.getFileView(
-        bucketId: bucketId,
-        fileId: id
-      ));
-    }
-
-    return images;
+    return image;
   }
 
   static int randomBasedOnDateSeed(int maxValueExclusive, {int extraSeed = 0}) {

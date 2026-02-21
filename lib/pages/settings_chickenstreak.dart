@@ -10,7 +10,7 @@ class SettingsChickenStreakPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
-            title: Text("Chicken Streak"),
+            title: Text("Chickenstreak"),
           ),
           SliverSafeArea(
             bottom: true,

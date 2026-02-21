@@ -4,7 +4,6 @@ import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/offline_page.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
-import 'package:chicken_thoughts_notifications/pages/settings_caching.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_chickenstreak.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_notifications.dart';
@@ -95,7 +94,6 @@ class ChickenThoughtsApp extends StatelessWidget {
                   dynamicColorScheme: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized() : darkDynamic?.harmonized()
                 ),
                 if (!kIsWeb) "/settings/notifications": (context) => SettingsNotificationPage(),
-                if (!kIsWeb) "/settings/caching": (context) => SettingsCachingPage(),
                 "/settings/chickenstreak": (context) => SettingsChickenStreakPage()
               },
             );

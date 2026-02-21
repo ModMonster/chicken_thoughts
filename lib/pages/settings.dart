@@ -1,6 +1,8 @@
+import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
+import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:flutter/foundation.dart';
@@ -56,8 +58,9 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 if (isAndroidWeb) Divider(),
                 ListTile(
-                  title: Text("Chicken Streak"),
-                  subtitle: Text("30 days"),
+                  title: Text("Chickenstreak"),
+                  subtitle: Text("Coming soon!"),
+                  enabled: false,
                   leading: Icon(Icons.calendar_today_outlined),
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/chickenstreak");
@@ -154,13 +157,18 @@ class SettingsPageState extends State<SettingsPage> {
                   subtitle: Text("Show an alert if a new app update is available"),
                   secondary: Icon(Icons.update_outlined),
                 ),
-                if (!kIsWeb) ListTile(
-                  title: Text("Caching"),
+                if (kDebugMode) ListTile(
                   leading: Icon(Icons.cached_outlined),
-                  onTap: () {
-                    Navigator.pushNamed(context, "/settings/caching");
+                  title: Text("Clear cache"),
+                  onTap: () async {
+                    await CacheManager.deleteCaches();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Cleared caches!"),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    });
                   },
-                  subtitle: Text(box.get("caching.enable", defaultValue: false)? "On" : "Off"),
                 ),
                 Divider(),
                 if (kDebugMode) ListTile(
@@ -214,7 +222,7 @@ class SettingsPageState extends State<SettingsPage> {
                             child: Text("Cancel")
                           ),
                           TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Hive.box("chickendex").clear();
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -223,6 +231,10 @@ class SettingsPageState extends State<SettingsPage> {
                                   content: Text("The Chickendex has been cleared!")
                                 )
                               );
+
+                              // re-add today's chicken thought
+                              ChickenThought today = await DatabaseManager.getDailyChickenThought();
+                              Hive.box("chickendex").put(today.id, today.images.length);
                             },
                             child: Text("OK"),
                           )
