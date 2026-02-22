@@ -4,49 +4,51 @@ import 'package:flutter/material.dart';
 
 class MobileScaffold extends StatefulWidget {
   final List<Widget> screens;
-  const MobileScaffold(this.screens, {super.key});
+  final ValueNotifier<int> currentPageNotifier;
+  const MobileScaffold(this.screens, {required this.currentPageNotifier, super.key});
 
   @override
   State<MobileScaffold> createState() => _MobileScaffoldState();
 }
 
 class _MobileScaffoldState extends State<MobileScaffold> {
-  int currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: PageTransitionSwitcher(
-          transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-            FadeThroughTransition(animation: primaryAnimation, secondaryAnimation: secondaryAnimation, child: child),
-          child: widget.screens[currentPage]
-        ),
-        bottomNavigationBar: NavigationBar(
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.photo_outlined),
-              selectedIcon: Icon(Icons.photo),
-              label: "Daily"
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.history_outlined),
-              selectedIcon: Icon(Icons.history),
-              label: "History"
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.grid_view_outlined),
-              selectedIcon: Icon(Icons.grid_view_sharp),
-              label: "Chickendex"
-            )
-          ],
-          selectedIndex: currentPage,
-          onDestinationSelected: (index) {
-            setState(() {
-              currentPage = index;
-            });
-            Vibrate.tap();
-          },
-        ),
-      );
+    return ValueListenableBuilder(
+      valueListenable: widget.currentPageNotifier,
+      builder: (context, value, child) {
+        return Scaffold(
+          body: PageTransitionSwitcher(
+            transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
+              FadeThroughTransition(animation: primaryAnimation, secondaryAnimation: secondaryAnimation, child: child),
+            child: widget.screens[value]
+          ),
+          bottomNavigationBar: NavigationBar(
+            destinations: [
+              NavigationDestination(
+                icon: Icon(Icons.photo_outlined),
+                selectedIcon: Icon(Icons.photo),
+                label: "Daily"
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.local_fire_department_outlined),
+                selectedIcon: Icon(Icons.local_fire_department),
+                label: "Streak"
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.grid_view_outlined),
+                selectedIcon: Icon(Icons.grid_view_sharp),
+                label: "Chickendex"
+              ),
+            ],
+            selectedIndex: value,
+            onDestinationSelected: (index) {
+              widget.currentPageNotifier.value = index;
+              Vibrate.tap();
+            },
+          ),
+        );
+      }
+    );
   }
 }

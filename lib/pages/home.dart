@@ -3,9 +3,9 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
+import 'package:chicken_thoughts_notifications/views/streak.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex.dart';
 import 'package:chicken_thoughts_notifications/views/daily.dart';
-import 'package:chicken_thoughts_notifications/views/history.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
@@ -26,6 +26,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<ChickenThought> _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
   DateTime _lastCheckedDay = DateTime.now();
+  final ValueNotifier<int> _currentPageNotifier = ValueNotifier(0);
 
   Future<void> showUpdateDialog() async {
     // Check for updates and show update dialog if necessary
@@ -57,46 +58,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     }
   }
-
-  // void showCacheInvalidDialog() async {
-  //   if (kIsWeb) return;
-  //   if (!Hive.box("settings").get("caching.enable", defaultValue: false)) return;
-
-  //   // Get local and remote cache versions
-  //   int localCacheVersion = await CacheManager.getLocalCacheVersion();
-  //   int remoteCacheVersion = await DatabaseManager.getRemoteCacheVersion();
-
-  //   // App requires an update
-  //   if (remoteCacheVersion > localCacheVersion) {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) =>
-  //       showDialog(context: context, barrierDismissible: false, builder: (context) {
-  //         return PopScope(
-  //           canPop: false,
-  //           child: AlertDialog(
-  //             title: const Text("Cache error"),
-  //             content: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               spacing: 16,
-  //               children: [
-  //                 Text("You have caching enabled, but your downloaded cache is out of date."),
-  //                 Text("Please visit the settings page to update your caches!"),
-  //               ],
-  //             ),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pushReplacementNamed(context, "/settings/caching", arguments: remoteCacheVersion);
-  //                 },
-  //                 child: Text("Open settings")
-  //               )
-  //             ],
-  //           ),
-  //         );
-  //       })
-  //     );
-  //   }
-  // }
 
   void showAppDownloadDialog() {
     if (!isAndroidWeb) return;
@@ -190,15 +151,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
     
         List<Widget> screens = [
-          DailyView(chickenThought: snapshot.data!),
-          HistoryView(),
-          ChickendexView()
+          DailyView(chickenThought: snapshot.data!, currentPageNotifier: _currentPageNotifier),
+          StreakView(),
+          ChickendexView(),
         ];
     
         if (mobile) {
-          return MobileScaffold(screens);
+          return MobileScaffold(screens, currentPageNotifier: _currentPageNotifier);
         } else {
-          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)));
+          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)), currentPageNotifier: _currentPageNotifier);
         }
       }
     );

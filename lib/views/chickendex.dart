@@ -17,13 +17,7 @@ class ChickendexView extends StatefulWidget {
 }
 
 class _ChickendexViewState extends State<ChickendexView> {
-  late final Future<Season> _future;
-
-  @override
-  void initState() {
-    _future = DatabaseManager.getDefaultSeason();
-    super.initState();
-  }
+  final Future<Season> _future = DatabaseManager.getDefaultSeason();
 
   @override
   Widget build(BuildContext context) {
