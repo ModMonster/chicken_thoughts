@@ -53,7 +53,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     final Map<String, dynamic> responseJson = jsonDecode(response.body);
     String? targetApkUrl;
 
-    if (kDebugMode) print("Supported architectures: ${deviceInfo.supportedAbis}");
+    if (kDebugMode) print("Preferred architecture: ${deviceInfo.supportedAbis.first}");
 
     if (!responseJson.containsKey("assets")) {
       // TODO: more advanced error handling?
@@ -64,15 +64,15 @@ class _UpdateDialogState extends State<UpdateDialog> {
     }
 
     for (Map<String, dynamic> asset in responseJson["assets"]) {
-      if (asset["name"].contains("arm-v7a") && deviceInfo.supportedAbis.contains("armeabi-v7a")) {
+      if (asset["name"].contains("arm-v7a") && deviceInfo.supportedAbis.first.contains("armeabi-v7a")) {
         // 32 bit ARM
         targetApkUrl = asset["browser_download_url"];
         break;
-      } else if (asset["name"].contains("arm64-v8a") && deviceInfo.supportedAbis.contains("arm64-v8a")) {
+      } else if (asset["name"].contains("arm64-v8a") && deviceInfo.supportedAbis.first.contains("arm64-v8a")) {
         // 64 bit ARM
         targetApkUrl = asset["browser_download_url"];
         break;
-      } else if (asset["name"].contains("x86_64") && deviceInfo.supportedAbis.contains("x86_64")) {
+      } else if (asset["name"].contains("x86_64") && deviceInfo.supportedAbis.first.contains("x86_64")) {
         // 64 bit x86
         targetApkUrl = asset["browser_download_url"];
         break;
