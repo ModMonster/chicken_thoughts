@@ -6,10 +6,9 @@ import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
+import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' show DateUtils;
-import 'package:hive_ce/hive.dart';
 
 class DatabaseManager {
   static const String endpoint = "https://tor.cloud.appwrite.io/v1";
@@ -138,36 +137,8 @@ class DatabaseManager {
     );
   }
 
-  static Future<void> handleStreak() async {
-    // Streak stuff
-    final Box box = Hive.box("settings");
-    box.put("streak.animate", true); // TODO: DEBUG
-    final DateTime now = DateTime.now();
-    final DateTime yesterday = now.subtract(Duration(days: 1));
-    final DateTime? lastViewed = box.get("streak.last_viewed");
-
-    if (kDebugMode) print("Last viewed: $lastViewed");
-
-    box.put("streak.last_viewed", now);
-
-    if (lastViewed == null) return;
-    if (DateUtils.isSameDay(lastViewed, now)) return;
-    
-    // Wasn't yesterday; reset streak
-    if (!DateUtils.isSameDay(lastViewed, yesterday)) {
-      if (kDebugMode) print("Resetting streak :(");
-      box.put("streak", 0);
-      return;
-    }
-    
-    if (kDebugMode) print("Streak go up!");
-    int streak = box.get("streak", defaultValue: 0) + 1;
-    box.put("streak", streak);
-    box.put("streak.animate", true);
-  }
-
   static Future<ChickenThought> getDailyChickenThought() async {
-    handleStreak();
+    StreakManager.handleStreak();
 
     Holiday? holiday = await getHolidayToday();
     if (holiday != null) {
