@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
+import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
@@ -22,7 +23,10 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  Future<ChickenThought> _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
+  DateTime _lastCheckedDay = DateTime.now();
+
   Future<void> showUpdateDialog() async {
     // Check for updates and show update dialog if necessary
     AppData appData = await DatabaseManager.getRemoteAppData();
@@ -140,60 +144,62 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      if (kDebugMode) print("App has come to the foreground!");
+
+      // Check if it is the next day
+      if (!DateUtils.isSameDay(_lastCheckedDay, DateTime.now())) {
+        _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
+        _lastCheckedDay = DateTime.now();
+      }
+    }
+  }
+
+  @override
   void initState() {
     showAppDownloadDialog();
     showUpdateDialog();
-    // showCacheInvalidDialog();
-    super.initState();
-  }
 
-  // A stream that updates every midnight so that we can reload the Chicken Thought
-  Stream<DateTime> midnightStream() async* {
-    while (true) {
-      final DateTime now = DateTime.now();
-      final DateTime nextMidnight = DateTime(now.year, now.month, now.day + 1);
-      final Duration durationUntilMidnight = nextMidnight.difference(now);
-      await Future.delayed(durationUntilMidnight);
-      yield DateTime.now();
-    }
+    // Add listener for 12 AM
+    WidgetsBinding.instance.addObserver(this);
+    
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     bool mobile = MediaQuery.of(context).size.width < 600;
 
-    return StreamBuilder(
-      stream: midnightStream(),
-      builder: (context, asyncSnapshot) {
-        return FutureBuilder(
-          future: DatabaseManager.getDailyChickenThought(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data == null) {
-              return Scaffold(
-                body: Center(child: ChickenSpinner())
-              );
-            }
-        
-            // Add to chicken thoughts user has seen
-            // key = ID of the chicken thought
-            // value = amount of chicken thoughts corresponding to this (usually 1)
-            // TODO: holidays will DEF MESS THIS UP
-            // FIX THIS WITH MIMI'S IDEA (ONE BIG LIST, NO holiday.christmas.jpg JUST ONE BIG LIST AND MAP EACH NUM INSIDE THE DATABASE)
-            Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
-        
-            List<Widget> screens = [
-              DailyView(chickenThought: snapshot.data!),
-              HistoryView(),
-              ChickendexView()
-            ];
-        
-            if (mobile) {
-              return MobileScaffold(screens);
-            } else {
-              return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)));
-            }
-          }
-        );
+    return FutureBuilder(
+      future: _dailyChickenThoughtFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Scaffold(
+            body: Center(child: ChickenSpinner())
+          );
+        }
+    
+        // Add to chicken thoughts user has seen
+        // key = ID of the chicken thought
+        // value = amount of chicken thoughts corresponding to this (usually 1)
+        // TODO: holidays will DEF MESS THIS UP
+        // FIX THIS WITH MIMI'S IDEA (ONE BIG LIST, NO holiday.christmas.jpg JUST ONE BIG LIST AND MAP EACH NUM INSIDE THE DATABASE)
+        Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
+    
+        List<Widget> screens = [
+          DailyView(chickenThought: snapshot.data!),
+          HistoryView(),
+          ChickendexView()
+        ];
+    
+        if (mobile) {
+          return MobileScaffold(screens);
+        } else {
+          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)));
+        }
       }
     );
   }
