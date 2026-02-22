@@ -37,20 +37,29 @@ class ChickendexLocked extends StatelessWidget {
             );
           });
         },
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 8,
-            children: [
-              Icon(Icons.lock),
-              Text(
-                index.toString(),
-                style: TextStyle(
-                  fontSize: 24
+        child: Stack(
+          children: [
+            Center(
+              child: Icon(Icons.lock),
+            ),
+            Positioned(
+              left: 4,
+              bottom: 4,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(9999),
+                  color: Theme.of(context).colorScheme.surfaceContainer
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                  child: Text(
+                    index.toString(),
+                    style: Theme.of(context).textTheme.labelSmall
+                  ),
                 ),
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
