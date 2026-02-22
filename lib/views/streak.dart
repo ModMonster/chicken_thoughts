@@ -91,7 +91,7 @@ class StreakView extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 24.0),
                 child: OutlinedButton(
                   onPressed: () {
-                
+                    Navigator.pushNamed(context, "/settings/icon");
                   },
                   child: Text("Open icon settings")
                 ),

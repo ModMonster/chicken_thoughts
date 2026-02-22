@@ -24,13 +24,9 @@ class StreakManager {
   static Future<void> handleStreak() async {
     // Streak stuff
     final Box box = Hive.box("settings");
-    box.put("streak.animate", true); // TODO: DEBUG
     final DateTime now = DateTime.now();
     final DateTime yesterday = now.subtract(Duration(days: 1));
     final DateTime? lastViewed = box.get("streak.last_viewed");
-
-    box.put("streak", 31);
-    box.put("streak.longest", 31);
 
     if (kDebugMode) print("Last viewed: $lastViewed");
 

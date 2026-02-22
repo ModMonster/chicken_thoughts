@@ -120,6 +120,19 @@ class SettingsPageState extends State<SettingsPage> {
                     Navigator.pushNamed(context, "/settings/color");
                   },
                 ),
+                if (!kIsWeb) ListTile(
+                  leading: Icon(Icons.app_registration_outlined),
+                  title: Text("App icon"),
+                  subtitle: Text(
+                    box.get("streak.longest", defaultValue: 0) >= 7?
+                      box.get("icon", defaultValue: "Default")
+                      : "Reach a 7 day streak to unlock app icon customization"
+                  ),
+                  enabled: box.get("streak.longest", defaultValue: 0) >= 7,
+                  onTap: () {
+                    Navigator.pushNamed(context, "/settings/icon");
+                  },
+                ),
                 if (!kIsWeb) SwitchListTile(
                   value: box.get("vibration", defaultValue: true),
                   onChanged: (value) {
