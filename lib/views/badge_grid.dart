@@ -37,7 +37,7 @@ class BadgeGrid extends StatelessWidget {
                     children: [
                       Positioned.fill(
                         child: CircleAvatar(
-                          backgroundImage: AssetImage(milestone.imagePath),
+                          backgroundImage: AssetImage(milestone.previewPath),
                           maxRadius: double.infinity,
                         ),
                       ),
@@ -80,14 +80,28 @@ class BadgeGrid extends StatelessWidget {
                           color: Colors.transparent,
                           child: InkWell(
                             customBorder: CircleBorder(),
-                            onTap: () {
+                            onTap: () async {
                               Vibrate.tap();
+                              if (Hive.box("settings").get("app_icon", defaultValue: 0) == index) return;
+                              bool success = await StreakManager.activateAppIcon(milestone);
+                              if (!success) {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  ScaffoldMessenger.of(context).clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text("Failed to change app icon."),
+                                    behavior: SnackBarBehavior.floating,
+                                  ));
+                                });
+                              }
+
                               Hive.box("settings").put("app_icon", index);
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("Changed app icon to ${milestone.name}."),
-                                behavior: SnackBarBehavior.floating,
-                              ));
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text("Changed app icon to ${milestone.name}."),
+                                  behavior: SnackBarBehavior.floating,
+                                ));
+                              });
                             },
                           ),
                         ),

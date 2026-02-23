@@ -1,26 +1,30 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app_icon_changer/flutter_app_icon_changer.dart';
 import 'package:hive_ce/hive.dart';
 
 class StreakManager {
   static final List<StreakMilestone> milestones = [
-    StreakMilestone(0, name: "Default", imagePath: "assets/icons/default.png"),
-    StreakMilestone(7, name: "Egg", imagePath: "assets/icons/egg.png"),
-    StreakMilestone(14, name: "Baby Chicken", imagePath: "assets/icons/baby_chicken.png"),
-    StreakMilestone(30, name: "Roofus", imagePath: "assets/icons/roofus.png"),
-    StreakMilestone(50, name: "Hackerbirb", imagePath: "assets/icons/hackerbirb.png"),
-    StreakMilestone(75, name: "Sherlock Chicken", imagePath: "assets/icons/sherlock_chicken.png"),
-    StreakMilestone(100, name: "Blue Boy", imagePath: "assets/icons/blue_boy.png"),
-    StreakMilestone(150, name: "Cas & Zeke", imagePath: "assets/icons/cas_and_zeke.png"),
-    StreakMilestone(200, name: "Real-Life Chicken", imagePath: "assets/icons/real_life_chicken.png"),
-    StreakMilestone(300, name: "Tai Tai", imagePath: "assets/icons/tai_tai.png"),
-    StreakMilestone(365, name: "Petrie", imagePath: "assets/icons/petrie.png"),
-    StreakMilestone(400, name: "Prospector Chicken", imagePath: "assets/icons/prospector_chicken.png"),
-    StreakMilestone(500, name: "Cordelia", imagePath: "assets/icons/cordelia.png"),
-    StreakMilestone(600, name: "Sammie", imagePath: "assets/icons/sammie.png"),
-    StreakMilestone(730, name: "Chicken Plushie", imagePath: "assets/icons/chicken_plushie.png"),
-    StreakMilestone(1000, name: "Real-Life *Actual* Chicken", imagePath: "assets/icons/real_actual_chicken.png"),
+    StreakMilestone(0, name: "Default", previewPath: "assets/icons/default.png", androidIcon: "MainActivity", isDefaultIcon: true),
+    StreakMilestone(7, name: "Egg", previewPath: "assets/icons/egg.png", androidIcon: "EggAlias"),
+    StreakMilestone(14, name: "Baby Chicken", previewPath: "assets/icons/baby_chicken.png", androidIcon: "BabyChickenAlias"),
+    StreakMilestone(30, name: "Roofus", previewPath: "assets/icons/roofus.png", androidIcon: "RoofusAlias"),
+    StreakMilestone(50, name: "Hackerbirb", previewPath: "assets/icons/hackerbirb.png", androidIcon: "HackerbirbAlias"),
+    StreakMilestone(75, name: "Sherlock Chicken", previewPath: "assets/icons/sherlock_chicken.png", androidIcon: "SherlockChickenAlias"),
+    StreakMilestone(100, name: "Blue Boy", previewPath: "assets/icons/blue_boy.png", androidIcon: "BlueBoyAlias"),
+    StreakMilestone(150, name: "Cas & Zeke", previewPath: "assets/icons/cas_and_zeke.png", androidIcon: "CasAndZekeAlias"),
+    StreakMilestone(200, name: "Real-Life Chicken", previewPath: "assets/icons/real_life_chicken.png", androidIcon: "RealLifeChickenAlias"),
+    StreakMilestone(300, name: "Tai Tai", previewPath: "assets/icons/tai_tai.png", androidIcon: "TaiTaiAlias"),
+    StreakMilestone(365, name: "Petrie", previewPath: "assets/icons/petrie.png", androidIcon: "PetrieAlias"),
+    StreakMilestone(400, name: "Prospector Chicken", previewPath: "assets/icons/prospector_chicken.png", androidIcon: "ProspectorChickenAlias"),
+    StreakMilestone(500, name: "Cordelia", previewPath: "assets/icons/cordelia.png", androidIcon: "CordeliaAlias"),
+    StreakMilestone(600, name: "Sammie", previewPath: "assets/icons/sammie.png", androidIcon: "SammieAlias"),
+    StreakMilestone(730, name: "Chicken Plushie", previewPath: "assets/icons/chicken_plushie.png", androidIcon: "ChickenPlushieAlias"),
+    StreakMilestone(1000, name: "Real-Life *Actual* Chicken", previewPath: "assets/icons/real_actual_chicken.png", androidIcon: "RealActualChickenAlias"),
   ];
+
+  static final FlutterAppIconChangerPlugin appIconChangerPlugin = FlutterAppIconChangerPlugin(iconsSet: milestones);
 
   static Future<void> handleStreak() async {
     // Streak stuff
@@ -61,14 +65,18 @@ class StreakManager {
   static StreakMilestone? getLatestMilestone() {
     return getNextMilestone().getPrevious();
   }
+
+  static Future<bool> activateAppIcon(StreakMilestone milestone) {
+    return milestone.activateThisIcon(appIconChangerPlugin);
+  }
 }
 
-class StreakMilestone {
+class StreakMilestone extends AppIcon {
   final int day;
   final String name;
-  final String imagePath;
+  final String previewPath;
 
-  StreakMilestone(this.day, {required this.name, required this.imagePath});
+  StreakMilestone(this.day, {required this.name, required this.previewPath, required super.androidIcon, super.iOSIcon = "", super.isDefaultIcon = false});
 
   bool isUnlocked() {
     return Hive.box("settings").get("streak.longest", defaultValue: 0) >= day;
@@ -83,5 +91,14 @@ class StreakMilestone {
     int index = StreakManager.milestones.indexOf(this) - 1;
     if (index < 0) return StreakManager.milestones.first;
     return StreakManager.milestones[index];
+  }
+
+  Future<bool> activateThisIcon(FlutterAppIconChangerPlugin plugin) async {
+    try {
+      return await plugin.changeIcon(currentIcon) ?? false;
+    } on PlatformException catch (e) {
+      if (kDebugMode) print("Failed to change app icon: exception $e");
+      return false;
+    }
   }
 }
