@@ -4,22 +4,22 @@ import 'package:hive_ce/hive.dart';
 
 class StreakManager {
   static final List<StreakMilestone> milestones = [
-    StreakMilestone(0, name: "Default"),
-    StreakMilestone(7, name: "Egg", fgPath: "assets/icons/egg.png"),
-    StreakMilestone(14, name: "Baby Chicken", fgPath: "assets/icons/baby_chicken.png"),
-    StreakMilestone(30, name: "Roofus", fgPath: "assets/icons/roofus.png"),
-    StreakMilestone(50, name: "Hackerbirb", fgPath: "assets/icons/hackerbirb_fg.png", bgPath: "assets/icons/hackerbirb_bg.png"),
-    StreakMilestone(75, name: "Sherlock Chicken", fgPath: "assets/icons/sherlock_chicken.png"),
-    StreakMilestone(100, name: "Blue Boy", fgPath: "assets/icons/blue_boy.png"),
-    StreakMilestone(150, name: "Cas & Zeke", fgPath: "assets/icons/cas_and_zeke.png"),
-    StreakMilestone(200, name: "Real-Life Chicken", fgPath: "assets/icons/real_life_chicken.png"),
-    StreakMilestone(300, name: "Tai Tai", fgPath: "assets/icons/tai_tai.png"),
-    StreakMilestone(365, name: "Petrie", fgPath: "assets/icons/petrie.png"),
-    StreakMilestone(400, name: "Prospector Chicken", fgPath: "assets/icons/prospector_chicken.png"),
-    StreakMilestone(500, name: "Cordelia", fgPath: "assets/icons/cordelia.png"),
-    StreakMilestone(600, name: "Sammie", fgPath: "assets/icons/sammie.png"),
-    StreakMilestone(730, name: "Chicken Plushie", fgPath: "assets/icons/chicken_plushie.png"),
-    StreakMilestone(1000, name: "Real-Life *Actual* Chicken", fgPath: "assets/icons/real_actual_chicken.png"),
+    StreakMilestone(0, name: "Default", imagePath: "assets/icons/default.png"),
+    StreakMilestone(7, name: "Egg", imagePath: "assets/icons/egg.png"),
+    StreakMilestone(14, name: "Baby Chicken", imagePath: "assets/icons/baby_chicken.png"),
+    StreakMilestone(30, name: "Roofus", imagePath: "assets/icons/roofus.png"),
+    StreakMilestone(50, name: "Hackerbirb", imagePath: "assets/icons/hackerbirb.png"),
+    StreakMilestone(75, name: "Sherlock Chicken", imagePath: "assets/icons/sherlock_chicken.png"),
+    StreakMilestone(100, name: "Blue Boy", imagePath: "assets/icons/blue_boy.png"),
+    StreakMilestone(150, name: "Cas & Zeke", imagePath: "assets/icons/cas_and_zeke.png"),
+    StreakMilestone(200, name: "Real-Life Chicken", imagePath: "assets/icons/real_life_chicken.png"),
+    StreakMilestone(300, name: "Tai Tai", imagePath: "assets/icons/tai_tai.png"),
+    StreakMilestone(365, name: "Petrie", imagePath: "assets/icons/petrie.png"),
+    StreakMilestone(400, name: "Prospector Chicken", imagePath: "assets/icons/prospector_chicken.png"),
+    StreakMilestone(500, name: "Cordelia", imagePath: "assets/icons/cordelia.png"),
+    StreakMilestone(600, name: "Sammie", imagePath: "assets/icons/sammie.png"),
+    StreakMilestone(730, name: "Chicken Plushie", imagePath: "assets/icons/chicken_plushie.png"),
+    StreakMilestone(1000, name: "Real-Life *Actual* Chicken", imagePath: "assets/icons/real_actual_chicken.png"),
   ];
 
   static Future<void> handleStreak() async {
@@ -66,10 +66,9 @@ class StreakManager {
 class StreakMilestone {
   final int day;
   final String name;
-  final String fgPath;
-  final String bgPath;
+  final String imagePath;
 
-  StreakMilestone(this.day, {required this.name, this.fgPath = "assets/icons/default_fg.png", this.bgPath = "assets/icons/default_bg.png"});
+  StreakMilestone(this.day, {required this.name, required this.imagePath});
 
   bool isUnlocked() {
     return Hive.box("settings").get("streak.longest", defaultValue: 0) >= day;

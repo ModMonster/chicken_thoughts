@@ -37,8 +37,7 @@ class BadgeGrid extends StatelessWidget {
                     children: [
                       Positioned.fill(
                         child: CircleAvatar(
-                          backgroundImage: AssetImage(milestone.bgPath),
-                          foregroundImage: AssetImage(milestone.fgPath),
+                          backgroundImage: AssetImage(milestone.imagePath),
                           maxRadius: double.infinity,
                         ),
                       ),
