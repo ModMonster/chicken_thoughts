@@ -37,7 +37,7 @@ class BadgeGrid extends StatelessWidget {
                     children: [
                       Positioned.fill(
                         child: CircleAvatar(
-                          backgroundImage: AssetImage(milestone.previewPath),
+                          backgroundImage: AssetImage(milestone.previewIcon),
                           maxRadius: double.infinity,
                         ),
                       ),
@@ -83,7 +83,7 @@ class BadgeGrid extends StatelessWidget {
                             onTap: () async {
                               Vibrate.tap();
                               if (Hive.box("settings").get("app_icon", defaultValue: 0) == index) return;
-                              bool success = await StreakManager.activateAppIcon(milestone);
+                              bool success = await milestone.activateThisIcon();
                               if (!success) {
                                 WidgetsBinding.instance.addPostFrameCallback((_) {
                                   ScaffoldMessenger.of(context).clearSnackBars();
