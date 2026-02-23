@@ -57,12 +57,13 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/
+    - assets/icons/
 
 flutter_launcher_icons:
   android: true
   image_path: "assets/icon.png"
-  adaptive_icon_foreground: "assets/icon-foreground.png"
-  adaptive_icon_background: "assets/icon-background.png"
+  adaptive_icon_foreground: "assets/icons/default_fg.png"
+  adaptive_icon_background: "assets/icons/default_bg.png"
   web:
     generate: true
     image_path: "assets/icon-circle-overhang.png"
