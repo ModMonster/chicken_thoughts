@@ -4,6 +4,7 @@ import 'package:hive_ce/hive.dart';
 
 class StreakManager {
   static final List<StreakMilestone> milestones = [
+    StreakMilestone(0, name: "Default"),
     StreakMilestone(7, name: "Egg", fgPath: "assets/icons/egg.png"),
     StreakMilestone(14, name: "Baby Chicken", fgPath: "assets/icons/baby_chicken.png"),
     StreakMilestone(30, name: "Roofus", fgPath: "assets/icons/roofus.png"),
@@ -76,12 +77,12 @@ class StreakMilestone {
 
   bool shouldShowHint() {
     StreakMilestone? previous = getPrevious();
-    return previous == null || previous.isUnlocked();
+    return previous.isUnlocked();
   }
 
-  StreakMilestone? getPrevious() {
+  StreakMilestone getPrevious() {
     int index = StreakManager.milestones.indexOf(this) - 1;
-    if (index < 0) return null;
+    if (index < 0) return StreakManager.milestones.first;
     return StreakManager.milestones[index];
   }
 }

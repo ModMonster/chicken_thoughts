@@ -1,5 +1,6 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
+import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
@@ -124,11 +125,8 @@ class SettingsPageState extends State<SettingsPage> {
                   leading: Icon(Icons.app_registration_outlined),
                   title: Text("App icon"),
                   subtitle: Text(
-                    box.get("streak.longest", defaultValue: 0) >= 7?
-                      box.get("icon", defaultValue: "Default")
-                      : "Reach a 7 day streak to unlock app icon customization"
+                    StreakManager.milestones[box.get("app_icon", defaultValue: 0)].name
                   ),
-                  enabled: box.get("streak.longest", defaultValue: 0) >= 7,
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/icon");
                   },

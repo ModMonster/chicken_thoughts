@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
+import 'package:chicken_thoughts_notifications/views/badge_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -22,25 +23,19 @@ class SettingsIconPage extends StatelessWidget {
             SliverAppBar.large(
               title: Text("Choose app icon"),
             ),
+            SliverToBoxAdapter(
+              child: ListTile(
+                title: Text("Unlock more icons by building your Chickenstreak!"),
+                leading: Icon(Icons.local_fire_department),
+              ),
+            ),
             SliverSafeArea(
               bottom: true,
               top: false,
               right: true,
               left: false,
-              sliver: SliverList.builder(
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return RadioListTile(
-                    value: index,
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    secondary: CircleAvatar(
-                      // backgroundColor: dynamicColorScheme!.primaryContainer,
-                      // foregroundColor: dynamicColorScheme!.onPrimaryContainer,
-                      child: Icon(Icons.auto_awesome_outlined),
-                    ),
-                    title: Text("Default")
-                  );
-                }
+              sliver: SliverToBoxAdapter(
+                child: BadgeGrid(),
               ),
             )
           ],
