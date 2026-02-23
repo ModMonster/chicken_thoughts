@@ -1,17 +1,32 @@
+import 'dart:typed_data';
+
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
-class ChickendexGridImage extends StatelessWidget {
+class ChickendexGridImage extends StatefulWidget {
   final String imagePath;
   const ChickendexGridImage(this.imagePath, {super.key});
 
   @override
+  State<ChickendexGridImage> createState() => _ChickendexGridImageState();
+}
+
+class _ChickendexGridImageState extends State<ChickendexGridImage> {
+  late final Future<Uint8List> _future;
+
+  @override
+  void initState() {
+    _future = DatabaseManager.getImagePreviewFromPath(widget.imagePath);
+    super.initState();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: DatabaseManager.getImagePreviewFromPath(imagePath),
+      future: _future,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return ClipRRect(
@@ -30,7 +45,7 @@ class ChickendexGridImage extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Hero(
-                  tag: imagePath,
+                  tag: widget.imagePath,
                   child: Image.memory(
                     snapshot.data!,
                     fit: BoxFit.cover,
@@ -43,7 +58,7 @@ class ChickendexGridImage extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       Vibrate.tap();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: imagePath, thumbImage: snapshot.data!)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: widget.imagePath, thumbImage: snapshot.data!)));
                     },
                   ),
                 )
@@ -59,7 +74,7 @@ class ChickendexGridImage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
                     child: Text(
-                      imagePath,
+                      widget.imagePath,
                       style: Theme.of(context).textTheme.labelSmall
                     ),
                   ),
