@@ -2,8 +2,8 @@ import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 
 class ChickendexLocked extends StatelessWidget {
-  final int index;
-  const ChickendexLocked(this.index, {super.key});
+  final String id;
+  const ChickendexLocked(this.id, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class ChickendexLocked extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
                   child: Text(
-                    index.toString(),
+                    id,
                     style: Theme.of(context).textTheme.labelSmall
                   ),
                 ),
