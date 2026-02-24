@@ -31,6 +31,11 @@ class _MobileScaffoldState extends State<MobileScaffold> {
                 label: "Daily"
               ),
               NavigationDestination(
+                icon: Icon(Icons.history_outlined),
+                selectedIcon: Icon(Icons.history),
+                label: "History"
+              ),
+              NavigationDestination(
                 icon: Icon(Icons.local_fire_department_outlined),
                 selectedIcon: Icon(Icons.local_fire_department),
                 label: "Streak"

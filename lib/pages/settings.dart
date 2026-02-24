@@ -185,7 +185,7 @@ class SettingsPageState extends State<SettingsPage> {
                       ),
                     ));
 
-                    Season season = await DatabaseManager.getSeasonToday();
+                    Season season = await DatabaseManager.getDefaultSeason();
                     for (int i = 1; i <= season.imageCount; i++) {
                       await Hive.box("chickendex").put(i.toString(), 1);
                     }

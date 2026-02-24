@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.1"
+  dynamic_height_grid_view:
+    dependency: "direct main"
+    description:
+      name: dynamic_height_grid_view
+      sha256: "89b37bf6179af6bc496135c0c786c1f13e117c4ec7ce2278be52df75be90e1d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   equatable:
     dependency: transitive
     description:
@@ -464,6 +472,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.7.2"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   isolate_channel:
     dependency: transitive
     description:

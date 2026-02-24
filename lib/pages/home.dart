@@ -3,6 +3,7 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
+import 'package:chicken_thoughts_notifications/views/history.dart';
 import 'package:chicken_thoughts_notifications/views/streak.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex.dart';
 import 'package:chicken_thoughts_notifications/views/daily.dart';
@@ -152,6 +153,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     
         List<Widget> screens = [
           DailyView(chickenThought: snapshot.data!, currentPageNotifier: _currentPageNotifier),
+          HistoryView(),
           StreakView(),
           ChickendexView(),
         ];

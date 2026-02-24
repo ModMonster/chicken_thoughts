@@ -35,6 +35,11 @@ class _WebScaffoldState extends State<WebScaffold> {
                           label: "Daily"
                         ),
                         NavigationRailM3EDestination(
+                          icon: Icon(Icons.history_outlined),
+                          selectedIcon: Icon(Icons.history),
+                          label: "History"
+                        ),
+                        NavigationRailM3EDestination(
                           icon: Icon(Icons.local_fire_department_outlined),
                           selectedIcon: Icon(Icons.local_fire_department),
                           label: "Streak"

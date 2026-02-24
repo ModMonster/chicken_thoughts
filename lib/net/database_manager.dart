@@ -28,8 +28,8 @@ class DatabaseManager {
     database = TablesDB(client);
   }
 
-  static Future<Holiday?> getHolidayToday() async {
-    final today = getToday();
+  static Future<Holiday?> getHolidayOnDate(DateTime dateIn) async {
+    final DateTime date = dateIn.copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
 
     // Fetch list of holidays
     RowList holidays = await database.listRows(
@@ -37,7 +37,7 @@ class DatabaseManager {
       tableId: "holidays",
       queries: [
         Query.or([
-          Query.equal("date", today.copyWith(year: 2026).toIso8601String()), // The holiday is today
+          Query.equal("date", date.toIso8601String()), // The holiday is today
           Query.isNotNull("weekday") // The weird ones (tm)
         ])
       ]
@@ -48,7 +48,7 @@ class DatabaseManager {
       DateTime holidayDate = DateTime.parse(row.data["date"]).copyWith(isUtc: false);
 
       // Holiday is exactly today
-      if (holidayDate.isAtSameMomentAs(today.copyWith(year: 2026))) {
+      if (holidayDate.isAtSameMomentAs(date)) {
         return Holiday(
           name: row.data["name"],
           displayName: row.data["displayName"]
@@ -60,18 +60,18 @@ class DatabaseManager {
 
       // Holiday is based on day of week; check if we are in the correct month
       int month = holidayDate.month;
-      if (month != today.month) continue;
+      if (month != date.month) continue;
 
       // Check if weekday matches
       Weekday weekday = Weekday.values.byName(row.data["weekday"].toString().toLowerCase());
-      if (today.weekday - 1 != weekday.index) continue;
+      if (date.weekday - 1 != weekday.index) continue;
 
       // Check if weekday number matches
       int weekdayNumber = row.data["weekdayNumber"];
       int firstPossibleDay = 1 + 7 * (weekdayNumber - 1);
       int lastPossibleDay = 7 * weekdayNumber;
       
-      if (today.day >= firstPossibleDay && today.day <= lastPossibleDay) {
+      if (date.day >= firstPossibleDay && date.day <= lastPossibleDay) {
         return Holiday(
           name: row.data["name"],
           displayName: row.data["displayName"]
@@ -83,8 +83,8 @@ class DatabaseManager {
     return null;
   }
 
-  static Future<Season> getSeasonToday() async {
-    final today = getToday();
+  static Future<Season> getSeasonOnDate(DateTime dateIn) async {
+    final DateTime date = dateIn.copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
 
     // Fetch list of seasons
     RowList seasons = await database.listRows(
@@ -105,9 +105,9 @@ class DatabaseManager {
       DateTime startDate = DateTime.parse(row.data["startDate"]).subtract(Duration(seconds: 1))..copyWith(isUtc: false);
       DateTime endDate = DateTime.parse(row.data["endDate"]).add(Duration(seconds: 1))..copyWith(isUtc: false);
 
-      if (startDate.isBefore(today) && endDate.isAfter(today)) {
+      if (startDate.isBefore(date) && endDate.isAfter(date)) {
         // 1/2 chance to just get the normal season
-        if (randomBasedOnDateSeed(2, extraSeed: 14) == 0) continue;
+        if (randomBasedOnDateSeed(date, 2, extraSeed: 14) == 0) continue;
 
         return Season(
           imageCount: row.data["imageCount"],
@@ -137,10 +137,8 @@ class DatabaseManager {
     );
   }
 
-  static Future<ChickenThought> getDailyChickenThought() async {
-    StreakManager.handleStreak();
-
-    Holiday? holiday = await getHolidayToday();
+  static Future<ChickenThought> getChickenThoughtOnDate(DateTime date) async {
+    Holiday? holiday = await getHolidayOnDate(date);
     if (holiday != null) {
       // Get all images corresponding to this holiday
       String holidayPath = "holiday.${holiday.name}";
@@ -148,7 +146,7 @@ class DatabaseManager {
       // TODO: this will unnessicarily download all images for a holiday even though we only need one
 
       // Choose a random one based on today's date as a seed
-      int index = randomBasedOnDateSeed(images.length);
+      int index = randomBasedOnDateSeed(date, images.length);
       return ChickenThought(
         images.length > 1 ? "$holidayPath.$index" : holidayPath,
         displayName: holiday.displayName,
@@ -157,8 +155,8 @@ class DatabaseManager {
     }
 
     // Choose a random chicken thought based on the season
-    Season season = await getSeasonToday();
-    int imageNumber = randomBasedOnDateSeed(season.imageCount) + 1;
+    Season season = await getSeasonOnDate(date);
+    int imageNumber = randomBasedOnDateSeed(date, season.imageCount) + 1;
     String filePath = season.imagePrefix == null? imageNumber.toString() : "season.${season.imagePrefix}.$imageNumber";
     List<Uint8List> images = await getImagesFromPath(filePath);
 
@@ -205,6 +203,11 @@ class DatabaseManager {
     return images;
   }
 
+  static Future<ChickenThought> getDailyChickenThought() async {
+    StreakManager.handleStreak();
+    return getChickenThoughtOnDate(DateTime.now());
+  }
+
   static Future<Uint8List> getImageFromExactPath(String path) async {   
     // Hit cache if it exists
     List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
@@ -230,11 +233,11 @@ class DatabaseManager {
     return image;
   }
 
-  static int randomBasedOnDateSeed(int maxValueExclusive, {int extraSeed = 0}) {
-    return Random(((DateTime.now().millisecondsSinceEpoch - 18000000) / 86400000).floor() + extraSeed).nextInt(maxValueExclusive);
+  static int randomBasedOnDateSeed(DateTime date, int maxValueExclusive, {int extraSeed = 0}) {
+    return Random(((date.millisecondsSinceEpoch - 18000000) / 86400000).floor() + extraSeed).nextInt(maxValueExclusive);
   }
 
-  static DateTime getToday() {
+  static DateTime getTodayWithoutYear() {
     return DateTime.now().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
