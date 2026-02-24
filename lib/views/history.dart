@@ -151,7 +151,10 @@ class _HistoryViewState extends State<HistoryView> {
                         ],
                       ) : Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
-                        child: ChickendexLocked(snapshot.data!.id),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: ChickendexLocked(snapshot.data!.id)
+                        ),
                       ),
                     ],
                   );
