@@ -2,6 +2,7 @@ import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
+import 'package:chicken_thoughts_notifications/views/coming_soon.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
@@ -33,30 +34,30 @@ class _ChickendexViewState extends State<ChickendexView> {
             );
           }
       
-          return AnimationLimiter(
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
+          return DefaultTabController(
+            length: 3,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [SliverAppBar(
                   title: const Text("Chickendex"),
                   pinned: true,
                   snap: true,
                   floating: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(56),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            Vibrate.tap();
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-                          },
-                          icon: Icon(Icons.view_array),
-                          label: Text("View unlocked (${box.length}/${snapshot.data!.imageCount})"),
-                        ),
+                  bottom: TabBar(
+                    tabs: [
+                      Tab(
+                        text: "Normal",
+                        icon: Icon(Icons.photo),
                       ),
-                    ),
+                      Tab(
+                        text: "Seasonal",
+                        icon: Icon(Icons.ac_unit),
+                      ),
+                      Tab(
+                        text: "Unlocked",
+                        icon: Icon(Icons.lock_open),
+                      )
+                    ],
                   ),
                   actions: [
                     if (MediaQuery.of(context).size.width <= 600) IconButton(
@@ -67,57 +68,83 @@ class _ChickendexViewState extends State<ChickendexView> {
                       tooltip: "Settings",
                     )
                   ],
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(8.0),
-                  sliver: SliverLayoutBuilder(
-                    builder: (context, constraints) {
-                      final double availableWidth = constraints.crossAxisExtent;
-                      const double size = 96.0;
-                      final int crossAxisCount = (availableWidth / size).floor();
-
-                      return SliverGrid.builder(
-                        itemCount: snapshot.data!.imageCount,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          mainAxisSpacing: 8,
-                          crossAxisSpacing: 8
+                )];
+              },
+              body: TabBarView(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        title: Text(
+                          "${box.length}/${snapshot.data!.imageCount} unlocked"
                         ),
-                        itemBuilder: (context, inp) {
-                          int index = inp + 1;
-                          int imageCount = box.get(index.toString(), defaultValue: 0);
-                                  
-                          // We haven't seen it yet; locked!
-                          if (imageCount == 0) {
-                            return AnimationConfiguration.staggeredGrid(
-                              position: inp,
-                              duration: const Duration(milliseconds: 375),
-                              columnCount: crossAxisCount,
-                              child: ScaleAnimation(
-                                child: FadeInAnimation(
-                                  child: ChickendexLocked(index.toString())
-                                )
-                              )
-                            );
-                          }
+                        trailing: OutlinedButton.icon(
+                          onPressed: () {
+                            Vibrate.tap();
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
+                          },
+                          icon: Icon(Icons.browse_gallery),
+                          label: Text("View all"),
+                        ),
+                      ),
+                      AnimationLimiter(
+                        child: Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final double availableWidth = constraints.maxWidth;
+                              const double size = 96.0;
+                              final int crossAxisCount = (availableWidth / size).floor();
                           
-                          // We have seen it; show it!
-                          return AnimationConfiguration.staggeredGrid(
-                            position: inp,
-                            duration: const Duration(milliseconds: 375),
-                            columnCount: crossAxisCount,
-                            child: ScaleAnimation(
-                              child: FadeInAnimation(
-                                child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
-                              )
-                            )
-                          );
-                        }
-                      );
-                    }
-                  )
-                )
-              ]
+                              return GridView.builder(
+                                itemCount: snapshot.data!.imageCount,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8
+                                ),
+                                padding: EdgeInsets.all(8),
+                                itemBuilder: (context, inp) {
+                                  int index = inp + 1;
+                                  int imageCount = box.get(index.toString(), defaultValue: 0);
+                                          
+                                  // We haven't seen it yet; locked!
+                                  if (imageCount == 0) {
+                                    return AnimationConfiguration.staggeredGrid(
+                                      position: inp,
+                                      duration: const Duration(milliseconds: 375),
+                                      columnCount: crossAxisCount,
+                                      child: ScaleAnimation(
+                                        child: FadeInAnimation(
+                                          child: ChickendexLocked(index.toString())
+                                        )
+                                      )
+                                    );
+                                  }
+                                  
+                                  // We have seen it; show it!
+                                  return AnimationConfiguration.staggeredGrid(
+                                    position: inp,
+                                    duration: const Duration(milliseconds: 375),
+                                    columnCount: crossAxisCount,
+                                    child: ScaleAnimation(
+                                      child: FadeInAnimation(
+                                        child: ChickendexGridImage(imageCount > 1? "$index.1" : index.toString())
+                                      )
+                                    )
+                                  );
+                                }
+                              );
+                            }
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  ComingSoonView("seasonal"),
+                  ComingSoonView("all")
+                ],
+              )
             ),
           );
         }
