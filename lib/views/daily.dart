@@ -35,7 +35,7 @@ class DailyView extends StatelessWidget {
             ),
           ),
           StreakPopup(onTap: () {
-            currentPageNotifier.value = 1;
+            currentPageNotifier.value = 2;
           })
         ],
       )
