@@ -262,7 +262,11 @@ class SettingsPageState extends State<SettingsPage> {
                 AboutListTile(
                   icon: Icon(Icons.info_outline),
                   applicationVersion: version,
-                  applicationIcon: CircleAvatar(backgroundImage: AssetImage("assets/icon.png")),
+                  applicationIcon: CircleAvatar(
+                    backgroundImage: AssetImage(
+                      StreakManager.milestones[Hive.box("settings").get("app_icon", defaultValue: 0)].previewIcon
+                    )
+                  ),
                   aboutBoxChildren: [
                     Text("An app that sends you a new Chicken Thought every day!")
                   ]
