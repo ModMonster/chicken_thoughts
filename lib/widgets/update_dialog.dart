@@ -40,6 +40,31 @@ class _UpdateDialogState extends State<UpdateDialog> {
     });
   }
 
+  void showErrorMessage() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          title: Text("Error downloading"),
+          content: Column(
+            spacing: 8.0,
+            children: [
+              Text("There was an error downloading the update."),
+              Text("Please don't try again it probably won't work lol"),
+            ]
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("OK")
+            )
+          ],
+        );
+      });
+    });
+  }
+
   Future<void> _startDownload() async {
     setState(() {
       _isDownloading = true;
@@ -56,10 +81,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
     if (kDebugMode) print("Preferred architecture: ${deviceInfo.supportedAbis.first}");
 
     if (!responseJson.containsKey("assets")) {
-      // TODO: more advanced error handling?
       setState(() {
         _isDownloading = false;
       });
+      showErrorMessage();
       return;
     }
 
@@ -88,6 +113,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
       setState(() {
         _isDownloading = false;
       });
+      showErrorMessage();
       return;
     }
     

@@ -147,7 +147,6 @@ class _HistoryViewState extends State<HistoryView> {
                               activeDotColor: Theme.of(context).colorScheme.primary,
                             ),
                           )
-                          // TODO: dots for multi image
                         ],
                       ) : Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
