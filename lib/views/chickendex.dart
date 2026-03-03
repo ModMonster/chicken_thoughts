@@ -13,7 +13,7 @@ class ChickendexView extends StatefulWidget {
 
 class _ChickendexViewState extends State<ChickendexView> {
   final Future<List<Season>> _seasonListFuture = DatabaseManager.getSeasonList();
-  final List<GlobalKey> keys = [];
+  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,31 +47,6 @@ class _ChickendexViewState extends State<ChickendexView> {
                 pinned: true,
                 snap: true,
                 floating: true,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(40),
-                  child: Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ActionChip(
-                              label: Text(snapshot.data![index].displayName?? "Normal"),
-                              onPressed: () {
-                                final ctx = keys[index].currentContext;
-                                if (ctx == null) return;
-                                Scrollable.ensureVisible(ctx);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
                 actions: [
                   if (MediaQuery.of(context).size.width <= 600) IconButton(
                     onPressed: () {
@@ -83,21 +58,31 @@ class _ChickendexViewState extends State<ChickendexView> {
                 ],
               )];
             },
-            body: ListView(
-              children: List<Widget>.generate(
-                snapshot.data!.length, (index) {
-                  Season season = snapshot.data![index];
-                  GlobalKey key = GlobalKey();
-                  keys.add(key);
-
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ChickendexTabView(season, key: key)
-                    ],
-                  );
-                }
-              )
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ChoiceChip(
+                          label: Text(snapshot.data![index].displayName?? "Normal"),
+                          selected: _currentPage == index,
+                          onSelected: (value) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                ChickendexTabView(snapshot.data![_currentPage]),
+              ],
             )
           );
         }
