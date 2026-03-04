@@ -155,7 +155,7 @@ class SettingsPageState extends State<SettingsPage> {
                     Vibrate.tap();
                   },
                   title: Text("Update prompts"),
-                  subtitle: Text("Show an alert if a new app update is available"),
+                  subtitle: Text("Show a popup when an optional app update is available"),
                   secondary: Icon(Icons.update_outlined),
                 ),
                 if (kDebugMode) ListTile(
