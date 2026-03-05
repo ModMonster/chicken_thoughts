@@ -120,6 +120,7 @@ class NotificationManager {
       time.minute
     );
 
+    notificationsPlugin.cancel(id: 0); // hide the existing notification (if there is one)
     await notificationsPlugin.zonedSchedule(
       id: 0,
       scheduledDate: scheduledDate,
