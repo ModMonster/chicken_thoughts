@@ -95,7 +95,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                               columnCount: crossAxisCount,
                               child: ScaleAnimation(
                                 child: FadeInAnimation(
-                                  child: ChickendexLocked(index.toString())
+                                  child: ChickendexLocked(id: index.toString())
                                 )
                               )
                             );
