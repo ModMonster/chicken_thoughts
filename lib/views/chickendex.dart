@@ -6,8 +6,6 @@ import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.d
 import 'package:chicken_thoughts_notifications/views/chickendex/chickendex_holiday_view.dart';
 import 'package:chicken_thoughts_notifications/views/chickendex/chickendex_season_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
 class ChickendexView extends StatefulWidget {
@@ -24,8 +22,6 @@ class _ChickendexViewState extends State<ChickendexView> {
 
   @override
   Widget build(BuildContext context) {
-    final Box box = Hive.box("chickendex");
-
     return Scaffold(
       body: FutureBuilder(
         future: Future.wait([
