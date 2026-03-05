@@ -83,39 +83,6 @@ class DatabaseManager {
     return null;
   }
 
-  static Future<List<Season>> getSeasonList() async {
-    // Fetch list of seasons
-    RowList seasonRows = await database.listRows(
-      databaseId: databaseId,
-      tableId: "seasons"
-    );
-
-    // Build list
-    List<Season> seasons = [];
-    for (Row row in seasonRows.rows) {
-      // Handle the normal season
-      if (row.data["name"] == null) {
-        seasons.add(Season(
-          imageCount: row.data["imageCount"],
-        ));
-        continue;
-      }
-
-      DateTime startDate = DateTime.parse(row.data["startDate"]).subtract(Duration(seconds: 1))..copyWith(isUtc: false);
-      DateTime endDate = DateTime.parse(row.data["endDate"]).add(Duration(seconds: 1))..copyWith(isUtc: false);
-
-      seasons.add(Season(
-        imageCount: row.data["imageCount"],
-        imagePrefix: row.data["name"],
-        displayName: row.data["displayName"],
-        startDate: startDate,
-        endDate: endDate
-      ));
-    }
-
-    return seasons;
-  }
-
   static Future<Season> getSeasonOnDate(DateTime dateIn) async {
     final DateTime date = dateIn.copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
 
