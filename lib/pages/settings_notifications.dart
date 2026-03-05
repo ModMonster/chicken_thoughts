@@ -89,7 +89,7 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
                     );
                     if (chosenTime == null) return;
                     box.put("notifications.streak_reminder_time", chosenTime);
-                    await NotificationManager.scheduleDailyNotification();
+                    await NotificationManager.scheduleStreakReminderNotification();
                   }
                 ),
                 ListTile(
