@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
-class ChickendexTabView extends StatefulWidget {
-  final Season images;
-  const ChickendexTabView(this.images, {super.key});
+class ChickendexSeasonView extends StatefulWidget {
+  final Season season;
+  const ChickendexSeasonView(this.season, {super.key});
 
   @override
-  State<ChickendexTabView> createState() => _ChickendexTabViewState();
+  State<ChickendexSeasonView> createState() => _ChickendexSeasonViewState();
 }
 
-class _ChickendexTabViewState extends State<ChickendexTabView> {
+class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
   int getUnlockedCount(String? prefix) {
     int count = 0;
     final Box box = Hive.box("chickendex");
@@ -35,9 +35,9 @@ class _ChickendexTabViewState extends State<ChickendexTabView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          title: Text(widget.images.displayName ?? "Normal"),
+          title: Text(widget.season.displayName ?? "Normal"),
           subtitle: Text(
-            "${getUnlockedCount(widget.images.imagePrefix)}/${widget.images.imageCount} unlocked"
+            "${getUnlockedCount(widget.season.imagePrefix)}/${widget.season.imageCount} unlocked"
           ),
           trailing: OutlinedButton.icon(
             onPressed: () {
@@ -57,7 +57,7 @@ class _ChickendexTabViewState extends State<ChickendexTabView> {
                 final int crossAxisCount = (availableWidth / size).floor();
             
                 return GridView.builder(
-                  itemCount: widget.images.imageCount,
+                  itemCount: widget.season.imageCount,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     mainAxisSpacing: 8,
@@ -66,7 +66,7 @@ class _ChickendexTabViewState extends State<ChickendexTabView> {
                   padding: EdgeInsets.all(8),
                   itemBuilder: (context, inp) {
                     int index = inp + 1;
-                    String imageId = "${widget.images.imagePrefix?? ""}.$index";
+                    String imageId = "${widget.season.imagePrefix?? ""}.$index";
                     int imageCount = Hive.box("chickendex").get(imageId, defaultValue: 0);
             
                     // We haven't seen it yet; locked!

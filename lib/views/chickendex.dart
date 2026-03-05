@@ -1,7 +1,8 @@
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
-import 'package:chicken_thoughts_notifications/views/chickendex/chickendex_tab.dart';
+import 'package:chicken_thoughts_notifications/views/chickendex/chickendex_holiday_view.dart';
+import 'package:chicken_thoughts_notifications/views/chickendex/chickendex_season_view.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 
@@ -65,12 +66,14 @@ class _ChickendexViewState extends State<ChickendexView> {
                       child: ListView.builder(
                         padding: const EdgeInsets.only(left: 16.0),
                         scrollDirection: Axis.horizontal,
-                        itemCount: snapshot.data!.length,
+                        itemCount: snapshot.data!.length + 1,
                         itemBuilder: (context, index) {
+                          final String displayName = index == snapshot.data!.length? "Holidays" : snapshot.data![index].displayName?? "Normal";
+
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: ChoiceChip(
-                              label: Text(snapshot.data![index].displayName?? "Normal"),
+                              label: Text(displayName),
                               selected: _currentPage == index,
                               onSelected: (value) {
                                 Vibrate.tap();
@@ -87,7 +90,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                 )
               ];
             },
-            body: ChickendexTabView(snapshot.data![_currentPage]),
+            body: _currentPage < snapshot.data!.length ? ChickendexSeasonView(snapshot.data![_currentPage]) : ChickendexHolidayView(),
           );
         }
       )

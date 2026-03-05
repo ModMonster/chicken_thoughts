@@ -116,6 +116,33 @@ class DatabaseManager {
     return seasons;
   }
 
+  static Future<List<Holiday>> getHolidayList() async {
+    // Fetch list of holidays
+    RowList holidayRows = await database.listRows(
+      databaseId: databaseId,
+      tableId: "holidays"
+    );
+
+    // Build list
+    List<Holiday> holidays = [];
+    for (Row row in holidayRows.rows) {
+      DateTime? date;
+      if (row.data["date"] != null) {
+        date = DateTime.parse(row.data["date"]).subtract(Duration(seconds: 1))..copyWith(isUtc: false);
+      }
+
+      holidays.add(Holiday(
+        name: row.data["name"],
+        displayName: row.data["displayName"],
+        date: date,
+        weekday: row.data["weekday"] == null? null : Weekday.values.byName(row.data["weekday"].toString().toLowerCase()),
+        weekdayNumber: row.data["weekdayNumber"]
+      ));
+    }
+
+    return holidays;
+  }
+
   static Future<Season> getSeasonOnDate(DateTime dateIn) async {
     final DateTime date = dateIn.copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
 
