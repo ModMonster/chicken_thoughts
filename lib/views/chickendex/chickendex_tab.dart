@@ -77,7 +77,7 @@ class _ChickendexTabViewState extends State<ChickendexTabView> {
                         columnCount: crossAxisCount,
                         child: ScaleAnimation(
                           child: FadeInAnimation(
-                            child: ChickendexLocked(index.toString())
+                            child: ChickendexLocked(id: index.toString())
                           )
                         )
                       );
