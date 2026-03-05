@@ -2,8 +2,8 @@ import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:flutter/material.dart';
 
 class ChickendexLocked extends StatelessWidget {
-  final String id;
-  const ChickendexLocked(this.id, {super.key});
+  final String? id;
+  const ChickendexLocked({this.id, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class ChickendexLocked extends StatelessWidget {
             );
           });
         },
-        child: Stack(
+        child: id == null? Icon(Icons.lock) : Stack(
           children: [
             Center(
               child: Icon(Icons.lock),
@@ -53,7 +53,7 @@ class ChickendexLocked extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
                   child: Text(
-                    id,
+                    id!,
                     style: Theme.of(context).textTheme.labelSmall
                   ),
                 ),
