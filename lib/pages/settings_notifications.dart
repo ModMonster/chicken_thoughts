@@ -32,6 +32,24 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
                   title: Text("Daily notification time"),
                   subtitle: Text(box.get("notifications.time", defaultValue: TimeOfDay(hour: 7, minute: 0)).format(context)),
                   leading: Icon(Icons.access_time_outlined),
+                  trailing: IconButton(
+                    onPressed: () {
+                      showDialog(context: context, builder: (context) => AlertDialog(
+                        title: Text("Daily notifications"),
+                        content: Text("Get reminders to check for a new Chicken Thought every day."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("OK")
+                          )
+                        ],
+                      ));
+                    },
+                    icon: Icon(Icons.help_outline),
+                    tooltip: "What is this?",
+                  ),
                   onTap: () async {
                     TimeOfDay? chosenTime = await showTimePicker(
                       context: context,
@@ -46,6 +64,24 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
                   title: Text("Streak reminder time"),
                   subtitle: Text(box.get("notifications.streak_reminder_time", defaultValue: TimeOfDay(hour: 20, minute: 0)).format(context)),
                   leading: Icon(Icons.local_fire_department_outlined),
+                  trailing: IconButton(
+                    onPressed: () {
+                      showDialog(context: context, builder: (context) => AlertDialog(
+                        title: Text("Streak reminders"),
+                        content: Text("You'll get a notification if you haven't checked your daily Chicken Thought before this time."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("OK")
+                          )
+                        ],
+                      ));
+                    },
+                    icon: Icon(Icons.help_outline),
+                    tooltip: "What is this?",
+                  ),
                   onTap: () async {
                     TimeOfDay? chosenTime = await showTimePicker(
                       context: context,
@@ -58,7 +94,7 @@ class _SettingsNotificationPageState extends State<SettingsNotificationPage> {
                 ),
                 ListTile(
                   title: Text("Android notification settings"),
-                  subtitle: Text("Toggle notifications or adjust how they are delivered"),
+                  subtitle: Text("Turn notifications on or off, adjust how notifications are delivered"),
                   leading: Icon(Icons.open_in_new_outlined),
                   onTap: () {
                     AppSettings.openAppSettings(type: AppSettingsType.notification);
