@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:chicken_thoughts_notifications/data/holiday.dart';
+import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
@@ -9,7 +11,9 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 class ChickendexGridImage extends StatefulWidget {
   final String imagePath;
   final String? displayName;
-  const ChickendexGridImage(this.imagePath, {this.displayName, super.key});
+  final List<Season> seasons;
+  final List<Holiday> holidays;
+  const ChickendexGridImage(this.imagePath, {this.displayName, required this.seasons, required this.holidays, super.key});
 
   @override
   State<ChickendexGridImage> createState() => _ChickendexGridImageState();
@@ -59,7 +63,14 @@ class _ChickendexGridImageState extends State<ChickendexGridImage> {
                   child: InkWell(
                     onTap: () {
                       Vibrate.tap();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: widget.imagePath, thumbImage: snapshot.data!)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                        ChickendexImageExpandedPage(
+                          startingImagePath: widget.imagePath,
+                          thumbImage: snapshot.data!,
+                          seasons: widget.seasons,
+                          holidays: widget.holidays,
+                        )
+                      ));
                     },
                   ),
                 )

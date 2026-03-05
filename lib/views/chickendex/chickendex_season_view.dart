@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
@@ -7,7 +8,9 @@ import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 class ChickendexSeasonView extends StatefulWidget {
   final Season season;
-  const ChickendexSeasonView(this.season, {super.key});
+  final List<Season> seasons;
+  final List<Holiday> holidays;
+  const ChickendexSeasonView(this.season, {required this.seasons, required this.holidays, super.key});
 
   @override
   State<ChickendexSeasonView> createState() => _ChickendexSeasonViewState();
@@ -80,7 +83,11 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                       columnCount: crossAxisCount,
                       child: ScaleAnimation(
                         child: FadeInAnimation(
-                          child: ChickendexGridImage(imageCount > 1? "$imageId.1" : imageId)
+                          child: ChickendexGridImage(
+                            imageCount > 1? "$imageId.1" : imageId,
+                            seasons: widget.seasons,
+                            holidays: widget.holidays,
+                          )
                         )
                       )
                     );

@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
@@ -16,13 +17,17 @@ class ChickendexView extends StatefulWidget {
 
 class _ChickendexViewState extends State<ChickendexView> {
   final Future<List<Season>> _seasonListFuture = DatabaseManager.getSeasonList();
+  final Future<List<Holiday>> _holidayListFuture = DatabaseManager.getHolidayList();
   int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: _seasonListFuture,
+        future: Future.wait([
+          _seasonListFuture,
+          _holidayListFuture
+        ]),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
             return Center(
@@ -31,7 +36,7 @@ class _ChickendexViewState extends State<ChickendexView> {
           }
 
           // Find default season, move to top
-          List<Season> seasons = snapshot.data!;
+          List<Season> seasons = snapshot.data![0] as List<Season>;
           int defaultIndex = 0;
           for (int i = 0; i < seasons.length; i++) {
             if (seasons[i].imagePrefix == null) {
@@ -67,7 +72,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                       child: ListView.builder(
                         padding: const EdgeInsets.only(left: 16.0),
                         scrollDirection: Axis.horizontal,
-                        itemCount: snapshot.data!.length + 2,
+                        itemCount: seasons.length + 2,
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return Row(
@@ -76,7 +81,12 @@ class _ChickendexViewState extends State<ChickendexView> {
                                   label: Text("View all"),
                                   onPressed: () {
                                     Vibrate.tap();
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                      ChickendexImageExpandedPage(
+                                        seasons: seasons,
+                                        holidays: snapshot.data![1] as List<Holiday>,
+                                      )
+                                    ));
                                   },
                                   avatar: Icon(Icons.view_carousel_outlined),
                                 ),
@@ -88,7 +98,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                             );
                           }
 
-                          final String displayName = index == snapshot.data!.length + 1? "Holidays" : snapshot.data![index - 1].displayName?? "Normal";
+                          final String displayName = index == seasons.length + 1? "Holidays" : seasons[index - 1].displayName?? "Normal";
 
                           return Padding(
                             padding: EdgeInsets.only(right: 4.0),
@@ -110,7 +120,15 @@ class _ChickendexViewState extends State<ChickendexView> {
                 )
               ];
             },
-            body: _currentPage < snapshot.data!.length ? ChickendexSeasonView(snapshot.data![_currentPage]) : ChickendexHolidayView(),
+            body: _currentPage < seasons.length ? ChickendexSeasonView(
+              key: ValueKey(_currentPage),
+              seasons[_currentPage],
+              seasons: seasons,
+              holidays: snapshot.data![1] as List<Holiday>,
+            ) : ChickendexHolidayView(
+              seasons: seasons,
+              holidays: snapshot.data![1] as List<Holiday>,
+            ),
           );
         }
       )
