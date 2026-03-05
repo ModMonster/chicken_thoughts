@@ -40,10 +40,10 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
             "${getUnlockedCount(widget.season.imagePrefix)}/${widget.season.imageCount} unlocked"
           ),
           trailing: OutlinedButton.icon(
-            onPressed: () {
+            onPressed: getUnlockedCount(widget.season.imagePrefix) > 0? () {
               Vibrate.tap();
               Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-            },
+            } : null,
             icon: Icon(Icons.browse_gallery),
             label: Text("View all"),
           ),

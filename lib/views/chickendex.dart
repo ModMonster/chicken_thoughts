@@ -60,9 +60,9 @@ class _ChickendexViewState extends State<ChickendexView> {
                     )
                   ],
                   bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(56),
+                    preferredSize: Size.fromHeight(52),
                     child: SizedBox(
-                      height: 56,
+                      height: 52,
                       child: ListView.builder(
                         padding: const EdgeInsets.only(left: 16.0),
                         scrollDirection: Axis.horizontal,
@@ -71,7 +71,7 @@ class _ChickendexViewState extends State<ChickendexView> {
                           final String displayName = index == snapshot.data!.length? "Holidays" : snapshot.data![index].displayName?? "Normal";
 
                           return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                            padding: const EdgeInsets.only(right: 4.0),
                             child: ChoiceChip(
                               label: Text(displayName),
                               selected: _currentPage == index,

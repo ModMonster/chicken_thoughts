@@ -50,10 +50,10 @@ class _ChickendexHolidayViewState extends State<ChickendexHolidayView> {
                 "${getUnlockedCount()}/${snapshot.data!.length} unlocked"
               ),
               trailing: OutlinedButton.icon(
-                onPressed: () {
+                onPressed: getUnlockedCount() > 0? () {
                   Vibrate.tap();
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-                },
+                } : null,
                 icon: Icon(Icons.browse_gallery),
                 label: Text("View all"),
               ),
