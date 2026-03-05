@@ -8,7 +8,8 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChickendexGridImage extends StatefulWidget {
   final String imagePath;
-  const ChickendexGridImage(this.imagePath, {super.key});
+  final String? displayName;
+  const ChickendexGridImage(this.imagePath, {this.displayName, super.key});
 
   @override
   State<ChickendexGridImage> createState() => _ChickendexGridImageState();
@@ -66,16 +67,21 @@ class _ChickendexGridImageState extends State<ChickendexGridImage> {
               Positioned(
                 left: 4,
                 bottom: 4,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(9999),
-                    color: Theme.of(context).colorScheme.surfaceContainer
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                    child: Text(
-                      widget.imagePath,
-                      style: Theme.of(context).textTheme.labelSmall
+                right: 4,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Theme.of(context).colorScheme.surfaceContainer
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                      child: Text(
+                        widget.displayName?? widget.imagePath,
+                        style: Theme.of(context).textTheme.labelSmall,
+                        maxLines: 2,
+                      ),
                     ),
                   ),
                 ),

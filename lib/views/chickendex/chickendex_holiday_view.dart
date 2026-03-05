@@ -1,7 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
-import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
-import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
@@ -49,14 +47,6 @@ class _ChickendexHolidayViewState extends State<ChickendexHolidayView> {
               subtitle: Text(
                 "${getUnlockedCount()}/${snapshot.data!.length} unlocked"
               ),
-              trailing: OutlinedButton.icon(
-                onPressed: getUnlockedCount() > 0? () {
-                  Vibrate.tap();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-                } : null,
-                icon: Icon(Icons.browse_gallery),
-                label: Text("View all"),
-              ),
             ),
             AnimationLimiter(
               child: Expanded(
@@ -76,7 +66,7 @@ class _ChickendexHolidayViewState extends State<ChickendexHolidayView> {
                       padding: EdgeInsets.all(8),
                       itemBuilder: (context, inp) {
                         Holiday holiday = snapshot.data![inp];
-                        bool locked = Hive.box("chickendex").get(holiday.name, defaultValue: 0) == 0;
+                        bool locked = Hive.box("chickendex").get("holiday.${holiday.name}", defaultValue: 0) == 0;
                 
                         // We haven't seen it yet; locked!
                         if (locked) {
@@ -99,7 +89,7 @@ class _ChickendexHolidayViewState extends State<ChickendexHolidayView> {
                           columnCount: crossAxisCount,
                           child: ScaleAnimation(
                             child: FadeInAnimation(
-                              child: ChickendexGridImage(holiday.name)
+                              child: ChickendexGridImage("holiday.${holiday.name}", displayName: holiday.displayName)
                             )
                           )
                         );

@@ -40,7 +40,45 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   @override
   void initState() {
     // Quick and dirty fix to sort properly (i.e. prevent 66 appearing after 650)
-    List<dynamic> chickendexItems = Hive.box("chickendex").keys.toList()..sort((in1, in2) => int.parse(in1).compareTo(int.parse(in2)));
+    List<dynamic> chickendexItems = Hive.box("chickendex").keys.toList()..sort(
+      (a, b) {
+        int? aNum = int.tryParse(a);
+        int? bNum = int.tryParse(b);
+
+        // Both are normal season numbers
+        if (aNum != null && bNum != null) {
+          return aNum.compareTo(bNum);
+        }
+
+        // Only one is a normal season number
+        if (aNum != null) return -1;
+        if (bNum != null) return 1;
+
+        // Split prefix/suffix
+        List<String> aSplit = a.split(".");
+        List<String> bSplit = b.split(".");
+
+        String aPrefix = aSplit.first;
+        String bPrefix = bSplit.first;
+
+        // Compare seasons (or holiday prefix)
+        int prefixCompare = aPrefix.compareTo(bPrefix);
+        if (prefixCompare != 0) return prefixCompare;
+
+        // Same season -> compare ending bit
+        String aSuffix = aSplit.last;
+        String bSuffix = bSplit.last;
+
+        int? aSuffixNum = int.tryParse(aSuffix);
+        int? bSuffixNum = int.tryParse(bSuffix);
+
+        if (aSuffixNum != null && bSuffixNum != null) {
+          return aSuffixNum.compareTo(bSuffixNum);
+        }
+
+        return aSuffix.compareTo(bSuffix);
+      }
+    );
 
     // Build the list of unlocked chickens
     for (String id in chickendexItems) {
@@ -114,7 +152,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Chicken Thought #${imagePaths[currentPage]}"),
+          title: Text(imagePaths[currentPage]),
         ),
         body: SafeArea(
           child: Column(

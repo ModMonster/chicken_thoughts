@@ -50,7 +50,7 @@ class ChickendexLocked extends StatelessWidget {
                 alignment: Alignment.bottomLeft,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(8),
                     color: Theme.of(context).colorScheme.surfaceContainer
                   ),
                   child: Padding(

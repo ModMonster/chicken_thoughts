@@ -1,6 +1,4 @@
 import 'package:chicken_thoughts_notifications/data/season.dart';
-import 'package:chicken_thoughts_notifications/data/vibrate.dart';
-import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_grid_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/material.dart';
@@ -39,14 +37,6 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
           subtitle: Text(
             "${getUnlockedCount(widget.season.imagePrefix)}/${widget.season.imageCount} unlocked"
           ),
-          trailing: OutlinedButton.icon(
-            onPressed: getUnlockedCount(widget.season.imagePrefix) > 0? () {
-              Vibrate.tap();
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage()));
-            } : null,
-            icon: Icon(Icons.browse_gallery),
-            label: Text("View all"),
-          ),
         ),
         AnimationLimiter(
           child: Expanded(
@@ -66,7 +56,7 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                   padding: EdgeInsets.all(8),
                   itemBuilder: (context, inp) {
                     int index = inp + 1;
-                    String imageId = "${widget.season.imagePrefix?? ""}.$index";
+                    String imageId = "${widget.season.imagePrefix != null ? ("${widget.season.imagePrefix}.") : ""}$index";
                     int imageCount = Hive.box("chickendex").get(imageId, defaultValue: 0);
             
                     // We haven't seen it yet; locked!
