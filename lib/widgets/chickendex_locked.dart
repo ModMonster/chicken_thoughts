@@ -45,16 +45,22 @@ class ChickendexLocked extends StatelessWidget {
             Positioned(
               left: 4,
               bottom: 4,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(9999),
-                  color: Theme.of(context).colorScheme.surfaceContainer
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                  child: Text(
-                    id!,
-                    style: Theme.of(context).textTheme.labelSmall
+              right: 4,
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surfaceContainer
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                    child: Text(
+                      id!,
+                      style: Theme.of(context).textTheme.labelSmall,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
                   ),
                 ),
               ),

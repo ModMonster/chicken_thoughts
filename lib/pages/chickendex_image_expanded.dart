@@ -1,3 +1,5 @@
+import 'package:chicken_thoughts_notifications/data/holiday.dart';
+import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
@@ -9,7 +11,9 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 class ChickendexImageExpandedPage extends StatefulWidget {
   final String? startingImagePath;
   final Uint8List? thumbImage;
-  const ChickendexImageExpandedPage({this.startingImagePath, this.thumbImage, super.key});
+  final List<Season> seasons;
+  final List<Holiday> holidays;
+  const ChickendexImageExpandedPage({this.startingImagePath, this.thumbImage, required this.seasons, required this.holidays, super.key});
 
   @override
   State<ChickendexImageExpandedPage> createState() => _ChickendexImageExpandedPageState();
@@ -37,10 +41,76 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
     imagePaths.add(imagePath);
   }
 
+  String getDisplayName(String imagePath) {
+    List<String> split = imagePath.split(".");
+    if (split.length == 1 || int.tryParse(split.first) != null) return "Chicken Thought #$imagePath";
+
+    if (split.first == "holiday") {
+      for (Holiday holiday in widget.holidays) {
+        if (holiday.name == split.last) {
+          return holiday.displayName;
+        }
+      }
+    }
+
+    for (Season season in widget.seasons) {
+      if (split[1] == season.imagePrefix) {
+        return "Chicken Thoughts: ${season.displayName} #${split.last}";
+      }
+    }
+
+    return "<ERROR>";
+  }
+
   @override
   void initState() {
     // Quick and dirty fix to sort properly (i.e. prevent 66 appearing after 650)
-    List<dynamic> chickendexItems = Hive.box("chickendex").keys.toList()..sort((in1, in2) => int.parse(in1).compareTo(int.parse(in2)));
+    List<dynamic> chickendexItems = Hive.box("chickendex").keys.toList()..sort(
+      (a, b) {
+        int? aNum = int.tryParse(a);
+        int? bNum = int.tryParse(b);
+
+        // Both are normal season numbers
+        if (aNum != null && bNum != null) {
+          return aNum.compareTo(bNum);
+        }
+
+        // Only one is a normal season number
+        if (aNum != null) return -1;
+        if (bNum != null) return 1;
+
+        // Split prefix/suffix
+        List<String> aSplit = a.split(".");
+        List<String> bSplit = b.split(".");
+
+        if (aSplit.first == "season") aSplit.removeAt(0);
+        if (bSplit.first == "season") bSplit.removeAt(0);
+
+        String aPrefix = aSplit.first;
+        String bPrefix = bSplit.first;
+
+        // Put holidays at the end
+        if (aPrefix == "holiday" && bPrefix != "holiday") return 1;
+        if (bPrefix == "holiday" && aPrefix != "holiday") return -1;
+
+        // Compare seasons (or holiday prefix)
+        int prefixCompare = aPrefix.compareTo(bPrefix);
+        if (prefixCompare != 0) return prefixCompare;
+
+        // Same season -> compare ending bit
+        String aSuffix = aSplit.last;
+        String bSuffix = bSplit.last;
+
+        int? aSuffixNum = int.tryParse(aSuffix);
+        int? bSuffixNum = int.tryParse(bSuffix);
+
+        if (aSuffixNum != null && bSuffixNum != null) {
+          return aSuffixNum.compareTo(bSuffixNum);
+        }
+
+        return aSuffix.compareTo(bSuffix);
+      }
+    );
 
     // Build the list of unlocked chickens
     for (String id in chickendexItems) {
@@ -114,7 +184,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Chicken Thought #${imagePaths[currentPage]}"),
+          title: Text(getDisplayName(imagePaths[currentPage])),
         ),
         body: SafeArea(
           child: Column(

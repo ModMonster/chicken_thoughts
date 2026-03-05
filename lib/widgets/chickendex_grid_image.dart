@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:chicken_thoughts_notifications/data/holiday.dart';
+import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/chickendex_image_expanded.dart';
@@ -8,7 +10,10 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChickendexGridImage extends StatefulWidget {
   final String imagePath;
-  const ChickendexGridImage(this.imagePath, {super.key});
+  final String? displayName;
+  final List<Season> seasons;
+  final List<Holiday> holidays;
+  const ChickendexGridImage(this.imagePath, {this.displayName, required this.seasons, required this.holidays, super.key});
 
   @override
   State<ChickendexGridImage> createState() => _ChickendexGridImageState();
@@ -58,7 +63,14 @@ class _ChickendexGridImageState extends State<ChickendexGridImage> {
                   child: InkWell(
                     onTap: () {
                       Vibrate.tap();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChickendexImageExpandedPage(startingImagePath: widget.imagePath, thumbImage: snapshot.data!)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                        ChickendexImageExpandedPage(
+                          startingImagePath: widget.imagePath,
+                          thumbImage: snapshot.data!,
+                          seasons: widget.seasons,
+                          holidays: widget.holidays,
+                        )
+                      ));
                     },
                   ),
                 )
@@ -66,16 +78,21 @@ class _ChickendexGridImageState extends State<ChickendexGridImage> {
               Positioned(
                 left: 4,
                 bottom: 4,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(9999),
-                    color: Theme.of(context).colorScheme.surfaceContainer
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                    child: Text(
-                      widget.imagePath,
-                      style: Theme.of(context).textTheme.labelSmall
+                right: 4,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Theme.of(context).colorScheme.surfaceContainer
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                      child: Text(
+                        widget.displayName?? widget.imagePath,
+                        style: Theme.of(context).textTheme.labelSmall,
+                        maxLines: 2,
+                      ),
                     ),
                   ),
                 ),
