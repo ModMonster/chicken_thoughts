@@ -2,6 +2,7 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DailyView extends StatelessWidget {
@@ -24,9 +25,9 @@ class DailyView extends StatelessWidget {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: kIsWeb? null : FloatingActionButton(
         onPressed: () {
-          ShareManager.share();
+          ShareManager.share(chickenThought.id, displayName: chickenThought.displayName);
         },
         tooltip: "Share",
         child: Icon(Icons.share),

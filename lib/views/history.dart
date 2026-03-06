@@ -1,6 +1,7 @@
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
@@ -119,9 +120,9 @@ class _HistoryViewState extends State<HistoryView> {
                       ListTile(
                         title: Text(formatDate(day, index)),
                         subtitle: Text(snapshot.data!.displayName),
-                        trailing: isUnlocked? IconButton.filledTonal(
+                        trailing: isUnlocked && !kIsWeb? IconButton.filledTonal(
                           onPressed: () {
-                            ShareManager.share();
+                            ShareManager.share(snapshot.data!.id, displayName: snapshot.data!.displayName);
                           },
                           tooltip: "Share",
                           icon: Icon(Icons.share)

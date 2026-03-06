@@ -4,6 +4,7 @@ import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive.dart';
@@ -176,6 +177,8 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       });
     }
 
+    String displayName = getDisplayName(imagePaths[currentPage]);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -185,11 +188,11 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(getDisplayName(imagePaths[currentPage])),
-          actions: [
+          title: Text(displayName),
+          actions: kIsWeb? null : [
             IconButton(
               onPressed: () {
-                ShareManager.share();
+                ShareManager.share(imagePaths[currentPage], displayName: displayName);
               },
               tooltip: "Share",
               icon: Icon(Icons.share)
