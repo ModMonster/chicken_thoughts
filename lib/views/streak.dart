@@ -10,7 +10,9 @@ class StreakView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int streak = Hive.box("settings").get("streak", defaultValue: 0);
+    final Box box = Hive.box("settings");
+    final int streak = box.get("streak", defaultValue: 0);
+    final int longestStreak = box.get("streak.longest", defaultValue: 0);
     final StreakMilestone? latestMilestone = StreakManager.getLatestMilestone();
     final StreakMilestone nextMilestone = StreakManager.getNextMilestone();
 
@@ -87,7 +89,7 @@ class StreakView extends StatelessWidget {
               child: ListTile(
                 leading: Icon(Icons.info_outline),
                 title: Text("Unlock badges by building your streak!${!kIsWeb? " Tap on an unlocked badge to use it as the app icon on the home screen." : ""}"),
-                subtitle: Text("Longest streak: ${Hive.box("settings").get("streak.longest", defaultValue: 0)} days"),
+                subtitle: Text("Longest streak: $longestStreak day${longestStreak == 1? "" : "s"}"),
               ),
             ),
             BadgeGrid()
