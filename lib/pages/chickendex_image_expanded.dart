@@ -1,5 +1,6 @@
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
+import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_photo_view_carousel_item.dart';
@@ -185,6 +186,15 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
       child: Scaffold(
         appBar: AppBar(
           title: Text(getDisplayName(imagePaths[currentPage])),
+          actions: [
+            IconButton(
+              onPressed: () {
+                ShareManager.share();
+              },
+              tooltip: "Share",
+              icon: Icon(Icons.share)
+            )
+          ],
         ),
         body: SafeArea(
           child: Column(
