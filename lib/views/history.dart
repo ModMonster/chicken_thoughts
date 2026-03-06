@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/chickendex_locked.dart';
 import 'package:flutter/foundation.dart';
@@ -122,6 +123,7 @@ class _HistoryViewState extends State<HistoryView> {
                         subtitle: Text(snapshot.data!.displayName),
                         trailing: isUnlocked && !kIsWeb? IconButton.filledTonal(
                           onPressed: () {
+                            Vibrate.tap();
                             ShareManager.share(snapshot.data!.id, displayName: snapshot.data!.displayName);
                           },
                           tooltip: "Share",

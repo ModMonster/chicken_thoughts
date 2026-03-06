@@ -192,6 +192,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
           actions: kIsWeb? null : [
             IconButton(
               onPressed: () {
+                Vibrate.tap();
                 ShareManager.share(imagePaths[currentPage], displayName: displayName);
               },
               tooltip: "Share",

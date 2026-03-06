@@ -1,5 +1,6 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
+import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
 import 'package:flutter/foundation.dart';
@@ -27,6 +28,7 @@ class DailyView extends StatelessWidget {
       ),
       floatingActionButton: kIsWeb? null : FloatingActionButton(
         onPressed: () {
+          Vibrate.tap();
           ShareManager.share(chickenThought.id, displayName: chickenThought.displayName);
         },
         tooltip: "Share",
