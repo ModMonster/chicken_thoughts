@@ -1,0 +1,2 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_daily,@drawable/ic_history,@drawable/ic_streak,@drawable/ic_chickendex,@drawable/ic_notification"/>

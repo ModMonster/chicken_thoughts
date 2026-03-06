@@ -5,7 +5,9 @@ class QuickActionsManager {
   static void initialize(ValueNotifier<int> currentPageNotifier) {
     final QuickActions quickActions = const QuickActions();
     quickActions.initialize((shortcutType) {
-      if (shortcutType == "history") {
+      if (shortcutType == "daily") {
+        currentPageNotifier.value = 0;
+      } else if (shortcutType == "history") {
         currentPageNotifier.value = 1;
       } else if (shortcutType == "streak") {
         currentPageNotifier.value = 2;
@@ -15,16 +17,24 @@ class QuickActionsManager {
     });
     quickActions.setShortcutItems([
       ShortcutItem(
+        type: "daily",
+        localizedTitle: "Daily",
+        icon: "ic_daily"
+      ),
+      ShortcutItem(
         type: "history",
-        localizedTitle: "History"
+        localizedTitle: "History",
+        icon: "ic_history"
       ),
       ShortcutItem(
         type: "streak",
-        localizedTitle: "Streak"
+        localizedTitle: "Streak",
+        icon: "ic_streak"
       ),
       ShortcutItem(
         type: "chickendex",
-        localizedTitle: "Chickendex"
+        localizedTitle: "Chickendex",
+        icon: "ic_chickendex"
       )
     ]);
   }
