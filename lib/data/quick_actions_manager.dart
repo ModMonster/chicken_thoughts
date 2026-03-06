@@ -19,22 +19,22 @@ class QuickActionsManager {
       ShortcutItem(
         type: "daily",
         localizedTitle: "Daily",
-        icon: "ic_daily"
+        icon: "ic_shortcut_daily"
       ),
       ShortcutItem(
         type: "history",
         localizedTitle: "History",
-        icon: "ic_history"
+        icon: "ic_shortcut_history"
       ),
       ShortcutItem(
         type: "streak",
         localizedTitle: "Streak",
-        icon: "ic_streak"
+        icon: "ic_shortcut_streak"
       ),
       ShortcutItem(
         type: "chickendex",
         localizedTitle: "Chickendex",
-        icon: "ic_chickendex"
+        icon: "ic_shortcut_chickendex"
       )
     ]);
   }
