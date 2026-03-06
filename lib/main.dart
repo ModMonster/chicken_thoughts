@@ -1,4 +1,5 @@
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
+import 'package:chicken_thoughts_notifications/data/quick_actions_manager.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
@@ -21,6 +22,8 @@ final String githubRepo = "modmonster/chicken_thoughts";
 
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
+final ValueNotifier<int> currentPageNotifier = ValueNotifier(0);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseManager.init();
@@ -30,6 +33,7 @@ void main() async {
   await Hive.openBox("chickendex");
   if (!kIsWeb) await NotificationManager.initNotifications();
   if (!kIsWeb) await deleteUpdateFile();
+  if (!kIsWeb) QuickActionsManager.initialize(currentPageNotifier);
 
   runApp(ChickenThoughtsApp());
 }
@@ -86,7 +90,7 @@ class ChickenThoughtsApp extends StatelessWidget {
                 switchTheme: switchTheme
               ),
               routes: {
-                "/": (context) => HomePage(hasDynamicColor: hasDynamicColor),
+                "/": (context) => HomePage(hasDynamicColor: hasDynamicColor, currentPageNotifier: currentPageNotifier),
                 "/offline": (context) => OfflinePage(),
                 "/settings": (context) => SettingsPage(hasDynamicColor: hasDynamicColor),
                 "/settings/color": (context) => SettingsColorPage(

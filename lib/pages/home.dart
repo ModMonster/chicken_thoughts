@@ -18,7 +18,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final bool hasDynamicColor;
-  const HomePage({required this.hasDynamicColor, super.key});
+  final ValueNotifier<int> currentPageNotifier;
+  const HomePage({required this.hasDynamicColor, required this.currentPageNotifier, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,7 +28,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<ChickenThought> _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
   DateTime _lastCheckedDay = DateTime.now();
-  final ValueNotifier<int> _currentPageNotifier = ValueNotifier(0);
 
   Future<void> showUpdateDialog() async {
     // Check for updates and show update dialog if necessary
@@ -152,16 +152,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
     
         List<Widget> screens = [
-          DailyView(chickenThought: snapshot.data!, currentPageNotifier: _currentPageNotifier),
+          DailyView(chickenThought: snapshot.data!, currentPageNotifier: widget.currentPageNotifier),
           HistoryView(),
           StreakView(),
           ChickendexView(),
         ];
     
         if (mobile) {
-          return MobileScaffold(screens, currentPageNotifier: _currentPageNotifier);
+          return MobileScaffold(screens, currentPageNotifier: widget.currentPageNotifier);
         } else {
-          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)), currentPageNotifier: _currentPageNotifier);
+          return WebScaffold(screens..add(SettingsPage(hasDynamicColor: widget.hasDynamicColor)), currentPageNotifier: widget.currentPageNotifier);
         }
       }
     );
