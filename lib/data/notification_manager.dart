@@ -19,7 +19,7 @@ class NotificationManager {
 
   static final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  static Future<void> initNotifications() async {
+  static Future<void> initNotifications(ValueNotifier<int> currentPageNotifier) async {
     final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();  
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_notification');
     final InitializationSettings initializationSettings = InitializationSettings(
@@ -27,7 +27,10 @@ class NotificationManager {
     );
     
     await notificationsPlugin.initialize(
-      settings: initializationSettings
+      settings: initializationSettings,
+      onDidReceiveNotificationResponse: (response) {
+        currentPageNotifier.value = 0; // go to "daily" page on notification tap
+      }
     );
 
     // request android notifications permission

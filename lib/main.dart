@@ -31,7 +31,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox("settings");
   await Hive.openBox("chickendex");
-  if (!kIsWeb) await NotificationManager.initNotifications();
+  if (!kIsWeb) await NotificationManager.initNotifications(currentPageNotifier);
   if (!kIsWeb) await deleteUpdateFile();
   if (!kIsWeb) QuickActionsManager.initialize(currentPageNotifier);
 
