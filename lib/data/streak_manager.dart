@@ -20,7 +20,7 @@ class StreakManager {
     StreakMilestone(500, name: "Cordelia", previewIcon: "assets/icons/cordelia.png", androidAlias: "CordeliaAlias"),
     StreakMilestone(600, name: "Sammie", previewIcon: "assets/icons/sammie.png", androidAlias: "SammieAlias"),
     StreakMilestone(730, name: "Chicken Plushie", previewIcon: "assets/icons/chicken_plushie.png", androidAlias: "ChickenPlushieAlias"),
-    StreakMilestone(1000, name: "Real-Life *Actual* Chicken", previewIcon: "assets/icons/real_actual_chicken.png", androidAlias: "RealActualChickenAlias"),
+    StreakMilestone(1000, name: "Actual Chicken", previewIcon: "assets/icons/real_actual_chicken.png", androidAlias: "RealActualChickenAlias"),
   ];
 
   static Future<void> handleStreak() async {
@@ -52,9 +52,9 @@ class StreakManager {
   }
 
   static StreakMilestone getNextMilestone() {
-    int longestStreak = Hive.box("settings").get("streak.longest", defaultValue: 0);
+    int streak = Hive.box("settings").get("streak", defaultValue: 0);
     for (int i = 0; i < milestones.length; i++) {
-      if (longestStreak < milestones[i].day) return milestones[i];
+      if (streak < milestones[i].day) return milestones[i];
     }
     return milestones.first;
   }

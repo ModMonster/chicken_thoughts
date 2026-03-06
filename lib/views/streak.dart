@@ -54,7 +54,7 @@ class StreakView extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
+            if (longestStreak < StreakManager.milestones.last.day) Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

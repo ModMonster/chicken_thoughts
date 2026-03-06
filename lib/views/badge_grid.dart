@@ -16,7 +16,7 @@ class BadgeGrid extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 150,
-          childAspectRatio: 0.6,
+          childAspectRatio: 0.55,
           mainAxisSpacing: 16.0,
           crossAxisSpacing: 32.0
         ),
@@ -152,6 +152,7 @@ class BadgeGrid extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: showHint? null : Theme.of(context).colorScheme.onSurface.withAlpha(192)
                 ),
+                maxLines: 2,
               ),
               Text(
                 "${milestone.day} days",
