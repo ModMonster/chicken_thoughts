@@ -83,10 +83,11 @@ class StreakView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: ListTile(
                 leading: Icon(Icons.info_outline),
                 title: Text("Unlock badges by building your streak!${!kIsWeb? " Tap on an unlocked badge to use it as the app icon on the home screen." : ""}"),
+                subtitle: Text("Longest streak: ${Hive.box("settings").get("streak.longest", defaultValue: 0)} days"),
               ),
             ),
             BadgeGrid()
