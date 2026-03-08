@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/widgets/shimmer_delayed.dart';
+import 'package:chicken_thoughts_notifications/widgets/tilted_avatar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
@@ -188,11 +189,13 @@ class BadgeGrid extends StatelessWidget {
                                                     aspectRatio: 1,
                                                     child: Hero(
                                                       tag: "badge-$index",
-                                                      child: ClipOval(
-                                                        child: ShimmerDelayed(
-                                                          interval: Duration(seconds: 2),
-                                                          child: CircleAvatar(
-                                                            backgroundImage: AssetImage(milestone.previewIcon),
+                                                      child: Tilted(
+                                                        child: ClipOval(
+                                                          child: ShimmerDelayed(
+                                                            interval: Duration(seconds: 2),
+                                                            child: CircleAvatar(
+                                                              backgroundImage: AssetImage(milestone.previewIcon),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
