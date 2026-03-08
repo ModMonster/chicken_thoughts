@@ -155,7 +155,6 @@ class BadgeGrid extends StatelessWidget {
                                   barrierDismissible: true,
                                   pageBuilder: (context, animation, animationOut) {
                                     final CurvedAnimation curvedAnimation = CurvedAnimation(parent: animation, curve: Curves.easeOut, reverseCurve: Curves.easeIn);
-
                                     return FadeTransition(
                                       opacity: curvedAnimation,
                                       child: ScaleTransition(
@@ -179,22 +178,24 @@ class BadgeGrid extends StatelessWidget {
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 8.0),
-                                                child: ConstrainedBox(
-                                                  constraints: BoxConstraints(
-                                                    maxWidth: 300,
-                                                  ),
-                                                  child: AspectRatio(
-                                                    aspectRatio: 1,
-                                                    child: Hero(
-                                                      tag: "badge-$index",
-                                                      child: Tilted(
-                                                        child: ClipOval(
-                                                          child: ShimmerDelayed(
-                                                            interval: Duration(seconds: 2),
-                                                            child: CircleAvatar(
-                                                              backgroundImage: AssetImage(milestone.previewIcon),
+                                              Flexible(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 8.0),
+                                                  child: ConstrainedBox(
+                                                    constraints: BoxConstraints(
+                                                      maxWidth: 300
+                                                    ),
+                                                    child: AspectRatio(
+                                                      aspectRatio: 1,
+                                                      child: Hero(
+                                                        tag: "badge-$index",
+                                                        child: Tilted(
+                                                          child: ClipOval(
+                                                            child: ShimmerDelayed(
+                                                              interval: Duration(seconds: 2),
+                                                              child: CircleAvatar(
+                                                                backgroundImage: AssetImage(milestone.previewIcon),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -268,32 +269,33 @@ class BadgeGrid extends StatelessWidget {
                                       ],
                                       content: Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         spacing: 16.0,
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
-                                            child: ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: 300,
-                                              ),
-                                              child: AspectRatio(
-                                                aspectRatio: 1,
-                                                child: Hero(
-                                                  tag: "badge-$index",
-                                                  child: Material(
-                                                    shape: CircleBorder(),
-                                                    color: showHint? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
-                                                    child: Center(
-                                                      child: Icon(
-                                                        Icons.lock,
-                                                        color: showHint? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onPrimaryContainer,
-                                                        size: 96,
+                                          Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: 8.0),
+                                              child: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth: 300
+                                                ),
+                                                child: AspectRatio(
+                                                  aspectRatio: 1,
+                                                  child: Hero(
+                                                    tag: "badge-$index",
+                                                    child: Material(
+                                                      shape: CircleBorder(),
+                                                      color: showHint? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.lock,
+                                                          color: showHint? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onPrimaryContainer,
+                                                          size: 96,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              )
+                                                )
+                                              ),
                                             ),
                                           ),
                                           Center(
@@ -303,8 +305,8 @@ class BadgeGrid extends StatelessWidget {
                                               style: Theme.of(context).textTheme.headlineMedium!,
                                             ),
                                           ),
-                                          Text("This badge is locked."),
-                                          Text("It will be unlocked once you've reached a ${milestone.day} day streak.")
+                                          Text("This badge is locked.", textAlign: TextAlign.center),
+                                          Text("It will be unlocked once you've reached a ${milestone.day} day streak.", textAlign: TextAlign.center)
                                         ],
                                       ),
                                     )
