@@ -173,6 +173,54 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 Divider(),
                 if (kDebugMode) ListTile(
+                  title: Text("Set streak"),
+                  leading: Icon(Icons.local_fire_department_outlined),
+                  subtitle: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 4.0,
+                      children: [
+                        ActionChip(
+                          label: Text("0 days"),
+                          onPressed: () {
+                            box.put("streak", 0);
+                            box.put("streak.longest", 0);
+                          },
+                        ),
+                        ActionChip(
+                          label: Text("10 days"),
+                          onPressed: () {
+                            box.put("streak", 10);
+                            if (box.get("streak.longest", defaultValue: 0) < 10) box.put("streak.longest", 10);
+                          },
+                        ),
+                        ActionChip(
+                          label: Text("100 days"),
+                          onPressed: () {
+                            box.put("streak", 100);
+                            if (box.get("streak.longest", defaultValue: 0) < 100) box.put("streak.longest", 100);
+                          },
+                        ),
+                        ActionChip(
+                          label: Text("365 days"),
+                          onPressed: () {
+                            box.put("streak", 365);
+                            if (box.get("streak.longest", defaultValue: 0) < 365) box.put("streak.longest", 365);
+                          },
+                        ),
+                        ActionChip(
+                          label: Text("1000 days"),
+                          onPressed: () {
+                            box.put("streak", 1000);
+                            if (box.get("streak.longest", defaultValue: 0) < 1000) box.put("streak.longest", 1000);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                if (kDebugMode) ListTile(
                   title: Text("Unlock full Chickendex"),
                   leading: Icon(Icons.add_circle_outline),
                   onTap: () async {

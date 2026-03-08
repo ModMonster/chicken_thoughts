@@ -1,11 +1,69 @@
+import 'dart:math';
+
 import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
+import 'package:chicken_thoughts_notifications/widgets/shimmer_delayed.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 
 class BadgeGrid extends StatelessWidget {
   const BadgeGrid({super.key});
+
+  Widget _badgeFlipAnimationBuilder(BuildContext flightContext, Animation<double> animation, HeroFlightDirection flightDirection, BuildContext fromHeroContext, BuildContext toHeroContext) {
+    final Widget toHero = toHeroContext.widget;
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        double value = animation.value;
+
+        // Flip when flying
+        double angle = value * pi;
+        if (flightDirection == HeroFlightDirection.pop) {
+          angle = (1 - value) * pi;
+        }
+
+        // Flip halfway
+        if (flightDirection == HeroFlightDirection.push && value > 0.5 || flightDirection == HeroFlightDirection.pop && value <= 0.5) {
+          angle -= pi;
+        }
+
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..rotateY(angle),
+          child: child,
+        );
+      },
+      child: toHero,
+    );
+  }
+
+  Future<void> _setAppIcon(BuildContext context, {required StreakMilestone milestone, required int index}) async {
+    Vibrate.tap();
+    if (Hive.box("settings").get("app_icon", defaultValue: 0) == index) return;
+
+    bool success = await milestone.activateThisIcon();
+    if (!success) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Failed to change app icon."),
+          behavior: SnackBarBehavior.floating,
+        ));
+      });
+    }
+
+    Hive.box("settings").put("app_icon", index);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Changed app icon to ${milestone.name}."),
+        behavior: SnackBarBehavior.floating,
+      ));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +94,13 @@ class BadgeGrid extends StatelessWidget {
                   child: isUnlocked? Stack(
                     children: [
                       Positioned.fill(
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage(milestone.previewIcon),
-                          maxRadius: double.infinity,
+                        child: Hero(
+                          tag: "badge-$index",
+                          flightShuttleBuilder: _badgeFlipAnimationBuilder,
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(milestone.previewIcon),
+                            maxRadius: double.infinity,
+                          ),
                         ),
                       ),
                       if (!kIsWeb) Positioned.fill(
@@ -74,72 +136,187 @@ class BadgeGrid extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (!kIsWeb) Positioned.fill(
+                      Positioned.fill(
                         child: Material(
                           shape: CircleBorder(),
                           color: Colors.transparent,
                           child: InkWell(
                             customBorder: CircleBorder(),
-                            onTap: () async {
+                            onLongPress: kIsWeb? null : () {
+                              _setAppIcon(context, milestone: milestone, index: index);
+                            },
+                            onTap: () {
                               Vibrate.tap();
-                              if (Hive.box("settings").get("app_icon", defaultValue: 0) == index) return;
-                              bool success = await milestone.activateThisIcon();
-                              if (!success) {
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  ScaffoldMessenger.of(context).clearSnackBars();
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text("Failed to change app icon."),
-                                    behavior: SnackBarBehavior.floating,
-                                  ));
-                                });
-                              }
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  opaque: false,
+                                  barrierColor: Colors.black54,
+                                  barrierDismissible: true,
+                                  pageBuilder: (context, animation, animationOut) {
+                                    final CurvedAnimation curvedAnimation = CurvedAnimation(parent: animation, curve: Curves.easeOut, reverseCurve: Curves.easeIn);
 
-                              Hive.box("settings").put("app_icon", index);
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                ScaffoldMessenger.of(context).clearSnackBars();
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text("Changed app icon to ${milestone.name}."),
-                                  behavior: SnackBarBehavior.floating,
-                                ));
-                              });
+                                    return FadeTransition(
+                                      opacity: curvedAnimation,
+                                      child: ScaleTransition(
+                                        scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                                          curvedAnimation
+                                        ),
+                                        child: AlertDialog(
+                                          clipBehavior: Clip.none,
+                                          actions: [
+                                            if (!kIsWeb) OutlinedButton.icon(
+                                              onPressed: Hive.box("settings").get("app_icon", defaultValue: 0) == index? null : () async {
+                                                _setAppIcon(context, milestone: milestone, index: index);
+                                              },
+                                              label: Text("Set as app icon"),
+                                              icon: Icon(Hive.box("settings").get("app_icon", defaultValue: 0) == index? Icons.check : Icons.auto_awesome),
+                                            ),
+                                            TextButton(onPressed: () {
+                                              Navigator.pop(context);
+                                            }, child: Text("Close"))
+                                          ],
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 8.0),
+                                                child: ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: 300,
+                                                  ),
+                                                  child: AspectRatio(
+                                                    aspectRatio: 1,
+                                                    child: Hero(
+                                                      tag: "badge-$index",
+                                                      child: ClipOval(
+                                                        child: ShimmerDelayed(
+                                                          interval: Duration(seconds: 2),
+                                                          child: CircleAvatar(
+                                                            backgroundImage: AssetImage(milestone.previewIcon),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 16.0),
+                                                child: Text(
+                                                  showHint? milestone.name : "???",
+                                                  textAlign: TextAlign.center,
+                                                  style: Theme.of(context).textTheme.headlineMedium!,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 8.0),
+                                                child: Text(
+                                                  '"${milestone.description}"'
+                                                ),
+                                              ),
+                                              if (milestone.day > 0) Padding(
+                                                padding: const EdgeInsets.only(top: 36.0),
+                                                child: Text(
+                                                  "Unlocked for reaching a ${milestone.day} day streak",
+                                                  style: Theme.of(context).textTheme.labelMedium,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                )
+                              );
                             },
                           ),
                         ),
                       )
                     ],
-                  ) : Material(
-                    shape: CircleBorder(),
-                    color: showHint? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
-                    child: InkWell(
-                      customBorder: CircleBorder(),
-                      onTap: () {
-                        Vibrate.tap();
-                        showDialog(context: context, builder: (context) => AlertDialog(
-                          title: Text("Locked!"),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 16,
-                            children: [
-                              Text("This badge is locked."),
-                              Text("It will be unlocked once you've reached a ${milestone.day} day streak!")
-                            ],
+                  ) : Hero(
+                    tag: "badge-$index",
+                    flightShuttleBuilder: _badgeFlipAnimationBuilder,
+                    child: Material(
+                      shape: CircleBorder(),
+                      color: showHint? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
+                      child: InkWell(
+                        customBorder: CircleBorder(),
+                        onTap: () {
+                          Vibrate.tap();
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              opaque: false,
+                              barrierColor: Colors.black54,
+                              barrierDismissible: true,
+                              pageBuilder: (context, animation, animationOut) {
+                                final CurvedAnimation curvedAnimation = CurvedAnimation(parent: animation, curve: Curves.easeOut, reverseCurve: Curves.easeIn);
+
+                                return FadeTransition(
+                                  opacity: curvedAnimation,
+                                  child: ScaleTransition(
+                                    scale: Tween<double>(begin: 0.95, end: 1.0).animate(curvedAnimation),
+                                    child: AlertDialog(
+                                      clipBehavior: Clip.none,
+                                      actions: [
+                                        TextButton(onPressed: () {
+                                          Navigator.pop(context);
+                                        }, child: Text("Close"))
+                                      ],
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        spacing: 16.0,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 8.0),
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: 300,
+                                              ),
+                                              child: AspectRatio(
+                                                aspectRatio: 1,
+                                                child: Hero(
+                                                  tag: "badge-$index",
+                                                  child: Material(
+                                                    shape: CircleBorder(),
+                                                    color: showHint? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
+                                                    child: Center(
+                                                      child: Icon(
+                                                        Icons.lock,
+                                                        color: showHint? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onPrimaryContainer,
+                                                        size: 96,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              showHint? milestone.name : "???",
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context).textTheme.headlineMedium!,
+                                            ),
+                                          ),
+                                          Text("This badge is locked."),
+                                          Text("It will be unlocked once you've reached a ${milestone.day} day streak.")
+                                        ],
+                                      ),
+                                    )
+                                  )
+                                );
+                              }
+                            )
+                          );
+                        },
+                        child: Center(
+                          child: Icon(
+                            Icons.lock,
+                            color: showHint? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onPrimaryContainer,
+                            size: 48,
                           ),
-                          actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("OK")
-                          )
-                        ],
-                        ));
-                      },
-                      child: Center(
-                        child: Icon(
-                          Icons.lock,
-                          color: showHint? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onPrimaryContainer,
-                          size: 48,
                         ),
                       ),
                     ),
