@@ -69,7 +69,7 @@ class StreakView extends StatelessWidget {
                       ),
                       child: LinearProgressIndicatorM3E(
                         shape: ProgressM3EShape.flat,
-                        value: (streak - (latestMilestone?.day ?? 0)) / nextMilestone.day,
+                        value: (streak - (latestMilestone?.day ?? 0)) / (nextMilestone.day - (latestMilestone?.day ?? 0)),
                       ),
                     ),
                   ),
