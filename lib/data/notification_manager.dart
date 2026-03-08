@@ -19,6 +19,11 @@ class NotificationManager {
 
   static final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
+  static void clearNotifications() {
+    notificationsPlugin.cancel(id: 0); // daily notifications
+    notificationsPlugin.cancel(id: 1); // warning notifications
+  }
+
   static Future<void> initNotifications(ValueNotifier<int> currentPageNotifier) async {
     final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();  
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_notification');

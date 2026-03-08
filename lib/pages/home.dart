@@ -1,5 +1,6 @@
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
+import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
@@ -117,6 +118,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
         _lastCheckedDay = DateTime.now();
       }
+
+      // Clear notifications
+      NotificationManager.clearNotifications();
     }
   }
 
