@@ -47,7 +47,15 @@ class StreakManager {
     if (kDebugMode) print("Streak go up!");
     int streak = box.get("streak", defaultValue: 0) + 1;
     box.put("streak", streak);
-    if (streak > box.get("streak.longest", defaultValue: 0)) box.put("streak.longest", streak);
+    if (streak > box.get("streak.longest", defaultValue: 0)) {
+      box.put("streak.longest", streak);
+      // Check for new badges
+      for (StreakMilestone milestone in StreakManager.milestones) {
+        if (milestone.day == streak) {
+          box.put("streak.unlockDate.$streak", DateTime.now());
+        }
+      }
+    }
     box.put("streak.animate", true);
   }
 

@@ -7,6 +7,7 @@ import 'package:chicken_thoughts_notifications/widgets/tilted_avatar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:intl/intl.dart';
 
 class BadgeGrid extends StatelessWidget {
   const BadgeGrid({super.key});
@@ -82,6 +83,14 @@ class BadgeGrid extends StatelessWidget {
         itemCount: StreakManager.milestones.length,
         itemBuilder: (context, index) {
           StreakMilestone milestone = StreakManager.milestones[index];
+          DateTime? unlockedDate = Hive.box("settings").get("streak.unlockDate.${milestone.day}");
+          if (unlockedDate == null) {
+            unlockedDate = DateTime.now()
+              .subtract(Duration(days: Hive.box("settings").get("streak.longest", defaultValue: 0)))
+              .add(Duration(days: milestone.day));
+              Hive.box("settings").put("streak.unlockDate.${milestone.day}", unlockedDate);
+          }
+
           bool showHint = milestone.shouldShowHint();
           bool isUnlocked = milestone.isUnlocked();
 
@@ -213,10 +222,19 @@ class BadgeGrid extends StatelessWidget {
                                                 ),
                                               ),
                                               if (milestone.day > 0) Padding(
+                                                padding: const EdgeInsets.only(top: 4.0),
+                                                child: Text(
+                                                  "${milestone.day} day streak",
+                                                  style: Theme.of(context).textTheme.labelMedium,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              if (milestone.day > 0) Padding(
                                                 padding: const EdgeInsets.only(top: 8.0),
                                                 child: Text(
-                                                  "Unlocked for reaching a ${milestone.day} day streak",
+                                                  "Unlocked on ${DateFormat("MMM d, yyyy").format(unlockedDate!)}",
                                                   style: Theme.of(context).textTheme.labelMedium,
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                               Padding(
