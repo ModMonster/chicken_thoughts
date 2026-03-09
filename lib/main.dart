@@ -17,8 +17,8 @@ import 'package:hive_ce_flutter/adapters.dart';
 
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
-final int versionCode = 15;
-final String version = "2.6.1${kDebugMode? "-DEBUG" : ""}";
+final int versionCode = 16;
+final String version = "2.6.2${kDebugMode? "-DEBUG" : ""}";
 final String githubRepo = "modmonster/chicken_thoughts";
 
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;

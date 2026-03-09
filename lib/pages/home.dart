@@ -29,10 +29,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<ChickenThought> _dailyChickenThoughtFuture = DatabaseManager.getDailyChickenThought();
   DateTime _lastCheckedDay = DateTime.now();
+  DateTime? _lastCheckedForUpdate;
+  bool _updateDialogShown = false;
+  bool _mandatoryUpdateDialogShown = false;
 
   Future<void> showUpdateDialog() async {
+    // Only check for update once every 30 seconds
+    if (_lastCheckedForUpdate != null && _lastCheckedForUpdate!.isAfter(DateTime.now().subtract(Duration(seconds: 30)))) return;
+
     // Check for updates and show update dialog if necessary
     AppData appData = await DatabaseManager.getRemoteAppData();
+    _lastCheckedForUpdate = DateTime.now();
 
     if (appData.offline) {
       WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacementNamed(context, "/offline"));
@@ -42,26 +49,29 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (kIsWeb) return;
 
     // App requires an update
-    if (appData.minVersion > versionCode) {
+    if (appData.minVersion > versionCode && !_mandatoryUpdateDialogShown) {
       updateAvailable = true;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
         showDialog(context: context, barrierDismissible: false, builder: (context) {
           return UpdateDialog(required: true);
         })
       );
+      _updateDialogShown = true;
+      _mandatoryUpdateDialogShown = true;
       return;
     }
 
     // App can update
     if (appData.latestVersion > versionCode) {
       updateAvailable = true;
-      if (Hive.box("settings").get("update_notifications", defaultValue: true)) {
+      if (!_updateDialogShown && Hive.box("settings").get("update_notifications", defaultValue: true)) {
         WidgetsBinding.instance.addPostFrameCallback((_) =>
           showDialog(context: context, builder: (context) {
             return UpdateDialog(required: false);
           })
         );
       }
+      _updateDialogShown = true;
     }
   }
 
@@ -125,6 +135,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
       // Clear notifications
       NotificationManager.clearNotifications();
+
+      // Check for updates
+      showUpdateDialog();
     }
   }
 
@@ -155,7 +168,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         // Add to chicken thoughts user has seen
         // key = ID of the chicken thought
         // value = amount of chicken thoughts corresponding to this (usually 1)
-        // TODO: holidays will DEF MESS THIS UP
         // FIX THIS WITH MIMI'S IDEA (ONE BIG LIST, NO holiday.christmas.jpg JUST ONE BIG LIST AND MAP EACH NUM INSIDE THE DATABASE)
         Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
     
