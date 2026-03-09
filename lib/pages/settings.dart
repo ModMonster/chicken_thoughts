@@ -1,15 +1,13 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
-import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
-import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
+import 'package:chicken_thoughts_notifications/widgets/settings_developer_totp_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:loading_indicator_m3e/loading_indicator_m3e.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -158,95 +156,7 @@ class SettingsPageState extends State<SettingsPage> {
                   subtitle: Text("Show a popup when an optional app update is available"),
                   secondary: Icon(Icons.update_outlined),
                 ),
-                if (kDebugMode) ListTile(
-                  leading: Icon(Icons.cached_outlined),
-                  title: Text("Clear cache"),
-                  onTap: () async {
-                    await CacheManager.deleteCaches();
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Cleared caches!"),
-                        behavior: SnackBarBehavior.floating,
-                      ));
-                    });
-                  },
-                ),
                 Divider(),
-                if (kDebugMode) ListTile(
-                  title: Text("Set streak"),
-                  leading: Icon(Icons.local_fire_department_outlined),
-                  subtitle: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 4.0,
-                      children: [
-                        ActionChip(
-                          label: Text("0 days"),
-                          onPressed: () {
-                            box.put("streak", 0);
-                            box.put("streak.longest", 0);
-                          },
-                        ),
-                        ActionChip(
-                          label: Text("10 days"),
-                          onPressed: () {
-                            box.put("streak", 10);
-                            if (box.get("streak.longest", defaultValue: 0) < 10) box.put("streak.longest", 10);
-                          },
-                        ),
-                        ActionChip(
-                          label: Text("100 days"),
-                          onPressed: () {
-                            box.put("streak", 100);
-                            if (box.get("streak.longest", defaultValue: 0) < 100) box.put("streak.longest", 100);
-                          },
-                        ),
-                        ActionChip(
-                          label: Text("365 days"),
-                          onPressed: () {
-                            box.put("streak", 365);
-                            if (box.get("streak.longest", defaultValue: 0) < 365) box.put("streak.longest", 365);
-                          },
-                        ),
-                        ActionChip(
-                          label: Text("1000 days"),
-                          onPressed: () {
-                            box.put("streak", 1000);
-                            if (box.get("streak.longest", defaultValue: 0) < 1000) box.put("streak.longest", 1000);
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                if (kDebugMode) ListTile(
-                  title: Text("Unlock full Chickendex"),
-                  leading: Icon(Icons.add_circle_outline),
-                  onTap: () async {
-                    showDialog(context: context, builder: (context) => PopScope(
-                      canPop: false,
-                      child: Center(
-                        child: LoadingIndicatorM3E(
-                          variant: LoadingIndicatorM3EVariant.contained,
-                        ),
-                      ),
-                    ));
-
-                    Season season = await DatabaseManager.getDefaultSeason();
-                    for (int i = 1; i <= season.imageCount; i++) {
-                      await Hive.box("chickendex").put(i.toString(), 1);
-                    }
-
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Unlocked all Chicken Thoughts! Note: this won't work with multi-image Chicken Thoughts, but that's fine since it's just for testing"),
-                        behavior: SnackBarBehavior.floating,
-                      ));
-                    });
-                  },
-                ),
                 ListTile(
                   title: Text("Clear Chickendex"),
                   leading: Icon(Icons.delete_outline),
@@ -307,17 +217,30 @@ class SettingsPageState extends State<SettingsPage> {
                     launchUrl(Uri.parse("https://github.com/$githubRepo/issues/new"), mode: LaunchMode.externalApplication);
                   },
                 ),
-                AboutListTile(
-                  icon: Icon(Icons.info_outline),
-                  applicationVersion: version,
-                  applicationIcon: CircleAvatar(
-                    backgroundImage: AssetImage(
-                      StreakManager.milestones[Hive.box("settings").get("app_icon", defaultValue: 0)].previewIcon
-                    )
+                GestureDetector(
+                  onLongPress: () {
+                    Vibrate.tap();
+                    // skip totp in debug mode
+                    if (kDebugMode) {
+                      Navigator.pushNamed(context, "/settings/dev");
+                      return;
+                    }
+
+                    // developer totp dialog
+                    showDialog(context: context, builder: (context) => SettingsDeveloperTotpDialog());
+                  },
+                  child: AboutListTile(
+                    icon: Icon(Icons.info_outline),
+                    applicationVersion: version,
+                    applicationIcon: CircleAvatar(
+                      backgroundImage: AssetImage(
+                        StreakManager.milestones[Hive.box("settings").get("app_icon", defaultValue: 0)].previewIcon
+                      )
+                    ),
+                    aboutBoxChildren: [
+                      Text("An app that sends you a new Chicken Thought every day!")
+                    ],
                   ),
-                  aboutBoxChildren: [
-                    Text("An app that sends you a new Chicken Thought every day!")
-                  ]
                 )
               ]
             ),
