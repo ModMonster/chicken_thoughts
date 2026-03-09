@@ -33,12 +33,21 @@ class _TiltedState extends State<Tilted> {
           rotY = (-(snapshot.data!.x - _neutralX) / 15).clamp(-0.4, 0.4);
         }
 
-        return Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateX(rotX)
-            ..rotateY(rotY),
+        return TweenAnimationBuilder<Offset>(
+          tween: Tween(
+            end: Offset(rotX, rotY)
+          ),
+          duration: Durations.short3,
+          builder: (context, offset, child) {
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001)
+                ..rotateX(offset.dx)
+                ..rotateY(offset.dy),
+              child: child
+            );
+          },
           child: widget.child
         );
       }
