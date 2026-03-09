@@ -48,6 +48,13 @@ class SettingsPageState extends State<SettingsPage> {
             left: false,
             sliver: SliverList.list(
               children: [
+                if (kDebugMode) ListTile(
+                  title: Text("Developer options"),
+                  leading: Icon(Icons.handyman_outlined),
+                  onTap: () {
+                    Navigator.pushNamed(context, "/settings/dev");
+                  },
+                ),
                 if (updateAvailable) ListTile(
                   title: Text("Update available"),
                   subtitle: Text("Tap to download the new update"),
@@ -60,7 +67,6 @@ class SettingsPageState extends State<SettingsPage> {
                     );
                   },
                 ),
-                if (updateAvailable) Divider(),
                 if (isAndroidWeb) ListTile(
                   title: Text("Download the app!"),
                   subtitle: Text("Tap to open download page"),
@@ -69,7 +75,7 @@ class SettingsPageState extends State<SettingsPage> {
                     launchUrl(Uri.parse("https://github.com/$githubRepo/releases/latest"), mode: LaunchMode.externalApplication);
                   },
                 ),
-                if (isAndroidWeb) Divider(),
+                if (isAndroidWeb || updateAvailable || kDebugMode) Divider(),
                 ListTile(
                   title: Text("Theme"),
                   subtitle: Text(getCurrentThemeName()),
