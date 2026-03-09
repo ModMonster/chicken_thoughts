@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     // App requires an update
     if (appData.minVersion > versionCode) {
+      updateAvailable = true;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
         showDialog(context: context, barrierDismissible: false, builder: (context) {
           return UpdateDialog(required: true);
@@ -52,12 +53,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     // App can update
-    if (appData.latestVersion > versionCode && Hive.box("settings").get("update_notifications", defaultValue: true)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-        showDialog(context: context, builder: (context) {
-          return UpdateDialog(required: false);
-        })
-      );
+    if (appData.latestVersion > versionCode) {
+      updateAvailable = true;
+      if (Hive.box("settings").get("update_notifications", defaultValue: true)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) =>
+          showDialog(context: context, builder: (context) {
+            return UpdateDialog(required: false);
+          })
+        );
+      }
     }
   }
 

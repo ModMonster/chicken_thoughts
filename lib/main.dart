@@ -24,6 +24,7 @@ final String githubRepo = "modmonster/chicken_thoughts";
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
 final ValueNotifier<int> currentPageNotifier = ValueNotifier(0);
+bool updateAvailable = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

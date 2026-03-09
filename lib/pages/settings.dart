@@ -5,6 +5,7 @@ import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_developer_totp_dialog.dart';
+import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
@@ -47,6 +48,19 @@ class SettingsPageState extends State<SettingsPage> {
             left: false,
             sliver: SliverList.list(
               children: [
+                if (updateAvailable) ListTile(
+                  title: Text("Update available"),
+                  subtitle: Text("Tap to download the new update"),
+                  leading: Icon(Icons.update),
+                  onTap: () {
+                    WidgetsBinding.instance.addPostFrameCallback((_) =>
+                      showDialog(context: context, barrierDismissible: true, builder: (context) {
+                        return UpdateDialog(required: false, autostart: true);
+                      })
+                    );
+                  },
+                ),
+                if (updateAvailable) Divider(),
                 if (isAndroidWeb) ListTile(
                   title: Text("Download the app!"),
                   subtitle: Text("Tap to open download page"),

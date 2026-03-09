@@ -24,7 +24,8 @@ Future<void> deleteUpdateFile() async {
 
 class UpdateDialog extends StatefulWidget {
   final bool required;
-  const UpdateDialog({this.required = false, super.key});
+  final bool autostart;
+  const UpdateDialog({this.required = false, this.autostart = false, super.key});
 
   @override
   State<UpdateDialog> createState() => _UpdateDialogState();
@@ -66,10 +67,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   Future<void> _startDownload() async {
-    setState(() {
-      _isDownloading = true;
-    });
-
     // Get target architecture
     AndroidDeviceInfo deviceInfo = await DeviceInfoPlugin().androidInfo;
 
@@ -138,6 +135,15 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   @override
+  void initState() {
+    if (widget.autostart) {
+      _isDownloading = true;
+      _startDownload();
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !_isDownloading && !widget.required,
@@ -186,6 +192,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   child: FilledButton(
                     onPressed: _isDownloading? null : () {
                       Vibrate.tap();
+                      setState(() {
+                        _isDownloading = true;
+                      });
                       _startDownload();
                     },
                     child: AnimatedSwitcher(
