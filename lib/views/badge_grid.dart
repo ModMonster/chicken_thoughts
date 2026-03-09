@@ -212,19 +212,20 @@ class BadgeGrid extends StatelessWidget {
                                                   style: Theme.of(context).textTheme.headlineMedium!,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 8.0),
-                                                child: Text(
-                                                  '"${milestone.description}"'
-                                                ),
-                                              ),
                                               if (milestone.day > 0) Padding(
-                                                padding: const EdgeInsets.only(top: 36.0),
+                                                padding: const EdgeInsets.only(top: 8.0),
                                                 child: Text(
                                                   "Unlocked for reaching a ${milestone.day} day streak",
                                                   style: Theme.of(context).textTheme.labelMedium,
                                                 ),
-                                              )
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 24.0),
+                                                child: Text(
+                                                  '"${milestone.description}"',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
