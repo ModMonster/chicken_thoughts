@@ -83,12 +83,12 @@ class BadgeGrid extends StatelessWidget {
         itemCount: StreakManager.milestones.length,
         itemBuilder: (context, index) {
           StreakMilestone milestone = StreakManager.milestones[index];
-          DateTime? unlockedDate = Hive.box("settings").get("streak.unlockDate.${milestone.day}");
+          DateTime? unlockedDate = Hive.box("settings").get("streak.unlock_date.${milestone.day}");
           if (unlockedDate == null) {
             unlockedDate = DateTime.now()
               .subtract(Duration(days: Hive.box("settings").get("streak.longest", defaultValue: 0)))
               .add(Duration(days: milestone.day));
-              Hive.box("settings").put("streak.unlockDate.${milestone.day}", unlockedDate);
+              Hive.box("settings").put("streak.unlock_date.${milestone.day}", unlockedDate);
           }
 
           bool showHint = milestone.shouldShowHint();

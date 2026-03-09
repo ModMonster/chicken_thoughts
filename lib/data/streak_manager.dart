@@ -52,7 +52,7 @@ class StreakManager {
       // Check for new badges
       for (StreakMilestone milestone in StreakManager.milestones) {
         if (milestone.day == streak) {
-          box.put("streak.unlockDate.$streak", DateTime.now());
+          box.put("streak.unlock_date.$streak", DateTime.now());
         }
       }
     }
