@@ -149,13 +149,14 @@ class SettingsPageState extends State<SettingsPage> {
                     Navigator.pushNamed(context, "/settings/icon");
                   },
                 ),
-                if (!kIsWeb) SwitchListTile(
+                SwitchListTile(
                   value: box.get("vibration", defaultValue: true),
                   onChanged: (value) {
                     box.put("vibration", value);
                     Vibrate.tap();
                   },
                   title: Text("Vibration"),
+                  subtitle: kIsWeb? Text("May not be supported on all devices") : null,
                   secondary: Icon(Icons.vibration_outlined),
                 ),
                 if (!kIsWeb) Divider(),
