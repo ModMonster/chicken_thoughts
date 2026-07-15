@@ -9,6 +9,7 @@ import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_developer.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_icon.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_notifications.dart';
+import 'package:chicken_thoughts_notifications/pages/settings_user.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
@@ -17,8 +18,8 @@ import 'package:hive_ce_flutter/adapters.dart';
 
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
-final int versionCode = 16;
-final String version = "2.6.2${kDebugMode? "-DEBUG" : ""}";
+final int versionCode = 17;
+final String version = "2.7.0${kDebugMode? "-DEBUG" : ""}";
 final String githubRepo = "modmonster/chicken_thoughts";
 
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;
@@ -100,6 +101,7 @@ class ChickenThoughtsApp extends StatelessWidget {
                   dynamicColorScheme: Theme.of(context).brightness == Brightness.light? lightDynamic?.harmonized() : darkDynamic?.harmonized()
                 ),
                 "/settings/dev": (context) => SettingsDeveloperPage(),
+                "/settings/user": (context) => SettingsUserDialog(),
                 if (!kIsWeb) "/settings/notifications": (context) => SettingsNotificationPage(),
                 if (!kIsWeb) "/settings/icon": (context) => SettingsIconPage(),
               },

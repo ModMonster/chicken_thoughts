@@ -4,6 +4,7 @@ import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
+import 'package:chicken_thoughts_notifications/pages/settings_user.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_developer_totp_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
@@ -48,6 +49,31 @@ class SettingsPageState extends State<SettingsPage> {
             left: false,
             sliver: SliverList.list(
               children: [
+                // ListTile(
+                //   title: Text("Log into Chicken Thoughts"),
+                //   leading: Icon(Icons.login_outlined),
+                //   onTap: () {
+                    
+                //   },
+                // ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+                  child: Card.outlined(
+                    child: ListTile(
+                      minTileHeight: 72,
+                      title: Text("Maddie"),
+                      subtitle: Text("Customize account"),
+                      leading: CircleAvatar(
+                        backgroundColor: Color(0xFFC2B7F0),
+                        child: Text("🪨"),
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      onTap: () {
+                        Navigator.pushNamed(context, "/settings/user");
+                      },
+                    ),
+                  ),
+                ),
                 if (kDebugMode) ListTile(
                   title: Text("Developer options"),
                   leading: Icon(Icons.handyman_outlined),
