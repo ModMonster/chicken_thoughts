@@ -26,23 +26,47 @@ class DailyView extends StatelessWidget {
           )
         ],
       ),
-      floatingActionButton: kIsWeb? null : FloatingActionButton(
-        onPressed: () {
-          Vibrate.tap();
-          ShareManager.share(chickenThought.id, displayName: chickenThought.displayName);
-        },
-        tooltip: "Share",
-        child: Icon(Icons.share),
-      ),
       body: Stack(
         children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: ChickenThoughtImage(chickenThought.images)
-              ),
+          Positioned.fill(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: ChickenThoughtImage(chickenThought.images)
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        tooltip: "Add reaction",
+                        icon: Icon(Icons.add_reaction),
+                      ),
+                      kIsWeb? Container() : IconButton(
+                        onPressed: () {
+                          Vibrate.tap();
+                          ShareManager.share(chickenThought.id, displayName: chickenThought.displayName);
+                        },
+                        tooltip: "Share",
+                        icon: Icon(Icons.share),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
           StreakPopup(onTap: () {

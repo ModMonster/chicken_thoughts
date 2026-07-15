@@ -4,7 +4,6 @@ import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
-import 'package:chicken_thoughts_notifications/pages/settings_user.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_developer_totp_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
