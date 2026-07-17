@@ -39,7 +39,9 @@ class _LoginDialogState extends State<LoginDialog> {
     // Push to database
     await DatabaseManager.createUser(id, nameController.text, emoji, color);
 
-    if (mounted) Navigator.pushReplacementNamed(context, "/settings/user");
+    setState(() {
+      state = LoginState.success;
+    });
   }
 
   Future<void> submitName() async {
@@ -96,10 +98,7 @@ class _LoginDialogState extends State<LoginDialog> {
           child: Text("OK")
         ),
       ];
-    } else if (state == LoginState.loading) {
-      content = LinearProgressIndicatorM3E();
-      actions = null;
-    } else {
+    } else if (state == LoginState.matching) {
       content = ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: double.maxFinite,
@@ -150,7 +149,10 @@ class _LoginDialogState extends State<LoginDialog> {
                     settings.put("user.name", user.name);
                     settings.put("user.emoji", user.iconFg);
                     settings.put("user.color", user.iconBg);
-                    Navigator.pushReplacementNamed(context, "/settings/user");
+                    
+                    setState(() {
+                      state = LoginState.success;
+                    });
                   },
                 );
               }
@@ -168,12 +170,36 @@ class _LoginDialogState extends State<LoginDialog> {
           child: Text("Back")
         ),
       ];
+    } else if (state == LoginState.success) {
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: Text("Customize profile"),
+            leading: Icon(Icons.palette_outlined),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, "/settings/user");
+            },
+          ),
+          ListTile(
+            title: Text("Close"),
+            leading: Icon(Icons.close),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      );
+      actions = null;
+    } else {
+      content = LinearProgressIndicatorM3E();
+      actions = null;
     }
 
     return PopScope(
       canPop: state != LoginState.loading,
       child: AlertDialog(
-        title: Text("Login"),
+        title: Text(state == LoginState.success? "Login success!" : "Login"),
         content: AnimatedSize(
           duration: Durations.short2,
           child: content
@@ -187,5 +213,6 @@ class _LoginDialogState extends State<LoginDialog> {
 enum LoginState {
   name,
   matching,
+  success,
   loading
 }
