@@ -61,7 +61,7 @@ class SettingsPageState extends State<SettingsPage> {
                     child: ListTile(
                       minTileHeight: 72,
                       title: Text("Maddie"),
-                      subtitle: Text("Customize account"),
+                      subtitle: Text("Customize profile"),
                       leading: CircleAvatar(
                         backgroundColor: Color(0xFFC2B7F0),
                         child: Text("🪨"),
