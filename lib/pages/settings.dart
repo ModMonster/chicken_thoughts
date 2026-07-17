@@ -60,7 +60,7 @@ class SettingsPageState extends State<SettingsPage> {
                           return ListTile(
                             minTileHeight: 72,
                             title: Text(box.get("user.name")),
-                            subtitle: Text("Customize profile"),
+                            subtitle: Text("Customize account"),
                             leading: CircleAvatar(
                               backgroundColor: userColors[box.get("user.color")],
                               child: Text(userEmojis[box.get("user.emoji")]),

@@ -195,7 +195,7 @@ class _LoginDialogState extends State<LoginDialog> {
             ),
           ),
           ListTile(
-            title: Text("Customize profile"),
+            title: Text("Customize account"),
             leading: Icon(Icons.palette_outlined),
             onTap: () {
               Navigator.pushReplacementNamed(context, "/settings/user");

@@ -2,9 +2,11 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
+import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
 
 class DailyView extends StatelessWidget {
   final ChickenThought chickenThought;
@@ -50,18 +52,44 @@ class DailyView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        tooltip: "Add reaction",
-                        icon: Icon(Icons.add_reaction),
-                      ),
-                      kIsWeb? Container() : IconButton(
+                      if (!kIsWeb) IconButton(
                         onPressed: () {
                           Vibrate.tap();
                           ShareManager.share(chickenThought.id, displayName: chickenThought.displayName);
                         },
                         tooltip: "Share",
                         icon: Icon(Icons.share),
+                      ),
+                      if (Hive.box("settings").containsKey("user.id")) IconButton(
+                        onPressed: () {},
+                        tooltip: "Add reaction",
+                        icon: Icon(Icons.add_reaction),
+                      ),
+                      ActionChip(
+                        label: Row(
+                          spacing: 4,
+                          children: [
+                            Icon(Icons.favorite_outline),
+                            Text("2"),
+                          ],
+                        ),
+                        onPressed: () {
+                          Vibrate.tap();
+                          if (!Hive.box("settings").containsKey("user.id")) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Please log in to react!"),
+                              action: SnackBarAction(
+                                label: "Login",
+                                onPressed: () {
+                                  showDialog(context: context, builder: (context) => LoginDialog());
+                                }
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              persist: false,
+                            ));
+                            return;
+                          }
+                        },
                       ),
                     ],
                   ),
