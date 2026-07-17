@@ -89,223 +89,222 @@ class _SettingsUserDialogState extends State<SettingsUserDialog> {
         child: Builder(
           builder: (context) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
               ),
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
-                      child: TextField(
-                        controller: controller,
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
-                      ),
+              body: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
+                    child: TextField(
+                      controller: controller,
+                      style: Theme.of(context).textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
                     ),
-                    Expanded(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 48, 0, 24),
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: AnimatedSwitcher(
-                                  duration: Durations.short4,
-                                  child: mode == EditMode.background? PageView.builder(
-                                    key: const ValueKey("bg-edit"),
-                                    physics: LooseScrollPhysics(),
-                                    pageSnapping: false,
-                                    controller: backgroundController,
-                                    itemCount: userColors.length,
-                                    onPageChanged: (index) {
-                                      setState(() {
-                                        selectedBackgroundIndex = index;
-                                      });
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: userColors[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ) : IgnorePointer(
-                                    key: const ValueKey("bg-normal"),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: userColors[selectedBackgroundIndex],
-                                      ),
-                                      width: 144,
-                                      height: 144,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: AnimatedSwitcher(
-                                  duration: Durations.short4,
-                                  child: mode == EditMode.foreground? PageView.builder(
-                                    key: const ValueKey("fg-edit"),
-                                    physics: LooseScrollPhysics(),
-                                    pageSnapping: false,
-                                    controller: foregroundController,
-                                    itemCount: userEmojis.length,
-                                    onPageChanged: (index) {
-                                      setState(() {
-                                        selectedForegroundIndex = index;
-                                      });
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return AnimatedOpacity(
-                                        opacity: index == selectedForegroundIndex? 1 : 0.6,
-                                        duration: Durations.short4,
-                                        child: Center(
-                                          child: Text(
-                                            userEmojis[index],
-                                            style: const TextStyle(
-                                              fontSize: 66
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ) : IgnorePointer(
-                                    key: const ValueKey("fg-normal"),
-                                    child: Text(
-                                      userEmojis[selectedForegroundIndex],
-                                      style: TextStyle(
-                                        fontSize: 66
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ) 
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 32.0,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 48, 0, 24),
+                        child: Stack(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(24),
-                                onTap: () {
-                                  if (mode != EditMode.foreground) Vibrate.tap();
-                                  setState(() {
-                                    mode = EditMode.foreground;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  width: 96,
-                                  height: 96,
-                                  duration: Durations.short2,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: mode == EditMode.foreground? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
-                                      width: mode == EditMode.foreground? 4.0 : 1.0
+                            Center(
+                              child: AnimatedSwitcher(
+                                duration: Durations.short4,
+                                child: mode == EditMode.background? PageView.builder(
+                                  key: const ValueKey("bg-edit"),
+                                  physics: LooseScrollPhysics(),
+                                  pageSnapping: false,
+                                  controller: backgroundController,
+                                  itemCount: userColors.length,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      selectedBackgroundIndex = index;
+                                    });
+                                  },
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: userColors[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ) : IgnorePointer(
+                                  key: const ValueKey("bg-normal"),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: userColors[selectedBackgroundIndex],
                                     ),
-                                    borderRadius: BorderRadius.circular(24)
+                                    width: 144,
+                                    height: 144,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      userEmojis[selectedForegroundIndex],
-                                      style: TextStyle(
-                                        fontSize: 48
-                                      )
-                                    )
-                                  )
                                 ),
                               ),
                             ),
-                            Text("Foreground")
+                            Center(
+                              child: AnimatedSwitcher(
+                                duration: Durations.short4,
+                                child: mode == EditMode.foreground? PageView.builder(
+                                  key: const ValueKey("fg-edit"),
+                                  physics: LooseScrollPhysics(),
+                                  pageSnapping: false,
+                                  controller: foregroundController,
+                                  itemCount: userEmojis.length,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      selectedForegroundIndex = index;
+                                    });
+                                  },
+                                  itemBuilder: (context, index) {
+                                    return AnimatedOpacity(
+                                      opacity: index == selectedForegroundIndex? 1 : 0.6,
+                                      duration: Durations.short4,
+                                      child: Center(
+                                        child: Text(
+                                          userEmojis[index],
+                                          style: const TextStyle(
+                                            fontSize: 66
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ) : IgnorePointer(
+                                  key: const ValueKey("fg-normal"),
+                                  child: Text(
+                                    userEmojis[selectedForegroundIndex],
+                                    style: TextStyle(
+                                      fontSize: 66
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ) 
                           ],
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 32.0,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(24),
+                              onTap: () {
+                                if (mode != EditMode.foreground) Vibrate.tap();
+                                setState(() {
+                                  mode = EditMode.foreground;
+                                });
+                              },
                               child: AnimatedContainer(
                                 width: 96,
                                 height: 96,
                                 duration: Durations.short2,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: mode == EditMode.background? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
-                                    width: mode == EditMode.background? 4.0 : 1.0
+                                    color: mode == EditMode.foreground? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
+                                    width: mode == EditMode.foreground? 4.0 : 1.0
                                   ),
-                                  color: userColors[selectedBackgroundIndex],
                                   borderRadius: BorderRadius.circular(24)
                                 ),
-                                child: Material(
-                                  type: MaterialType.transparency,
+                                child: Center(
+                                  child: Text(
+                                    userEmojis[selectedForegroundIndex],
+                                    style: TextStyle(
+                                      fontSize: 48
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+                          ),
+                          Text("Foreground")
+                        ],
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: AnimatedContainer(
+                              width: 96,
+                              height: 96,
+                              duration: Durations.short2,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: mode == EditMode.background? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
+                                  width: mode == EditMode.background? 4.0 : 1.0
+                                ),
+                                color: userColors[selectedBackgroundIndex],
+                                borderRadius: BorderRadius.circular(24)
+                              ),
+                              child: Material(
+                                type: MaterialType.transparency,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
                                   borderRadius: BorderRadius.circular(20),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    onTap: () {
-                                      if (mode != EditMode.background) Vibrate.tap();
-                                      setState(() {
-                                        mode = EditMode.background;
-                                      });
-                                    },
-                                  ),
+                                  onTap: () {
+                                    if (mode != EditMode.background) Vibrate.tap();
+                                    setState(() {
+                                      mode = EditMode.background;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
-                            Text("Background")
-                          ],
-                        )
-                      ],
+                          ),
+                          Text("Background")
+                        ],
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 36.0, top: 24.0),
+                    child: ListTile(
+                      leading: Icon(Icons.logout_outlined),
+                      title: Text("Log out"),
+                      iconColor: Colors.red,
+                      textColor: Colors.red,
+                      onTap: () {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: Text("Log out"),
+                            content: Text("Are you sure you want to log out?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Cancel")
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Hive.box("settings").delete("user.id");
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: Text("OK")
+                              )
+                            ],
+                          );
+                        });
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0, top: 24.0),
-                      child: ListTile(
-                        leading: Icon(Icons.logout_outlined),
-                        title: Text("Log out"),
-                        iconColor: Colors.red,
-                        textColor: Colors.red,
-                        onTap: () {
-                          showDialog(context: context, builder: (context) {
-                            return AlertDialog(
-                              title: Text("Log out"),
-                              content: Text("Are you sure you want to log out?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Cancel")
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Hive.box("settings").delete("user.id");
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("OK")
-                                )
-                              ],
-                            );
-                          });
-                        },
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             );
           }
