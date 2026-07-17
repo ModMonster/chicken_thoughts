@@ -174,6 +174,26 @@ class _LoginDialogState extends State<LoginDialog> {
       content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: CircleAvatar(
+              backgroundColor: userColors[Hive.box("settings").get("user.color")],
+              radius: 72,
+              child: Text(
+                userEmojis[Hive.box("settings").get("user.emoji")],
+                style: TextStyle(
+                  fontSize: 66
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Text(
+              Hive.box("settings").get("user.name"),
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ),
           ListTile(
             title: Text("Customize profile"),
             leading: Icon(Icons.palette_outlined),

@@ -11,6 +11,7 @@ import 'package:chicken_thoughts_notifications/views/daily.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
+import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +121,32 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
+  void showLoginPrompt() {
+    if (Hive.box("settings").containsKey("login_dismissed")) return;
+    Hive.box("settings").put("login_dismissed", true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(context: context, builder: (context) => AlertDialog(
+        title: Text("Login?"),
+        content: Text("Log in to your Chicken Thoughts account to get access to social features!"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel")
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              showDialog(context: context, builder: (context) => LoginDialog());
+            },
+            child: Text("OK")
+          ),
+        ],
+      ));
+    });
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -145,6 +172,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     showAppDownloadDialog();
     showUpdateDialog();
+    showLoginPrompt();
 
     // Add listener for 12 AM
     WidgetsBinding.instance.addObserver(this);
