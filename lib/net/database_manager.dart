@@ -7,6 +7,7 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
+import 'package:chicken_thoughts_notifications/data/user.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/foundation.dart';
 
@@ -361,6 +362,54 @@ class DatabaseManager {
     )).rows.first;
 
     return appInfo.data["cacheSize"];
+  }
+
+  static Future<List<ChickenThoughtsUser>> getUsersMatchingName(String q) async {
+    RowList userRows = await database.listRows(
+      databaseId: databaseId,
+      tableId: "users",
+      queries: [
+        Query.contains("name", q)
+      ]
+    );
+
+    List<ChickenThoughtsUser> users = [];
+    for (Row row in userRows.rows) {
+      users.add(ChickenThoughtsUser(
+        id: row.$id,
+        name: row.data["name"],
+        iconFg: row.data["iconFg"],
+        iconBg: row.data["iconBg"]
+      ));
+    }
+
+    return users;
+  }
+
+  static Future<void> createUser(String id, String name, int iconFg, int iconBg) async {
+    await database.createRow(
+      databaseId: databaseId,
+      tableId: "users",
+      rowId: id,
+      data: {
+        "name": name,
+        "iconFg": iconFg,
+        "iconBg": iconBg
+      }
+    );
+  }
+
+  static Future<void> updateUser(String id, String name, int iconFg, int iconBg) async {
+    await database.updateRow(
+      databaseId: databaseId,
+      tableId: "users",
+      rowId: id,
+      data: {
+        "name": name,
+        "iconFg": iconFg,
+        "iconBg": iconBg
+      }
+    );
   }
 }
 
