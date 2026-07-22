@@ -120,9 +120,10 @@ class _SettingsUserDialogState extends State<SettingsUserDialog> {
                                   controller: backgroundController,
                                   itemCount: userColors.length,
                                   onPageChanged: (index) {
+                                    Vibrate.carousel();
                                     setState(() {
                                       selectedBackgroundIndex = index;
-                                    });
+                                    }); 
                                   },
                                   itemBuilder: (context, index) {
                                     return Padding(
@@ -158,6 +159,7 @@ class _SettingsUserDialogState extends State<SettingsUserDialog> {
                                   controller: foregroundController,
                                   itemCount: userEmojis.length,
                                   onPageChanged: (index) {
+                                    Vibrate.carousel();
                                     setState(() {
                                       selectedForegroundIndex = index;
                                     });
