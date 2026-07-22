@@ -2,14 +2,15 @@ import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
+import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
-import 'package:chicken_thoughts_notifications/views/history.dart';
-import 'package:chicken_thoughts_notifications/views/streak.dart';
-import 'package:chicken_thoughts_notifications/views/chickendex.dart';
-import 'package:chicken_thoughts_notifications/views/daily.dart';
 import 'package:chicken_thoughts_notifications/scaffold/mobile_scaffold.dart';
 import 'package:chicken_thoughts_notifications/scaffold/web_scaffold.dart';
+import 'package:chicken_thoughts_notifications/views/chickendex.dart';
+import 'package:chicken_thoughts_notifications/views/daily.dart';
+import 'package:chicken_thoughts_notifications/views/history.dart';
+import 'package:chicken_thoughts_notifications/views/streak.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_spinner.dart';
 import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
@@ -121,6 +122,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
+  Future<void> checkCacheValidity() async {
+    int remoteCacheVersion = await DatabaseManager.getRemoteCacheVersion();
+    if (Hive.box("settings").get("cache_version", defaultValue: 0) != remoteCacheVersion) {
+      Hive.box("settings").put("cache_version", remoteCacheVersion);
+      CacheManager.clearCache();
+    }
+  }
+
   void showLoginPrompt() {
     if (Hive.box("settings").containsKey("login_dismissed")) return;
     Hive.box("settings").put("login_dismissed", true);
@@ -172,6 +181,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     showAppDownloadDialog();
     showUpdateDialog();
+    checkCacheValidity();
     showLoginPrompt();
 
     // Add listener for 12 AM
@@ -195,9 +205,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     
         // Add to chicken thoughts user has seen
         // key = ID of the chicken thought
-        // value = amount of chicken thoughts corresponding to this (usually 1)
+        // value = 1 if unlocked
         // FIX THIS WITH MIMI'S IDEA (ONE BIG LIST, NO holiday.christmas.jpg JUST ONE BIG LIST AND MAP EACH NUM INSIDE THE DATABASE)
-        Hive.box("chickendex").put(snapshot.data!.id, snapshot.data!.images.length);
+        Hive.box("chickendex").put(snapshot.data!.id, 1);
     
         List<Widget> screens = [
           DailyView(chickenThought: snapshot.data!, currentPageNotifier: widget.currentPageNotifier),

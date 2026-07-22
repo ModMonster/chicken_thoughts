@@ -1,7 +1,6 @@
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
-import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
 import 'package:chicken_thoughts_notifications/widgets/reaction_picker_sheet.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
 import 'package:flutter/foundation.dart';
@@ -43,8 +42,8 @@ class DailyView extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: ChickenThoughtImage(
-                          chickenThought.images,
+                        child: Image.memory(
+                          chickenThought.image,
                           key: chickenThoughtsImageKey
                         )
                       ),

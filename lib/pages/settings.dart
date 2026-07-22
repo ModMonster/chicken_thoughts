@@ -250,7 +250,7 @@ class SettingsPageState extends State<SettingsPage> {
 
                               // re-add today's chicken thought
                               ChickenThought today = await DatabaseManager.getDailyChickenThought();
-                              Hive.box("chickendex").put(today.id, today.images.length);
+                              Hive.box("chickendex").put(today.id, 1);
                             },
                             child: Text("OK"),
                           )

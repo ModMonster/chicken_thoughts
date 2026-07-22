@@ -202,17 +202,14 @@ class DatabaseManager {
   static Future<ChickenThought> getChickenThoughtOnDate(DateTime date) async {
     Holiday? holiday = await getHolidayOnDate(date);
     if (holiday != null) {
-      // Get all images corresponding to this holiday
+      // Get holiday image
       String holidayPath = "holiday.${holiday.name}";
-      List<Uint8List> images = await getImagesFromPath(holidayPath);
-      // TODO: this will unnessicarily download all images for a holiday even though we only need one
+      Uint8List image = await getImageFromPath(holidayPath);
 
-      // Choose a random one based on today's date as a seed
-      int index = randomBasedOnDateSeed(date, images.length);
       return ChickenThought(
-        images.length > 1 ? "$holidayPath.$index" : holidayPath,
+        holidayPath,
         displayName: holiday.displayName,
-        images: images
+        image: image
       );
     }
 
@@ -220,49 +217,10 @@ class DatabaseManager {
     Season season = await getSeasonOnDate(date);
     int imageNumber = randomBasedOnDateSeed(date, season.imageCount) + 1;
     String filePath = season.imagePrefix == null? imageNumber.toString() : "season.${season.imagePrefix}.$imageNumber";
-    List<Uint8List> images = await getImagesFromPath(filePath);
+    Uint8List image = await getImageFromPath(filePath);
 
     String displayName = "${season.displayName != null ? "Chicken Thoughts: ${season.displayName}" : "Chicken Thought"} #$imageNumber";
-    return ChickenThought(filePath, displayName: displayName, images: images);
-  }
-
-  // Get all images corresponding to a filename
-  // e.g. holiday.fathers_day will give holiday.fathers_day.1.jpg and holiday.fathers_day.2.jpg
-  static Future<List<Uint8List>> getImagesFromPath(String path) async {   
-    // Hit cache if it exists
-    List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
-    if (cacheHitResults != null && cacheHitResults.isNotEmpty) return cacheHitResults;
-
-    FileList files = await storage.listFiles(
-      bucketId: bucketId,
-      queries: [
-        Query.or([
-          Query.equal("name", "$path.jpg"),
-          Query.startsWith("name", "$path.")
-        ])
-      ]
-    );
-
-    List<String> ids = files.files.map((e) => e.$id).toList();
-    List<Uint8List> images = [];
-
-    for (String id in ids) {
-      images.add(await storage.getFileView(
-        bucketId: bucketId,
-        fileId: id
-      ));
-    }
-
-    // Add images to cache
-    if (images.length > 1) {
-      for (int i = 0; i < images.length; i++) {
-        CacheManager.addToCache("$path.${i+1}", images[i]);
-      }
-    } else {
-      CacheManager.addToCache(path, images[0]);
-    }
-
-    return images;
+    return ChickenThought(filePath, displayName: displayName, image: image);
   }
 
   static Future<ChickenThought> getDailyChickenThought() async {
@@ -270,10 +228,10 @@ class DatabaseManager {
     return getChickenThoughtOnDate(DateTime.now());
   }
 
-  static Future<Uint8List> getImageFromExactPath(String path) async {   
+  static Future<Uint8List> getImageFromPath(String path) async {   
     // Hit cache if it exists
-    List<Uint8List>? cacheHitResults = await CacheManager.getImagesFromPath(path);
-    if (cacheHitResults != null && cacheHitResults.isNotEmpty) return cacheHitResults.first;
+    Uint8List? cacheHit = await CacheManager.getImageFromPath(path);
+    if (cacheHit != null) return cacheHit;
 
     FileList files = await storage.listFiles(
       bucketId: bucketId,
@@ -303,12 +261,8 @@ class DatabaseManager {
     return DateTime.now().copyWith(year: 2026, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
-  static Future<Uint8List> getImagePreviewFromPath(String path) async {
-    List<Uint8List> thumbs = await getImagesFromPath("thumb.$path");
-    if (thumbs.isEmpty) {
-      throw Exception("No image IDs found for path: $path");
-    }
-    return thumbs.first;
+  static Future<Uint8List> getThumbnailFromPath(String path) async {
+    return await getImageFromPath("thumb.$path");
   }
 
   static Future<AppData> getRemoteAppData() async {
@@ -337,32 +291,6 @@ class DatabaseManager {
     )).rows.first;
 
     return appInfo.data["cacheVersion"];
-  }
-
-  static Future<Uint8List> downloadFile(String fileId) async {
-    if (kDebugMode) print("Downloading file: $fileId");
-    return await storage.getFileDownload(
-      bucketId: bucketId,
-      fileId: fileId
-    );
-  }
-
-  static Future<FileList> getCacheFiles() async {
-    return await storage.listFiles(
-      bucketId: bucketId,
-      queries: [
-        Query.startsWith("name", "caches")
-      ]
-    );
-  }
-
-  static Future<int> getRemoteCacheSize() async {
-    Row appInfo = (await database.listRows(
-      databaseId: databaseId,
-      tableId: "app"
-    )).rows.first;
-
-    return appInfo.data["cacheSize"];
   }
 
   static Future<List<ChickenThoughtsUser>> getUsersMatchingName(String q) async {

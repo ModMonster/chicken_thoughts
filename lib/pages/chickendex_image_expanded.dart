@@ -36,6 +36,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   final Map<String, Future<Uint8List>> _futures = {};
 
   void addImagePath(String imagePath) {
+    print("WIDGET.STARTINGIMAGE IS: ${widget.startingImagePath}, IMAGEPAGE IS: $imagePath");
     if (widget.startingImagePath == imagePath) {
       currentPage = imagePaths.length;
       if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
@@ -116,14 +117,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
 
     // Build the list of unlocked chickens
     for (String id in chickendexItems) {
-      int imageCount = Hive.box("chickendex").get(id);
-      if (imageCount > 1) {
-        for (int i = 1; i <= imageCount; i++) {
-          addImagePath("$id.$i");
-        }
-      } else {
-        addImagePath(id);
-      }
+      addImagePath(id);
     }
     if (widget.startingImagePath == null) {
       currentPage = 0;
@@ -228,7 +222,7 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
                       itemBuilder: (context, index) {
                         String chickenIndex = imagePaths[index];
                         if (!_futures.containsKey(chickenIndex)) {
-                          _futures[chickenIndex] = DatabaseManager.getImageFromExactPath(chickenIndex);
+                          _futures[chickenIndex] = DatabaseManager.getImageFromPath(chickenIndex);
                         }
                         
                         return Hero(

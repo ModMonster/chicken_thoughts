@@ -8,30 +8,22 @@ import 'package:share_plus/share_plus.dart';
 
 class ShareManager {
   static Future<void> share(String chickenThoughtPath, {required String displayName}) async {
-    List<Uint8List> images = await DatabaseManager.getImagesFromPath(chickenThoughtPath);
+    Uint8List image = await DatabaseManager.getImageFromPath(chickenThoughtPath);
     
     final tempDir = await getTemporaryDirectory();
-    final List<File> shareFiles = [];
 
     // Write each image to a unique temp file
-    for (int i = 0; i < images.length; i++) {
-      final file = File('${tempDir.path}/image_$i.png');
-      await file.writeAsBytes(images[i]);
-      shareFiles.add(file);
-    }
+    final file = File('${tempDir.path}/share.png');
+    await file.writeAsBytes(image);
 
     await SharePlus.instance.share(
       ShareParams(
         title: displayName,
         subject: "Take a look at $displayName!",
-        files: shareFiles.map((f) => XFile(f.path)).toList()
+        files: [XFile(file.path)]
       )
     );
 
-    for (File file in shareFiles) {
-      if (await file.exists()) {
-        await file.delete();
-      }
-    }
+    await file.delete();
   }
 }

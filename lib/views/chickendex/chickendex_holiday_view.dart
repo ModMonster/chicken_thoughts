@@ -58,7 +58,7 @@ class _ChickendexHolidayViewState extends State<ChickendexHolidayView> {
                   padding: EdgeInsets.all(8),
                   itemBuilder: (context, inp) {
                     Holiday holiday = widget.holidays[inp];
-                    bool locked = Hive.box("chickendex").get("holiday.${holiday.name}", defaultValue: 0) == 0;
+                    bool locked = !Hive.box("chickendex").containsKey("holiday.${holiday.name}");
             
                     // We haven't seen it yet; locked!
                     if (locked) {

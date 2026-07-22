@@ -19,7 +19,7 @@ class _ChickendexPhotoViewCarouselItemState extends State<ChickendexPhotoViewCar
 
   @override
   void initState() {
-    _future = DatabaseManager.getImagePreviewFromPath(widget.fileName);
+    _future = DatabaseManager.getThumbnailFromPath(widget.fileName);
     if (widget.onLoadThumbnail != null) {
       _future.then((value) => widget.onLoadThumbnail!(value));
     }
