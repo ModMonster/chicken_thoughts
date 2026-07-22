@@ -65,12 +65,8 @@ class ReactionPickerSheet extends StatelessWidget {
                 Navigator.pop(context);
                 final renderBox = chickenThoughtsImageKey.currentContext!.findRenderObject() as RenderBox;
                 final position = renderBox.localToGlobal(Offset.zero);
-                final center = position + Offset(
-                  renderBox.size.width / 2,
-                  renderBox.size.height / 2
-                );
 
-                Rect imageRect = Rect.fromCenter(center: center, width: renderBox.size.width, height: renderBox.size.width);
+                Rect imageRect = position & renderBox.size;
 
                 Navigator.of(context).push(
                   PageRouteBuilder(
