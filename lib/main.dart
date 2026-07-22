@@ -1,8 +1,8 @@
 import 'package:chicken_thoughts_notifications/data/notification_manager.dart';
 import 'package:chicken_thoughts_notifications/data/quick_actions_manager.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
-import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/pages/home.dart';
 import 'package:chicken_thoughts_notifications/pages/offline_page.dart';
 import 'package:chicken_thoughts_notifications/pages/settings.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
@@ -17,8 +17,8 @@ import 'package:hive_ce_flutter/adapters.dart';
 
 // This will be checked against the database when app starts
 // It can be used to prompt updates and lock out old versions of the app
-final int versionCode = 16;
-final String version = "2.6.2${kDebugMode? "-DEBUG" : ""}";
+final int versionCode = 17;
+final String version = "2.6.3${kDebugMode? "-DEBUG" : ""}";
 final String githubRepo = "modmonster/chicken_thoughts";
 
 final bool isAndroidWeb = kIsWeb && defaultTargetPlatform == TargetPlatform.android;

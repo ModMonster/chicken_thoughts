@@ -40,7 +40,7 @@ class _SettingsDeveloperPageState extends State<SettingsDeveloperPage> {
                   leading: Icon(Icons.cached_outlined),
                   title: Text("Clear cache"),
                   onTap: () async {
-                    await CacheManager.deleteCaches();
+                    await CacheManager.clearCache();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Cleared caches!"),
@@ -106,7 +106,7 @@ class _SettingsDeveloperPageState extends State<SettingsDeveloperPage> {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Unlocked all Chicken Thoughts! Note: this won't work with multi-image Chicken Thoughts, but that's fine since it's just for testing"),
+                        content: Text("Unlocked all Chicken Thoughts!"),
                         behavior: SnackBarBehavior.floating,
                       ));
                     });

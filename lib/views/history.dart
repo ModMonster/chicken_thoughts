@@ -6,10 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -113,8 +110,6 @@ class _HistoryViewState extends State<HistoryView> {
                   }
 
                   final bool isUnlocked = Hive.box("chickendex").containsKey(snapshot.data!.id);
-                  final PageController controller = PageController();
-
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -136,28 +131,8 @@ class _HistoryViewState extends State<HistoryView> {
                         children: [
                           AspectRatio(
                             aspectRatio: 1,
-                            child: PhotoViewGallery.builder(
-                              backgroundDecoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-                              itemCount: snapshot.data!.images.length,
-                              pageController: controller,
-                              builder: (context, index) {
-                                return PhotoViewGalleryPageOptions(
-                                  maxScale: PhotoViewComputedScale.contained,
-                                  minScale: PhotoViewComputedScale.contained,
-                                  imageProvider: MemoryImage(snapshot.data!.images[index])
-                                );
-                              },
-                            ),
+                            child: Image.memory(snapshot.data!.image)
                           ),
-                          if (snapshot.data!.images.length > 1) SmoothPageIndicator(
-                            controller: controller,
-                            count: snapshot.data!.images.length,
-                            effect: WormEffect(
-                              dotHeight: 8,
-                              dotWidth: 8,
-                              activeDotColor: Theme.of(context).colorScheme.primary,
-                            ),
-                          )
                         ],
                       ) : Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),

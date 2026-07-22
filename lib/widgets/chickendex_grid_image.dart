@@ -24,7 +24,7 @@ class _ChickendexGridImageState extends State<ChickendexGridImage> {
 
   @override
   void initState() {
-    _future = DatabaseManager.getImagePreviewFromPath(widget.imagePath);
+    _future = DatabaseManager.getThumbnailFromPath(widget.imagePath);
     super.initState();
   }
   

@@ -60,10 +60,10 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                   itemBuilder: (context, inp) {
                     int index = inp + 1;
                     String imageId = "${widget.season.imagePrefix != null ? ("${widget.season.imagePrefix}.") : ""}$index";
-                    int imageCount = Hive.box("chickendex").get(imageId, defaultValue: 0);
+                    bool locked = !Hive.box("chickendex").containsKey(imageId);
             
                     // We haven't seen it yet; locked!
-                    if (imageCount == 0) {
+                    if (locked) {
                       return AnimationConfiguration.staggeredGrid(
                         position: inp,
                         duration: const Duration(milliseconds: 375),
@@ -84,7 +84,7 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                       child: ScaleAnimation(
                         child: FadeInAnimation(
                           child: ChickendexGridImage(
-                            imageCount > 1? "$imageId.1" : imageId,
+                            imageId,
                             seasons: widget.seasons,
                             holidays: widget.holidays,
                           )

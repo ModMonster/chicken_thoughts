@@ -24,7 +24,7 @@ class CacheManager {
     return path.join(cacheDir.path, filename);
   }
 
-  static Future<void> deleteCaches() async {
+  static Future<void> clearCache() async {
     if (kDebugMode) print("Deleting from ${cacheDir.path}");
     if (!await cacheDir.exists()) return;
     for (FileSystemEntity file in cacheDir.listSync()) {
@@ -42,28 +42,11 @@ class CacheManager {
     if (kDebugMode) print("Added $id to cache!");
   }
 
-  static Future<List<Uint8List>?> getImagesFromPath(String path) async {
+  static Future<Uint8List?> getImageFromPath(String filePath) async {
     // Return null if on web or cache disabled
     if (kIsWeb) return null;
 
-    List<Uint8List> images = [];
-    Uint8List? normalImage = await _getImageFromFilePath("$path.jpg");
-    if (normalImage != null) images.add(normalImage);
-
-    // Try getting variations (i.e. __.1.jpg, __.2.jpg)
-    Uint8List? variationImage;
-    int counter = 1;
-    do {
-      variationImage = await _getImageFromFilePath("$path.$counter.jpg");
-      if (variationImage != null) images.add(variationImage);
-      counter++;
-    } while (variationImage != null);
-
-    return images;
-  }
-
-  static Future<Uint8List?> _getImageFromFilePath(String filePath) async {
-    String absolutePath = path.join(cacheDir.path, filePath);
+    String absolutePath = path.join(cacheDir.path, "$filePath.jpg");
     io.File file = io.File(absolutePath);
     if (!await file.exists()) return null;
     return await file.readAsBytes();
