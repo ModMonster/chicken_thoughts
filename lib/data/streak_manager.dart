@@ -26,7 +26,7 @@ class StreakManager {
   static Future<void> handleStreak() async {
     // Streak stuff
     final Box box = Hive.box("settings");
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
     final DateTime yesterday = now.subtract(Duration(days: 1));
     final DateTime? lastViewed = box.get("streak.last_viewed");
 

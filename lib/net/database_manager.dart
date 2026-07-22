@@ -225,7 +225,7 @@ class DatabaseManager {
 
   static Future<ChickenThought> getDailyChickenThought() async {
     StreakManager.handleStreak();
-    return getChickenThoughtOnDate(DateTime.now());
+    return getChickenThoughtOnDate(DateTime.now().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0));
   }
 
   static Future<Uint8List> getImageFromPath(String path) async {   
