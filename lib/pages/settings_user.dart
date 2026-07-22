@@ -98,10 +98,15 @@ class _SettingsUserDialogState extends State<SettingsUserDialog> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
-                    child: TextField(
-                      controller: controller,
-                      style: Theme.of(context).textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 400
+                      ),
+                      child: TextField(
+                        controller: controller,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -278,8 +283,8 @@ class _SettingsUserDialogState extends State<SettingsUserDialog> {
                     child: ListTile(
                       leading: Icon(Icons.logout_outlined),
                       title: Text("Log out"),
-                      iconColor: Colors.red,
-                      textColor: Colors.red,
+                      iconColor: Theme.of(context).colorScheme.error,
+                      textColor: Theme.of(context).colorScheme.error,
                       onTap: () {
                         showDialog(context: context, builder: (context) {
                           return AlertDialog(

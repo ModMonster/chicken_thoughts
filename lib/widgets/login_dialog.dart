@@ -101,8 +101,8 @@ class _LoginDialogState extends State<LoginDialog> {
     } else if (state == LoginState.matching) {
       content = ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: double.maxFinite,
-          minWidth: double.maxFinite,
+          maxWidth: 400,
+          minWidth: 400,
           maxHeight: 600
         ),
         child: Column(
