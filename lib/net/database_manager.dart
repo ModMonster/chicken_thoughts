@@ -50,15 +50,15 @@ class DatabaseManager {
       DateTime holidayDate = DateTime.parse(row.data["date"]).copyWith(isUtc: false);
 
       // Holiday is exactly today
-      if (holidayDate.isAtSameMomentAs(date)) {
-        return Holiday(
-          name: row.data["name"],
-          displayName: row.data["displayName"]
-        );
+      if (row.data["weekday"] == null) {
+        if (holidayDate.isAtSameMomentAs(date)) {
+          return Holiday(
+            name: row.data["name"],
+            displayName: row.data["displayName"]
+          );
+        }
+        continue;
       }
-
-      // Check for something that got through without a weekday
-      if (row.data["weekday"] == null) continue;
 
       // Holiday is based on day of week; check if we are in the correct month
       int month = holidayDate.month;
