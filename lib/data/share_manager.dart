@@ -29,7 +29,9 @@ class ShareManager {
     );
 
     for (File file in shareFiles) {
-      await file.delete();
+      if (await file.exists()) {
+        await file.delete();
+      }
     }
   }
 }

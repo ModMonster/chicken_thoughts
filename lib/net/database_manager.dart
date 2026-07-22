@@ -10,6 +10,7 @@ import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/user.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive_ce/hive.dart';
 
 class DatabaseManager {
   static const String endpoint = "https://tor.cloud.appwrite.io/v1";
@@ -408,6 +409,21 @@ class DatabaseManager {
         "name": name,
         "iconFg": iconFg,
         "iconBg": iconBg
+      }
+    );
+  }
+
+  static Future<void> addReaction(String chickenThought, String emoji, double x, double y) async {
+    await database.createRow(
+      databaseId: databaseId,
+      tableId: "reactions",
+      rowId: ID.unique(),
+      data: {
+        "chickenThought": chickenThought,
+        "user": Hive.box("settings").get("user.id"),
+        "x": x,
+        "y": y,
+        "reaction": emoji
       }
     );
   }

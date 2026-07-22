@@ -2,7 +2,7 @@ import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/share_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/widgets/chicken_thought_image.dart';
-import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
+import 'package:chicken_thoughts_notifications/widgets/reaction_picker_sheet.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,8 @@ import 'package:hive_ce/hive.dart';
 class DailyView extends StatelessWidget {
   final ChickenThought chickenThought;
   final ValueNotifier currentPageNotifier;
-  const DailyView({required this.chickenThought, required this.currentPageNotifier, super.key});
+  final GlobalKey chickenThoughtsImageKey = GlobalKey();
+  DailyView({required this.chickenThought, required this.currentPageNotifier, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,10 @@ class DailyView extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: ChickenThoughtImage(chickenThought.images)
+                        child: ChickenThoughtImage(
+                          chickenThought.images,
+                          key: chickenThoughtsImageKey
+                        )
                       ),
                     ),
                   ),
@@ -61,36 +65,38 @@ class DailyView extends StatelessWidget {
                         icon: Icon(Icons.share),
                       ),
                       if (Hive.box("settings").containsKey("user.id")) IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showModalBottomSheet(context: context, builder: (context) => ReactionPickerSheet(chickenThought.id, chickenThoughtsImageKey));
+                        },
                         tooltip: "Add reaction",
                         icon: Icon(Icons.add_reaction),
                       ),
-                      ActionChip(
-                        label: Row(
-                          spacing: 4,
-                          children: [
-                            Icon(Icons.favorite_outline),
-                            Text("2"),
-                          ],
-                        ),
-                        onPressed: () {
-                          Vibrate.tap();
-                          if (!Hive.box("settings").containsKey("user.id")) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Please log in to react!"),
-                              action: SnackBarAction(
-                                label: "Login",
-                                onPressed: () {
-                                  showDialog(context: context, builder: (context) => LoginDialog());
-                                }
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              persist: false,
-                            ));
-                            return;
-                          }
-                        },
-                      ),
+                      // ActionChip(
+                      //   label: Row(
+                      //     spacing: 4,
+                      //     children: [
+                      //       Icon(Icons.favorite_outline),
+                      //       Text("2"),
+                      //     ],
+                      //   ),
+                      //   onPressed: () {
+                      //     Vibrate.tap();
+                      //     if (!Hive.box("settings").containsKey("user.id")) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //         content: Text("Please log in to react!"),
+                      //         action: SnackBarAction(
+                      //           label: "Login",
+                      //           onPressed: () {
+                      //             showDialog(context: context, builder: (context) => LoginDialog());
+                      //           }
+                      //         ),
+                      //         behavior: SnackBarBehavior.floating,
+                      //         persist: false,
+                      //       ));
+                      //       return;
+                      //     }
+                      //   },
+                      // ),
                     ],
                   ),
                 )
