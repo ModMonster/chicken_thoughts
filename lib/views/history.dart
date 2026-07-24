@@ -62,7 +62,6 @@ class _HistoryViewState extends State<HistoryView> {
             ),
             itemBuilder: (context, index) {
               DateTime day = now.subtract(Duration(days: index + 1));
-              print(day);
 
               return FutureBuilder(
                 future: DatabaseManager.getChickenThoughtOnDate(day),

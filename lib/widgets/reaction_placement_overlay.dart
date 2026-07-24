@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:chicken_thoughts_notifications/net/database_manager.dart';
+import 'package:chicken_thoughts_notifications/data/reaction.dart';
 import 'package:chicken_thoughts_notifications/widgets/hole_painter.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,8 @@ class ReactionPlacementOverlay extends StatefulWidget {
   final Rect imageRect;
   final Emoji emoji;
   final String chickenThoughtId;
-  const ReactionPlacementOverlay({super.key, required this.imageRect, required this.emoji, required this.chickenThoughtId});
+  final void Function(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) onPlaced;
+  const ReactionPlacementOverlay({super.key, required this.imageRect, required this.emoji, required this.chickenThoughtId, required this.onPlaced});
 
   @override
   State<ReactionPlacementOverlay> createState() => _ReactionPlacementOverlayState();
@@ -56,9 +57,11 @@ class _ReactionPlacementOverlayState extends State<ReactionPlacementOverlay> wit
 
                 double x = (tap.dx - widget.imageRect.left) / widget.imageRect.width;
                 double y = (tap.dy - widget.imageRect.top) / widget.imageRect.height;
+                Reaction reaction = Reaction(emoji: widget.emoji.emoji, position: Offset(x, y));
 
                 Navigator.pop(context);
-                DatabaseManager.addReaction(widget.chickenThoughtId, widget.emoji.emoji, x, y);
+                widget.onPlaced(context, reaction, Offset(MediaQuery.of(context).size.width / 2 - 18, widget.imageRect.bottom + 8), tap);
+                // DatabaseManager.addReaction(widget.chickenThoughtId, widget.emoji.emoji, x, y);
               },
               child: SizedBox.expand(),
             ),

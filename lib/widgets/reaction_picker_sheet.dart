@@ -1,3 +1,4 @@
+import 'package:chicken_thoughts_notifications/data/reaction.dart';
 import 'package:chicken_thoughts_notifications/widgets/reaction_placement_overlay.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,8 @@ import 'package:flutter/material.dart';
 class ReactionPickerSheet extends StatelessWidget {
   final GlobalKey chickenThoughtsImageKey;
   final String chickenThoughtId;
-  const ReactionPickerSheet(this.chickenThoughtId, this.chickenThoughtsImageKey, {super.key});
+  final void Function(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) onPlaced;
+  const ReactionPickerSheet(this.chickenThoughtId, this.chickenThoughtsImageKey, this.onPlaced, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class ReactionPickerSheet extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  "Choose emoji",
+                  "Choose reaction",
                   style: Theme.of(context).textTheme.headlineMedium
                 ),
                 Spacer(),
@@ -61,14 +63,13 @@ class ReactionPickerSheet extends StatelessWidget {
                   indicatorColor: Theme.of(context).colorScheme.primary,
                 )
               ),
-              onEmojiSelected: (category, emoji) {
-                Navigator.pop(context);
+              onEmojiSelected: (category, emoji) async {
                 final renderBox = chickenThoughtsImageKey.currentContext!.findRenderObject() as RenderBox;
                 final position = renderBox.localToGlobal(Offset.zero);
 
                 Rect imageRect = position & renderBox.size;
 
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     opaque: false,
                     barrierColor: Colors.transparent,
@@ -76,6 +77,7 @@ class ReactionPickerSheet extends StatelessWidget {
                       imageRect: imageRect,
                       emoji: emoji,
                       chickenThoughtId: chickenThoughtId,
+                      onPlaced: onPlaced
                     ),
                     transitionsBuilder:(context, animation, secondaryAnimation, child) {
                       return FadeTransition(

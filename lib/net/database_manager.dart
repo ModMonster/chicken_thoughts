@@ -5,11 +5,13 @@ import 'package:appwrite/models.dart';
 import 'package:chicken_thoughts_notifications/data/app_data.dart';
 import 'package:chicken_thoughts_notifications/data/chicken_thought.dart';
 import 'package:chicken_thoughts_notifications/data/holiday.dart';
+import 'package:chicken_thoughts_notifications/data/reaction.dart';
 import 'package:chicken_thoughts_notifications/data/season.dart';
 import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/user.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:hive_ce/hive.dart';
 
 class DatabaseManager {
@@ -354,6 +356,22 @@ class DatabaseManager {
         "reaction": emoji
       }
     );
+  }
+
+  static Future<List<Reaction>> getReactions(String chickenThought) async {
+    RowList rows = await database.listRows(
+      databaseId: databaseId,
+      tableId: "reactions",
+      queries: [
+        Query.equal("chickenThought", chickenThought)
+      ]
+    );
+
+    return rows.rows.map((row) => Reaction(
+      emoji: row.data["reaction"],
+      position: Offset(row.data["x"], row.data["y"]),
+      
+    )).toList();
   }
 }
 

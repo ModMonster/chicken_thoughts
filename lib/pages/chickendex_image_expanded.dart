@@ -36,7 +36,6 @@ class _ChickendexImageExpandedPageState extends State<ChickendexImageExpandedPag
   final Map<String, Future<Uint8List>> _futures = {};
 
   void addImagePath(String imagePath) {
-    print("WIDGET.STARTINGIMAGE IS: ${widget.startingImagePath}, IMAGEPAGE IS: $imagePath");
     if (widget.startingImagePath == imagePath) {
       currentPage = imagePaths.length;
       if (widget.thumbImage != null) prefetchedThumbnails[imagePaths.length] = widget.thumbImage!;
