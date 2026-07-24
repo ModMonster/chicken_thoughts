@@ -24,12 +24,8 @@ class _DailyViewState extends State<DailyView> {
   final GlobalKey chickenThoughtsImageKey = GlobalKey();
   OverlayEntry? flyingSticker;
   List<Reaction> reactions = [];
-  bool showReactions = Hive.box("settings").get("show_reactions", defaultValue: true);
 
   void addReaction(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) {
-    showReactions = true;
-    Hive.box("settings").put("show_reactions", true);
-
     flyingSticker = OverlayEntry(
       builder: (_) {
         return FlyingSticker(
@@ -129,36 +125,41 @@ class _DailyViewState extends State<DailyView> {
                       padding: const EdgeInsets.all(8),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Stack(
-                          children: [
-                            Image.memory(
-                              widget.chickenThought.image,
-                              key: chickenThoughtsImageKey
-                            ),
-
-                            ...reactions.map((reaction) {
-                              final renderBox = chickenThoughtsImageKey.currentContext!.findRenderObject() as RenderBox;
-
-                              Offset pos = Offset(
-                                renderBox.size.width * reaction.position.dx - 18,
-                                renderBox.size.height * reaction.position.dy - 18
-                              );
-
-                              return Positioned(
-                                left: pos.dx,
-                                top: pos.dy,
-                                child: AnimatedOpacity(
-                                  opacity: showReactions? 1.0 : 0.0,
-                                  duration: Durations.short3,
-                                  curve: Curves.easeOut,
-                                  child: Text(
-                                      reaction.emoji,
-                                      style: const TextStyle(fontSize: 36),
-                                    ),
+                        child: StreamBuilder(
+                          stream: Hive.box("settings").watch(key: "show_reactions"),
+                          builder: (context, asyncSnapshot) {
+                            return Stack(
+                              children: [
+                                Image.memory(
+                                  widget.chickenThought.image,
+                                  key: chickenThoughtsImageKey
                                 ),
-                              );
-                            }),
-                          ],
+                            
+                                ...reactions.map((reaction) {
+                                  final renderBox = chickenThoughtsImageKey.currentContext!.findRenderObject() as RenderBox;
+                            
+                                  Offset pos = Offset(
+                                    renderBox.size.width * reaction.position.dx - 18,
+                                    renderBox.size.height * reaction.position.dy - 18
+                                  );
+                            
+                                  return Positioned(
+                                    left: pos.dx,
+                                    top: pos.dy,
+                                    child: AnimatedOpacity(
+                                      opacity: Hive.box("settings").get("show_reactions", defaultValue: true)? 1.0 : 0.0,
+                                      duration: Durations.short3,
+                                      curve: Curves.easeOut,
+                                      child: Text(
+                                          reaction.emoji,
+                                          style: const TextStyle(fontSize: 36),
+                                        ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            );
+                          }
                         )
                       ),
                     ),
@@ -178,14 +179,11 @@ class _DailyViewState extends State<DailyView> {
                         icon: Icon(Icons.share),
                       ),
                       IconButton(
-                        tooltip: showReactions? "Hide reactions" : "Show reactions",
+                        tooltip: Hive.box("settings").get("show_reactions", defaultValue: true)? "Hide reactions" : "Show reactions",
                         onPressed: () {
-                          setState(() {
-                            showReactions = !showReactions;
-                            Hive.box("settings").put("show_reactions", showReactions);
-                          });
+                          Hive.box("settings").put("show_reactions", !Hive.box("settings").get("show_reactions", defaultValue: true));
                         },
-                        icon: Icon(showReactions? Icons.visibility_outlined : Icons.visibility_off_outlined)
+                        icon: Icon(Hive.box("settings").get("show_reactions", defaultValue: true)? Icons.visibility_outlined : Icons.visibility_off_outlined)
                       ),
                       if (Hive.box("settings").containsKey("user.id")) IconButton(
                         onPressed: () {

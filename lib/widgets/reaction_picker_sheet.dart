@@ -2,6 +2,7 @@ import 'package:chicken_thoughts_notifications/data/reaction.dart';
 import 'package:chicken_thoughts_notifications/widgets/reaction_placement_overlay.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
 
 class ReactionPickerSheet extends StatelessWidget {
   final GlobalKey chickenThoughtsImageKey;
@@ -69,6 +70,7 @@ class ReactionPickerSheet extends StatelessWidget {
 
                 Rect imageRect = position & renderBox.size;
 
+                Hive.box("settings").put("show_reactions", true);
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     opaque: false,
