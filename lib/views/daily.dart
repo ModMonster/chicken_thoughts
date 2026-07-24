@@ -27,6 +27,9 @@ class _DailyViewState extends State<DailyView> {
   bool showReactions = Hive.box("settings").get("show_reactions", defaultValue: true);
 
   void addReaction(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) {
+    showReactions = true;
+    Hive.box("settings").put("show_reactions", true);
+
     flyingSticker = OverlayEntry(
       builder: (_) {
         return FlyingSticker(

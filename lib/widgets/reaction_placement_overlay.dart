@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:chicken_thoughts_notifications/data/reaction.dart';
+import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/hole_painter.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _ReactionPlacementOverlayState extends State<ReactionPlacementOverlay> wit
 
                 Navigator.pop(context);
                 widget.onPlaced(context, reaction, Offset(MediaQuery.of(context).size.width / 2 - 18, widget.imageRect.bottom + 8), tap);
-                // DatabaseManager.addReaction(widget.chickenThoughtId, widget.emoji.emoji, x, y);
+                DatabaseManager.addReaction(widget.chickenThoughtId, widget.emoji.emoji, x, y);
               },
               child: SizedBox.expand(),
             ),
