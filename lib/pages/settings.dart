@@ -3,9 +3,9 @@ import 'package:chicken_thoughts_notifications/data/streak_manager.dart';
 import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/main.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
-import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_color.dart';
 import 'package:chicken_thoughts_notifications/pages/settings_user.dart';
+import 'package:chicken_thoughts_notifications/widgets/login_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/settings_developer_totp_dialog.dart';
 import 'package:chicken_thoughts_notifications/widgets/update_dialog.dart';
 import 'package:flutter/foundation.dart';
@@ -184,6 +184,16 @@ class SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     Navigator.pushNamed(context, "/settings/icon");
                   },
+                ),
+                SwitchListTile(
+                  value: box.get("show_reactions", defaultValue: true),
+                  onChanged: (value) {
+                    box.put("show_reactions", value);
+                    Vibrate.tap();
+                  },
+                  title: Text("Show reactions"),
+                  subtitle: Text("Display reaction stickers on images"),
+                  secondary: Icon(Icons.mood),
                 ),
                 SwitchListTile(
                   value: box.get("vibration", defaultValue: true),
