@@ -12,7 +12,7 @@ import 'package:chicken_thoughts_notifications/data/user.dart';
 import 'package:chicken_thoughts_notifications/net/cache_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:hive_ce/hive.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseManager {
   static const String endpoint = "https://tor.cloud.appwrite.io/v1";
@@ -343,17 +343,17 @@ class DatabaseManager {
     );
   }
 
-  static Future<void> addReaction(String chickenThought, String emoji, double x, double y) async {
+  static Future<void> addReaction(String chickenThought, Reaction reaction) async {
     await database.createRow(
       databaseId: databaseId,
       tableId: "reactions",
-      rowId: ID.unique(),
+      rowId: reaction.id,
       data: {
         "chickenThought": chickenThought,
-        "user": Hive.box("settings").get("user.id"),
-        "x": x,
-        "y": y,
-        "reaction": emoji
+        "user": reaction.user.id,
+        "x": reaction.position.dx,
+        "y": reaction.position.dy,
+        "reaction": reaction.emoji
       }
     );
   }
@@ -363,15 +363,40 @@ class DatabaseManager {
       databaseId: databaseId,
       tableId: "reactions",
       queries: [
-        Query.equal("chickenThought", chickenThought)
+        Query.equal("chickenThought", chickenThought),
+        Query.select([
+          "reaction",
+          "x",
+          "y",
+          "user.\$id",
+          "user.name",
+          "user.iconFg",
+          "user.iconBg",
+          "\$createdAt"
+        ])
       ]
     );
 
     return rows.rows.map((row) => Reaction(
+      id: row.$id,
       emoji: row.data["reaction"],
       position: Offset(row.data["x"], row.data["y"]),
-      
+      user: ChickenThoughtsUser(
+        id: row.data["user"]["\$id"],
+        name: row.data["user"]["name"],
+        iconFg: row.data["user"]["iconFg"],
+        iconBg: row.data["user"]["iconBg"]
+      ),
+      timestamp: DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(row.data["\$createdAt"]).copyWith(isUtc: true).toLocal()
     )).toList();
+  }
+
+  static Future<void> deleteReaction(Reaction reaction) async {
+    await database.deleteRow(
+      databaseId: databaseId,
+      tableId: "reactions",
+      rowId: reaction.id,
+    );
   }
 }
 

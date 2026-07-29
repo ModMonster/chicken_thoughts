@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:appwrite/appwrite.dart';
 import 'package:chicken_thoughts_notifications/data/reaction.dart';
+import 'package:chicken_thoughts_notifications/data/user.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/hole_painter.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
 
 class ReactionPlacementOverlay extends StatefulWidget {
   final Rect imageRect;
@@ -58,11 +61,17 @@ class _ReactionPlacementOverlayState extends State<ReactionPlacementOverlay> wit
 
                 double x = (tap.dx - widget.imageRect.left) / widget.imageRect.width;
                 double y = (tap.dy - widget.imageRect.top) / widget.imageRect.height;
-                Reaction reaction = Reaction(emoji: widget.emoji.emoji, position: Offset(x, y));
+                Box box = Hive.box("settings");
+                Reaction reaction = Reaction(id: ID.unique(), emoji: widget.emoji.emoji, position: Offset(x, y), timestamp: DateTime.now(), user: ChickenThoughtsUser(
+                  id: box.get("user.id"),
+                  name: box.get("user.name"),
+                  iconFg: box.get("user.emoji"),
+                  iconBg: box.get("user.color")
+                ));
 
                 Navigator.pop(context);
                 widget.onPlaced(context, reaction, Offset(MediaQuery.of(context).size.width / 2 - 18, widget.imageRect.bottom + 8), tap);
-                DatabaseManager.addReaction(widget.chickenThoughtId, widget.emoji.emoji, x, y);
+                DatabaseManager.addReaction(widget.chickenThoughtId, reaction);
               },
               child: SizedBox.expand(),
             ),

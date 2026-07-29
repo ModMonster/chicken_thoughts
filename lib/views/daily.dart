@@ -5,6 +5,7 @@ import 'package:chicken_thoughts_notifications/data/vibrate.dart';
 import 'package:chicken_thoughts_notifications/net/database_manager.dart';
 import 'package:chicken_thoughts_notifications/widgets/flying_sticker.dart';
 import 'package:chicken_thoughts_notifications/widgets/reaction_picker_sheet.dart';
+import 'package:chicken_thoughts_notifications/widgets/reaction_tooltip.dart';
 import 'package:chicken_thoughts_notifications/widgets/streak_popup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,9 @@ class DailyView extends StatefulWidget {
 
 class _DailyViewState extends State<DailyView> {
   final GlobalKey chickenThoughtsImageKey = GlobalKey();
-  OverlayEntry? flyingSticker;
   List<Reaction> reactions = [];
+  OverlayEntry? flyingSticker;
+  OverlayEntry? tooltip;
 
   void addReaction(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) {
     flyingSticker = OverlayEntry(
@@ -47,44 +49,49 @@ class _DailyViewState extends State<DailyView> {
     Overlay.of(context).insert(flyingSticker!);
   }
 
-  // void showReactionTooltip(Reaction reaction, Offset position) {
-  //   OverlayEntry entry = OverlayEntry(
-  //     builder: (context) {
-  //       return Positioned(
-  //         left: position.dx - 50,
-  //         top: position.dy + 40,
-  //         child: Material(
-  //           color: Colors.transparent,
-  //           child: Container(
-  //             padding: const EdgeInsets.symmetric(
-  //               horizontal: 12,
-  //               vertical: 6,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               color: Colors.black87,
-  //               borderRadius: BorderRadius.circular(12),
-  //             ),
-  //             child: Text(
-  //               "hiiiii",
-  //               style: const TextStyle(
-  //                 color: Colors.white,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
+  void showReactionTooltip(Reaction reaction, Offset position) {
+    tooltip?.remove();
 
-  //   Overlay.of(context).insert(entry);
+    Size screenSize = MediaQuery.of(context).size;
+    double left = clampDouble(position.dx - 132, 8, screenSize.width - 316);
+    double top = clampDouble(position.dy + 48, 8, screenSize.height - 80);
 
-  //   Future.delayed(
-  //     const Duration(seconds: 2),
-  //     () {
-  //       entry.remove();
-  //     },
-  //   );
-  // }
+    tooltip = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            GestureDetector(
+              onTap: () {
+                tooltip?.remove();
+                tooltip = null;
+              },
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                color: Colors.black54,
+              ),
+            ),
+
+            Positioned(
+              left: left,
+              top: top,
+              child: ReactionTooltip(reaction, delete: () => deleteReaction(reaction))
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(tooltip!);
+  }
+
+  void deleteReaction(Reaction reaction) {
+    setState(() {
+      reactions.remove(reaction);
+    });
+    tooltip?.remove();
+    tooltip = null;
+    DatabaseManager.deleteReaction(reaction);
+  }
 
   @override
   void initState() {
@@ -93,6 +100,10 @@ class _DailyViewState extends State<DailyView> {
         reactions = value;
       })
     );
+
+    // This prevents the reactions from all clumping in the top left on initial load.
+    // Don't ask questions.
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
     super.initState();
   }
 
@@ -150,10 +161,15 @@ class _DailyViewState extends State<DailyView> {
                                       opacity: Hive.box("settings").get("show_reactions", defaultValue: true)? 1.0 : 0.0,
                                       duration: Durations.short3,
                                       curve: Curves.easeOut,
-                                      child: Text(
+                                      child: InkWell(
+                                        onTap: () {
+                                          showReactionTooltip(reaction, renderBox.localToGlobal(Offset.zero) + pos);
+                                        },
+                                        child: Text(
                                           reaction.emoji,
                                           style: const TextStyle(fontSize: 36),
                                         ),
+                                      ),
                                     ),
                                   );
                                 }),
@@ -192,32 +208,6 @@ class _DailyViewState extends State<DailyView> {
                         tooltip: "Add reaction",
                         icon: Icon(Icons.add_reaction),
                       ),
-                      // ActionChip(
-                      //   label: Row(
-                      //     spacing: 4,
-                      //     children: [
-                      //       Icon(Icons.favorite_outline),
-                      //       Text("2"),
-                      //     ],
-                      //   ),
-                      //   onPressed: () {
-                      //     Vibrate.tap();
-                      //     if (!Hive.box("settings").containsKey("user.id")) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      //         content: Text("Please log in to react!"),
-                      //         action: SnackBarAction(
-                      //           label: "Login",
-                      //           onPressed: () {
-                      //             showDialog(context: context, builder: (context) => LoginDialog());
-                      //           }
-                      //         ),
-                      //         behavior: SnackBarBehavior.floating,
-                      //         persist: false,
-                      //       ));
-                      //       return;
-                      //     }
-                      //   },
-                      // ),
                     ],
                   ),
                 )
