@@ -147,15 +147,18 @@ class _DailyViewState extends State<DailyView> {
                                       opacity: Hive.box("settings").get("show_reactions", defaultValue: true)? 1.0 : 0.0,
                                       duration: Durations.short3,
                                       curve: Curves.easeOut,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (Hive.box("settings").get("show_reactions", defaultValue: true)) {
-                                            showReactionTooltip(reaction, renderBox.localToGlobal(Offset.zero) + pos);
-                                          }
-                                        },
-                                        child: Text(
-                                          reaction.emoji,
-                                          style: const TextStyle(fontSize: 36),
+                                      child: MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (Hive.box("settings").get("show_reactions", defaultValue: true)) {
+                                              showReactionTooltip(reaction, renderBox.localToGlobal(Offset.zero) + pos);
+                                            }
+                                          },
+                                          child: Text(
+                                            reaction.emoji,
+                                            style: const TextStyle(fontSize: 36),
+                                          ),
                                         ),
                                       ),
                                     ),

@@ -45,7 +45,7 @@ class ReactionPickerSheet extends StatelessWidget {
                   top: EmojiPickerItem.searchBar
                 ),
                 emojiViewConfig: EmojiViewConfig(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                   columns: 7,
                   emojiSizeMax: 36.0
                 ),
@@ -65,18 +65,13 @@ class ReactionPickerSheet extends StatelessWidget {
                 )
               ),
               onEmojiSelected: (category, emoji) async {
-                final renderBox = chickenThoughtsImageKey.currentContext!.findRenderObject() as RenderBox;
-                final position = renderBox.localToGlobal(Offset.zero);
-
-                Rect imageRect = position & renderBox.size;
-
                 Hive.box("settings").put("show_reactions", true);
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     opaque: false,
                     barrierColor: Colors.transparent,
                     pageBuilder: (context, animation, secondaryAnimation) => ReactionPlacementOverlay(
-                      imageRect: imageRect,
+                      chickenThoughtsImageKey: chickenThoughtsImageKey,
                       emoji: emoji,
                       chickenThoughtId: chickenThoughtId,
                       onPlaced: onPlaced

@@ -55,7 +55,11 @@ class _ReactionTooltipState extends State<ReactionTooltip> with SingleTickerProv
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double left = clampDouble(widget.position.dx - 132, 8, screenSize.width - 316);
-    double top = clampDouble(widget.position.dy + 48, 8, screenSize.height - 80);
+    double top = clampDouble(widget.position.dy + 48, 8, screenSize.height);
+
+    if (top > screenSize.height - 80) {
+      top -= 128;
+    }
 
     return Stack(
       children: [
@@ -107,19 +111,21 @@ class _ReactionTooltipState extends State<ReactionTooltip> with SingleTickerProv
                 child: SizedBox(
                   width: 300,
                   height: 72,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.fromLTRB(16.0, 0, 8.0, 0),
-                    leading: CircleAvatar(
-                      backgroundColor: userColors[widget.reaction.user.iconBg],
-                      child: Text(userEmojis[widget.reaction.user.iconFg]),
+                  child: Center(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.fromLTRB(16.0, 0, 8.0, 0),
+                      leading: CircleAvatar(
+                        backgroundColor: userColors[widget.reaction.user.iconBg],
+                        child: Text(userEmojis[widget.reaction.user.iconFg]),
+                      ),
+                      title: Text(widget.reaction.user.name),
+                      subtitle: widget.reaction.timestamp != null? Text(formatDate(widget.reaction.timestamp!)) : null,
+                      trailing: widget.reaction.user.id == Hive.box("settings").get("user.id")? IconButton(
+                        onPressed: delete,
+                        icon: Icon(Icons.delete_outline),
+                        tooltip: "Delete",
+                      ) : null,
                     ),
-                    title: Text(widget.reaction.user.name),
-                    subtitle: widget.reaction.timestamp != null? Text(formatDate(widget.reaction.timestamp!)) : null,
-                    trailing: widget.reaction.user.id == Hive.box("settings").get("user.id")? IconButton(
-                      onPressed: delete,
-                      icon: Icon(Icons.delete_outline),
-                      tooltip: "Delete",
-                    ) : null,
                   ),
                 ),
               ),
