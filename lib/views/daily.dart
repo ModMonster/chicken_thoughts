@@ -26,6 +26,7 @@ class _DailyViewState extends State<DailyView> {
   List<Reaction> reactions = [];
   OverlayEntry? flyingSticker;
   OverlayEntry? tooltip;
+  AnimationController? tooltipController;
 
   void addReaction(BuildContext context, Reaction reaction, Offset startPosition, Offset endPosition) {
     flyingSticker = OverlayEntry(
@@ -52,31 +53,16 @@ class _DailyViewState extends State<DailyView> {
   void showReactionTooltip(Reaction reaction, Offset position) {
     tooltip?.remove();
 
-    Size screenSize = MediaQuery.of(context).size;
-    double left = clampDouble(position.dx - 132, 8, screenSize.width - 316);
-    double top = clampDouble(position.dy + 48, 8, screenSize.height - 80);
-
     tooltip = OverlayEntry(
       builder: (context) {
-        return Stack(
-          children: [
-            GestureDetector(
-              onTap: () {
-                tooltip?.remove();
-                tooltip = null;
-              },
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                color: Colors.black54,
-              ),
-            ),
-
-            Positioned(
-              left: left,
-              top: top,
-              child: ReactionTooltip(reaction, delete: () => deleteReaction(reaction))
-            ),
-          ],
+        return ReactionTooltip(
+          reaction,
+          position: position,
+          delete: () => deleteReaction(reaction),
+          close: () {
+            tooltip?.remove();
+            tooltip = null;
+          }
         );
       },
     );
@@ -163,7 +149,9 @@ class _DailyViewState extends State<DailyView> {
                                       curve: Curves.easeOut,
                                       child: InkWell(
                                         onTap: () {
-                                          showReactionTooltip(reaction, renderBox.localToGlobal(Offset.zero) + pos);
+                                          if (Hive.box("settings").get("show_reactions", defaultValue: true)) {
+                                            showReactionTooltip(reaction, renderBox.localToGlobal(Offset.zero) + pos);
+                                          }
                                         },
                                         child: Text(
                                           reaction.emoji,
