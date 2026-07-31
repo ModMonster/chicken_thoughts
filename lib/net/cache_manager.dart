@@ -25,6 +25,7 @@ class CacheManager {
   }
 
   static Future<void> clearCache() async {
+    if (kIsWeb) return;
     if (kDebugMode) print("Deleting from ${cacheDir.path}");
     if (!await cacheDir.exists()) return;
     for (FileSystemEntity file in cacheDir.listSync()) {
