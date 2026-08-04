@@ -23,11 +23,11 @@ class _ReactionTooltipState extends State<ReactionTooltip> with SingleTickerProv
   String formatDate(DateTime date) {
     DateTime now = DateTime.now();
     if (date.year == now.year && date.month == now.month && date.day == now.day) {
-      return DateFormat("'Today at' K:mm a").format(date);
+      return DateFormat("'Today at' h:mm a").format(date);
     } else if (date.year == DateTime.now().year) {
-      return DateFormat("MMM d 'at' K:mm a").format(date);
+      return DateFormat("MMM d 'at' h:mm a").format(date);
     } else {
-      return DateFormat("MMM d, YYYY 'at' K:mm a").format(date);
+      return DateFormat("MMM d, YYYY 'at' h:mm a").format(date);
     }
   }
 
