@@ -59,7 +59,7 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                   padding: EdgeInsets.all(8),
                   itemBuilder: (context, inp) {
                     int index = inp + 1;
-                    String imageId = "${widget.season.imagePrefix != null ? ("${widget.season.imagePrefix}.") : ""}$index";
+                    String imageId = "${widget.season.imagePrefix != null ? ("season.${widget.season.imagePrefix}.") : ""}$index";
                     bool locked = !Hive.box("chickendex").containsKey(imageId);
             
                     // We haven't seen it yet; locked!
@@ -85,6 +85,7 @@ class _ChickendexSeasonViewState extends State<ChickendexSeasonView> {
                         child: FadeInAnimation(
                           child: ChickendexGridImage(
                             imageId,
+                            displayName: index.toString(),
                             seasons: widget.seasons,
                             holidays: widget.holidays,
                           )
